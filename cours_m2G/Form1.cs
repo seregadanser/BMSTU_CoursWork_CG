@@ -101,56 +101,66 @@ namespace cours_m2G
         int io = 0;
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-
+            //федоров алексей борисович
+            if (e.KeyValue == 'I')
+            {
+                EasyTransformVisitor vvv = new EasyTransformVisitor(new MatrixTransformationTransfer3D(1, 0, 0));
+                pyramide.action(vvv);
+            }
+            if (e.KeyValue == 'O')
+            {
+                EasyTransformVisitor vvv = new EasyTransformVisitor(new MatrixTransformationTransfer3D(-1, 0, 0));
+                pyramide.action(vvv);
+            }
 
             if (e.KeyValue == 'W')
             {
-                curcam.Move(1, -5);
+                curcam.Move(CameraDirection.FORWARD, 5);
             }
             if (e.KeyValue == 'S')
             {
-                curcam.Move(1, 5);
+                curcam.Move(CameraDirection.BACKWARD, 5);
             }
             if (e.KeyValue == 'A')
             {
-                curcam.Move(2, -5);
+                curcam.Move(CameraDirection.LEFT, 5);
             }
             if (e.KeyValue == 'D')
             {
-                curcam.Move(2, 5);
+                curcam.Move(CameraDirection.RIGHT, 5);
             }
             if (e.KeyValue == 'Q')
             {
-                curcam.Move(3, 5);
+                curcam.Move(CameraDirection.UP, 5);
             }
             if (e.KeyValue == 'E')
             {
-                curcam.Move(3, -5);
+                curcam.Move(CameraDirection.DOWN, 5);
             }
 
             if (e.KeyValue == 'Z')
             {
-                curcam.Move(9, 1);
+                curcam.Move(CameraDirection.ROTATIONY, 1);
             }
             if (e.KeyValue == 'X')
             {
-                curcam.Move(9, -1);
+                curcam.Move(CameraDirection.ROTATIONY, -1);
             }
             if (e.KeyValue == 'C')
             {
-                curcam.Move(5, 1);
+                curcam.Move(CameraDirection.YAW, 1);
             }
             if (e.KeyValue == 'V')
             {
-                curcam.Move(5, -1);
+                curcam.Move(CameraDirection.YAW, -1);
             }
             if (e.KeyValue == 'G')
             {
-                curcam.Move(4, 1);
+                curcam.Move(CameraDirection.PICH, 1);
             }
             if (e.KeyValue == 'F')
             {
-                curcam.Move(4, -1);
+                curcam.Move(CameraDirection.PICH, -1);
             }
 
 

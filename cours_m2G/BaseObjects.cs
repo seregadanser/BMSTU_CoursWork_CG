@@ -5,6 +5,11 @@
         public void action(IVisitor visitor);
     }
 
+   public enum CameraDirection
+    {
+        FORWARD, BACKWARD,LEFT,RIGHT,UP,DOWN, YAW, PICH, ROTATIONY
+    }
+
     class Axes : IBaseObjects
     {
         readonly LineComponent XAxis, YAxis, ZAxis;
@@ -141,50 +146,48 @@
             return true;
         }
 
-        public void Move(int direction, double speed)
+        public void Move(CameraDirection dir, double speed)
         {
             MatrixTransformation3D rotation;
-            switch (direction)
+            switch (dir)
             {
-                case 0:
+             
+                case CameraDirection.FORWARD:
+                    Position.Coords -= (Direction * speed);
                     break;
-                case 1:
-                    Position.Coords += (Direction * speed);
-                    break;
-                case 2:
+                case CameraDirection.RIGHT:
                     Position.Coords += (Right * (speed));
                     break;
-                case 3:
+                case CameraDirection.UP:
                     Position.Coords += (Up * (speed));
                     break;
-
-                case 4:
+                case CameraDirection.BACKWARD:
+                    Position.Coords += (Direction * speed);
+                    break;
+                case CameraDirection.LEFT:
+                    Position.Coords -= (Right * (speed));
+                    break;
+                case CameraDirection.DOWN:
+                    Position.Coords -= (Up * (speed));
+                    break;
+                case CameraDirection.YAW:
                     //вращение вокруг своей оси по Y
                     rotation = new MatrixTransformationRotateVec3D(Up,(int)speed);
                     Direction *= rotation;
                     Right *= rotation;
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
-                case 5:
+                case CameraDirection.PICH:
                     //вращение вокруг своей оси по X
                     rotation = new MatrixTransformationRotateVec3D(Right,(int)speed);
                     Direction *= rotation;
                     Up *= rotation;
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
-                case 6:
+        
+        
 
-                    break;
-                case 7:
-
-
-
-                    break;
-                case 8:
-
-                    break;
-
-                case 9:
+                case CameraDirection.ROTATIONY:
                     ////вращение по вокруг y относительно  0 0 0
                     MatrixTransformation3D r = new MatrixTransformationRotateY3D((int)speed);
                     Position.Coords = Position.Coords * r;
@@ -194,7 +197,7 @@
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
 
-                case 10:
+              //  case 10:
                     ////вращение по вокруг y относительно  задаваемой точки
                     //MatrixTransformation3D transfer3 = new MatrixTransformationTransfer3D(-100, -0, -0);
                     //MatrixTransformation3D transfer4 = new MatrixTransformationTransfer3D(100, 0, 0);
@@ -209,7 +212,7 @@
                     //RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
 
 
-                    break;
+                 //   break;
 
             }
             CountLookAt();

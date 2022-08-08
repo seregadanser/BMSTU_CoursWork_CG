@@ -62,8 +62,8 @@ namespace cours_m2G
             }
             catch { }
 
-            line.Point1.action(this);
-            line.Point2.action(this);
+            //line.Point1.action(this);
+            //line.Point2.action(this);
         }
 
         protected virtual MatrixCoord3D actions(PointComponent point)
