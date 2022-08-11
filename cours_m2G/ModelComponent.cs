@@ -8,7 +8,7 @@ namespace cours_m2G
 {
     interface ModelComponent : IObjects
     {
-        public Color Color { get; set; }
+       
         public bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir);
     }
 
@@ -102,11 +102,36 @@ namespace cours_m2G
         {
             return new PointComponent(point.Coords * transform);
         }
+
+        public static bool operator ==(PointComponent p1, PointComponent p2)
+        {
+            if (p1.X == p2.X && p1.Y == p2.Y && p1.Z == p2.Z)
+                return true;
+            return false;
+        }
+
+        public static bool operator !=(PointComponent p1, PointComponent p2)
+        {
+            if (p1.X != p2.X || p1.Y != p2.Y || p1.Z != p2.Z)
+                return true;
+            return false;
+        }
     }
 
     class LineComponent : ModelComponent
     {
-       public Color Color { get; set; } = Color.Black;
+        Color color = Color.Black;
+        public Color Color
+        {
+            get
+            { return color; }
+            set
+            {
+                color = value;
+                point1.Color = value;
+                point2.Color = value;
+            }
+        }
         private PointComponent point1, point2;
         public PointComponent Point1 { get { return point1; } set { point1.Coords = value.Coords; } }
         public PointComponent Point2 { get { return point2; } set { point2.Coords = value.Coords; } }
@@ -135,6 +160,20 @@ namespace cours_m2G
         public static LineComponent operator *(LineComponent line, MatrixTransformation3D transform)
         {
             return new LineComponent(line.point1 * transform, line.point2*transform);
+        }
+
+        public static bool operator ==(LineComponent p1, LineComponent p2)
+        {
+            if (p1.point1 == p2.point1 && p1.point2 == p2.point2)
+                return true;
+            return false;
+        }
+
+        public static bool operator !=(LineComponent p1, LineComponent p2)
+        {
+            if (p1.point1 != p2.point1 || p1.point2 != p2.point2)
+                return true;
+            return false;
         }
     }
 
@@ -170,6 +209,7 @@ namespace cours_m2G
         {
             points = new List<PointComponent>();
             lines = new List<LineComponent>();
+      
             for (int i = 0; i < inlines.Length; i++)
                 AddLine(inlines[i]);
         }
@@ -199,6 +239,14 @@ namespace cours_m2G
                 if (!pi2)
                     points.Add(line.Point2);
             }
+        }
+
+        public void DelitLine(LineComponent line)
+        {
+            points.Remove(line.Point1);
+            points.Remove(line.Point2);
+            lines.Remove(line);
+
         }
 
         public void action(IVisitor visitor)

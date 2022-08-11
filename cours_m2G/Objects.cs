@@ -14,7 +14,19 @@ namespace cours_m2G
 
     class Model : IObjects
     {
-        public Color Color { get; set; } = Color.Black;
+        Color color = Color.Black;
+        public Color Color
+        {
+            get
+            { return color; }
+            set
+            {
+                foreach (PolygonComponent l in polygons)
+                {
+                    l.Color = value;
+                }
+            }
+        }
         protected List<PointComponent> points;
         protected List<LineComponent> lines;
         protected List<PolygonComponent> polygons;
@@ -78,10 +90,22 @@ namespace cours_m2G
 
         }
 
-     
+        public void DelitePoint(PointComponent p)
+        {
+            points.Remove(p);
+            
+        }
+
         public void AddPoint(PointComponent point)
         {
-            points.Add(point);
+            bool pi = true;
+            foreach (PointComponent p in points)
+            {
+                if (p == point)
+                    pi = false;
+            }
+            if (pi)
+                points.Add(point);
         }
 
         public  void AddLine(LineComponent line)
@@ -171,6 +195,14 @@ namespace cours_m2G
                 if (!pi)
                     lines.Add(p);
             }
+            bool pi3 = false;
+            foreach (PolygonComponent poly in polygons)
+            {
+                if (polygon == poly)
+                    pi3 = true;
+            }
+            if (!pi3)
+                polygons.Add(polygon);
         }
     }
 
@@ -178,34 +210,59 @@ namespace cours_m2G
     {
         public Cub(PointComponent center, int side) : base()
         {
-            points.Add(new PointComponent(center.X - side/2, center.Y +side/2, center.Z+side/2));
-            points.Add(new PointComponent(center.X - side / 2, center.Y + side / 2, center.Z - side / 2));
-            points.Add(new PointComponent(center.X + side / 2, center.Y + side / 2, center.Z - side / 2));
-            points.Add(new PointComponent(center.X + side / 2, center.Y + side / 2, center.Z + side / 2));
-            points.Add(new PointComponent(center.X - side / 2, center.Y - side / 2, center.Z + side / 2));
-            points.Add(new PointComponent(center.X - side / 2, center.Y - side / 2, center.Z - side / 2));
-            points.Add(new PointComponent(center.X + side / 2, center.Y - side / 2, center.Z - side / 2));
-            points.Add(new PointComponent(center.X + side / 2, center.Y - side / 2, center.Z + side / 2));
 
-            lines.Add(new LineComponent(points[0], points[1]));
-            lines.Add(new LineComponent(points[1], points[2]));
-            lines.Add(new LineComponent(points[2], points[3]));
-            lines.Add(new LineComponent(points[3], points[0]));
-            lines.Add(new LineComponent(points[4], points[5]));
-            lines.Add(new LineComponent(points[5], points[6]));
-            lines.Add(new LineComponent(points[6], points[7]));
-            lines.Add(new LineComponent(points[7], points[4]));
-            lines.Add(new LineComponent(points[0], points[4]));
-            lines.Add(new LineComponent(points[1], points[5]));
-            lines.Add(new LineComponent(points[2], points[6]));
-            lines.Add(new LineComponent(points[3], points[7]));
+            //AddPoint(new PointComponent(center.X - side / 2, center.Y + side / 2, center.Z + side / 2));
+            //AddPoint(new PointComponent(center.X - side / 2, center.Y + side / 2, center.Z - side / 2));
+            //AddPoint(new PointComponent(center.X + side / 2, center.Y + side / 2, center.Z - side / 2));
+            //AddPoint(new PointComponent(center.X + side / 2, center.Y + side / 2, center.Z + side / 2));
+            //AddPoint(new PointComponent(center.X - side / 2, center.Y - side / 2, center.Z + side / 2));
+            //AddPoint(new PointComponent(center.X - side / 2, center.Y - side / 2, center.Z - side / 2));
+            //AddPoint(new PointComponent(center.X + side / 2, center.Y - side / 2, center.Z - side / 2));
+            //AddPoint(new PointComponent(center.X + side / 2, center.Y - side / 2, center.Z + side / 2));
 
-            polygons.Add(new PolygonComponent(lines[0], lines[9], lines[4], lines[8] ));
-            polygons.Add(new PolygonComponent(lines[1], lines[10], lines[5], lines[9]));
-            polygons.Add(new PolygonComponent(lines[10], lines[6], lines[11], lines[2]));
-            polygons.Add(new PolygonComponent(lines[3], lines[11], lines[7], lines[8]));
-            polygons.Add(new PolygonComponent(lines[0], lines[1], lines[2], lines[3]));
-            polygons.Add(new PolygonComponent(lines[4], lines[5], lines[6], lines[7]));
+            //AddLine(new LineComponent(points[0], points[1]));
+            //AddLine(new LineComponent(points[1], points[2]));
+            //AddLine(new LineComponent(points[2], points[3]));
+            //AddLine(new LineComponent(points[3], points[0]));
+            //AddLine(new LineComponent(points[4], points[5]));
+            //AddLine(new LineComponent(points[5], points[6]));
+            //AddLine(new LineComponent(points[6], points[7]));
+            //AddLine(new LineComponent(points[7], points[4]));
+            //AddLine(new LineComponent(points[0], points[4]));
+            //AddLine(new LineComponent(points[1], points[5]));
+            //AddLine(new LineComponent(points[2], points[6]));
+            //AddLine(new LineComponent(points[3], points[7]));
+
+            PointComponent p1 = new PointComponent(center.X - side / 2, center.Y + side / 2, center.Z + side / 2);
+            PointComponent p2 = new PointComponent(center.X - side / 2, center.Y + side / 2, center.Z - side / 2);
+            PointComponent p3 = new PointComponent(center.X + side / 2, center.Y + side / 2, center.Z - side / 2);
+            PointComponent p4 = new PointComponent(center.X + side / 2, center.Y + side / 2, center.Z + side / 2);
+            PointComponent p5 = new PointComponent(center.X - side / 2, center.Y - side / 2, center.Z + side / 2);
+            PointComponent p6 = new PointComponent(center.X - side / 2, center.Y - side / 2, center.Z - side / 2);
+            PointComponent p7 = new PointComponent(center.X + side / 2, center.Y - side / 2, center.Z - side / 2);
+            PointComponent p8 = new PointComponent(center.X + side / 2, center.Y - side / 2, center.Z + side / 2);
+            AddLine(new LineComponent(p1, p2));
+            AddLine(new LineComponent(p2, p3));
+            AddLine(new LineComponent(p3, p4));
+            AddLine(new LineComponent(p4, p5));
+            AddLine(new LineComponent(p5, p6));
+            AddLine(new LineComponent(p6, p7));
+            AddLine(new LineComponent(p7, p8));
+            AddLine(new LineComponent(p8, p5));
+            PointComponent p0 = new PointComponent(center.X - side / 2, center.Y + side / 2, center.Z + side / 2);
+            p0.Color = Color.Bisque;
+            AddLine(new LineComponent(p0, p5));
+            AddLine(new LineComponent(p2, p6));
+            AddLine(new LineComponent(p3, p7));
+            AddLine(new LineComponent(p4, p8));
+
+
+            AddPolygons(new PolygonComponent(lines[0], lines[9], lines[4], lines[8]));
+            AddPolygons(new PolygonComponent(lines[1], lines[10], lines[5], lines[9]));
+            AddPolygons(new PolygonComponent(lines[10], lines[6], lines[11], lines[2]));
+            AddPolygons(new PolygonComponent(lines[3], lines[11], lines[7], lines[8]));
+            AddPolygons(new PolygonComponent(lines[0], lines[1], lines[2], lines[3]));
+            AddPolygons(new PolygonComponent(lines[4], lines[5], lines[6], lines[7]));
         }
     }
 }

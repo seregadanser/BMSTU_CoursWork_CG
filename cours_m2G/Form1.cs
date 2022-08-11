@@ -108,12 +108,16 @@ namespace cours_m2G
             if (e.KeyValue == 'I')
             {
                 EasyTransformVisitor vvv = new EasyTransformVisitor(new MatrixTransformationTransfer3D(1, 0, 0));
-                pyramide.action(vvv);
+                cub.action(vvv);
             }
             if (e.KeyValue == 'O')
             {
                 EasyTransformVisitor vvv = new EasyTransformVisitor(new MatrixTransformationTransfer3D(-1, 0, 0));
-                pyramide.action(vvv);
+                cub.action(vvv);
+            }
+            if (e.KeyValue == 'L')
+            {
+              //  cub.DD();
             }
 
             if (e.KeyValue == 'W')
@@ -313,6 +317,7 @@ namespace cours_m2G
             whatobj = listBox1.SelectedItem.ToString();
             if(numobj>0)
             cub.SetCurComponent(whatobj, numobj);
+            pictureBox2.Refresh();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -327,6 +332,7 @@ namespace cours_m2G
             }
              if(numobj>0)
                  cub.SetCurComponent(whatobj, numobj);
+            pictureBox2.Refresh();
         }
     }
 }
