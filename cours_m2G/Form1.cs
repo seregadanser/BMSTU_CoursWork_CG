@@ -2,13 +2,15 @@ namespace cours_m2G
 {
     public partial class Form1 : Form
     {
-
+        string whatobj = "Model";
+        int numobj;
         Camera[] cams;
         Camera curcam;
         Axes axes;
         Pyramide pyramide;
         DrawVisitor Drawer;
         ReadVisitor Reader;
+        Model cub;
         public Form1()
         {
             InitializeComponent();
@@ -17,16 +19,17 @@ namespace cours_m2G
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
             //cam = new DynamicCamera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 1, 0), -90, 0);
             cams = new Camera[3];
-            cams[0] = new Camera(new PointComponent(0, 400, 0), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 0, 1));
-            cams[2] = new Camera(new PointComponent(300, 300, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(-1, 1, -1));
-            cams[1] = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
-            cams[1].Aspect = pictureBox2.Size.Width / pictureBox2.Size.Height;
-           
+            cams[0] = new Camera(new PointComponent(0, 400, 0), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 0, 1), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));
+            cams[2] = new Camera(new PointComponent(300, 300, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(-1, 1, -1), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));
+            cams[1] = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
+
+            //cams[1] = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixOrtoProjection(0-pictureBox2.Size.Width/2, 0+ pictureBox2.Size.Width / 2, 0 - pictureBox2.Size.Height / 2, 0 + pictureBox2.Size.Height / 2, 1, 1000));
             curcam = cams[1];
             axes = new Axes();
             pyramide = new Pyramide();
             Drawer = new DrawVisitorCamera(null, cams[1], pictureBox2.Size, 1);
             Reader = new ReadVisitorCamera(cams[1], pictureBox2.Size, 1);
+            cub = new Cub(new PointComponent(0, 0, 0), 20);
             // MatrixTransformation3D ry = new MatrixTransformationScale3D(2, 2,2);
             //IVisitor v = new EasyTransformVisitor(ry);
             //pyramide.action(v);
@@ -215,7 +218,8 @@ namespace cours_m2G
 
         private void pictureBox1_Paint_1(object sender, PaintEventArgs e)
         {
-            IVisitor v = new DrawVisitorCamera(e, cams[0], pictureBox1.Size, trackBar3.Value);
+            DrawVisitor v = new DrawVisitorCamera(e, cams[0], pictureBox1.Size, trackBar3.Value);
+            v.PrintText = false;
             axes.action(v);
             pyramide.action(v);
             curcam.action(v);
@@ -226,13 +230,15 @@ namespace cours_m2G
         private void pictureBox2_Paint(object sender, PaintEventArgs e)
         {
 
-           
+            
             Drawer.E = e;
-            axes.action(Drawer);
-            //foreach (PointComponent ppp in pp)
-            //    ppp.action(Drawer);
-           pyramide.action(Drawer);
+            cub.action(Drawer);
         
+            // axes.action(Drawer);
+            // foreach (PointComponent ppp in pp)
+            //  ppp.action(Drawer);
+            //pyramide.action(Drawer);
+
         }
         List<PointComponent> pp = new List<PointComponent>();
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
@@ -245,15 +251,18 @@ namespace cours_m2G
             p1.action(Reader);
             label4.Text = Convert.ToString(p1.X);
             label5.Text = Convert.ToString(p1.Y);
-            pp.Add(p1);
-            for(int i = 0; i < 400; i++)
-            {
-                PointComponent po = new PointComponent(0,0,0);
-                po.Coords =cams[1].Position.Coords + (p1.Coords * i);
-                pp.Add(po);
-            }
-            p1.Color = Color.DarkRed;
-     
+
+           bool jj =  axes.isget(curcam.Position.Coords, p1.Coords);
+            label1.Text = Convert.ToString(jj);
+            //pp.Add(p1);
+            //for (int i = 0; i < 400; i++)
+            //{
+            //    PointComponent po = new PointComponent(0, 0, 0);
+            //    po.Coords = cams[1].Position.Coords + (p1.Coords * i);
+            //    pp.Add(po);
+            //}
+            //p1.Color = Color.DarkRed;
+
         }
 
         private void trackBar4_Scroll(object sender, EventArgs e)
@@ -295,6 +304,29 @@ namespace cours_m2G
         private void label1_Click(object sender, EventArgs e)
         {
             pp.Clear();
+        }
+
+   
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            whatobj = listBox1.SelectedItem.ToString();
+            if(numobj>0)
+            cub.SetCurComponent(whatobj, numobj);
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                numobj = Convert.ToInt32(textBox1.Text);
+            }
+            catch
+            {
+                numobj = -1;
+            }
+             if(numobj>0)
+                 cub.SetCurComponent(whatobj, numobj);
         }
     }
 }

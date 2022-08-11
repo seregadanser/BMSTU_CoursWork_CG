@@ -15,7 +15,7 @@ namespace cours_m2G
         public Scene(PictureBox sc)
         {
             axes = new Axes();
-            cam = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0));
+           // cam = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0));
             visitor = new DrawVisitorCamera(null, cam, sc.Size , 1);
         }
 

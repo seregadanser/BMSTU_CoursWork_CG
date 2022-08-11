@@ -1,101 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="cours_m2G.Axes" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="19.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>gAAABAABAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
-      <FileName>BaseObjects.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="cours_m2G.Camera" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="21.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>CAAABAAAAIAAAAAgACAIACAAAAAAAACAAACAAAAAAAI=</HashCode>
-      <FileName>BaseObjects.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.139" Collapsed="true" />
-  </Class>
-  <Class Name="cours_m2G.Pyramide" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="19.5" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BaseObjects.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="cours_m2G.Matrix" Collapsed="true">
-    <Position X="9" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAgAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.MatrixCoord3D" Collapsed="true">
-    <Position X="1.25" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAIAAYAEAAAAAAABAAAAAAAAAAggIYAE=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.MatrixTransformation3D" Collapsed="true">
-    <Position X="10.25" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAASIAAAEAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.MatrixTransformationTransfer3D" Collapsed="true">
-    <Position X="14.75" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.MatrixTransformationScale3D" Collapsed="true">
-    <Position X="3.5" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.MatrixTransformationRotateX3D" Collapsed="true">
-    <Position X="8" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.MatrixTransformationRotateY3D" Collapsed="true">
-    <Position X="12.5" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.MatrixTransformationRotateZ3D" Collapsed="true">
-    <Position X="17" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.MatrixAuxiliary" Collapsed="true">
-    <Position X="5.75" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.MatrixPerspectiveProjection" Collapsed="true">
-    <Position X="10.25" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Matrix.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="cours_m2G.PointComponent" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="23" Y="1.5" Width="1.5" />
+    <Position X="13.5" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABAAAAAEAAAAAIEAAAAAAAABAAAAAQCAAgAAAYAE=</HashCode>
       <FileName>ModelComponent.cs</FileName>
@@ -103,22 +9,142 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="cours_m2G.LineComponent" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="21.25" Y="1.5" Width="1.5" />
+    <Position X="11.75" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAABACAAAAAgIAAIAAAAAAAAAAAAAAAACAAgAAAAAA=</HashCode>
       <FileName>ModelComponent.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="cours_m2G.DrawVisitorCamera">
-    <Position X="1.75" Y="9.75" Width="1.5" />
+  <Class Name="cours_m2G.Matrix" Collapsed="true">
+    <Position X="10.5" Y="6" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAQAACAAAAAkAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAgAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixCoord3D" Collapsed="true">
+    <Position X="0.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAYAEAAAAAAABAAAAAAAAAAggIYAE=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixTransformation3D" Collapsed="true">
+    <Position X="11.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAASIAAAEAAAAAABAAAAAUAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixTransformationTransfer3D" Collapsed="true">
+    <Position X="2.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixTransformationScale3D" Collapsed="true">
+    <Position X="7.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixTransformationRotateX3D" Collapsed="true">
+    <Position X="11.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixTransformationRotateY3D" Collapsed="true">
+    <Position X="16.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixTransformationRotateZ3D" Collapsed="true">
+    <Position X="5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixTransformationRotateVec3D" Collapsed="true">
+    <Position X="9.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixAuxiliary" Collapsed="true">
+    <Position X="14" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixProjection" Collapsed="true">
+    <Position X="19.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAQAAAAEAAAAAAAAAAAAAAAAAQEAAAEBAQAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixPerspectiveProjection" Collapsed="true">
+    <Position X="18.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.MatrixOrtoProjection" Collapsed="true">
+    <Position X="20.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.ScreenVisitor" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAIEAAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Visitor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="cours_m2G.DrawVisitor" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAACAAAAAEAAAAAAAAAAACAAAAAgAAAAA=</HashCode>
+      <FileName>Visitor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.DrawVisitorCamera" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAQAACAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Visitor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.ReadVisitor" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Visitor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cours_m2G.ReadVisitorCamera" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Visitor.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="cours_m2G.EasyTransformVisitor" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="23" Y="0.5" Width="1.5" />
+    <Position X="5.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
       <FileName>Visitor.cs</FileName>
@@ -126,62 +152,79 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="cours_m2G.HardTransformVisitor" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="19.5" Y="1.5" Width="1.5" />
+    <Position X="7" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAACAAAAAAAAAAAAEAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
       <FileName>Visitor.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="cours_m2G.ScreenVisitor">
-    <Position X="3.25" Y="5.75" Width="1.5" />
+  <Class Name="cours_m2G.Axes" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAABAIEAAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Visitor.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="cours_m2G.DrawVisitor">
-    <Position X="4.25" Y="9" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAACAAAAAEAAAAAAAAAAACAAAAAgAAAAA=</HashCode>
-      <FileName>Visitor.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.ReadVisitor">
-    <Position X="6.5" Y="9" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Visitor.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="cours_m2G.ReadVisitorCamera">
-    <Position X="9" Y="10" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Visitor.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Interface Name="cours_m2G.IBaseObjects" Collapsed="true">
-    <Position X="19.5" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>gAAABACBAAAAAAAAAAAAAAAAAAAAIAAAAAIAAAAAAAA=</HashCode>
       <FileName>BaseObjects.cs</FileName>
     </TypeIdentifier>
-  </Interface>
-  <Interface Name="cours_m2G.ModelComponent" Collapsed="true">
-    <Position X="23" Y="3.75" Width="1.5" />
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="cours_m2G.Camera" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.25" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <HashCode>CBAABAAAQIAAAEAgACAIACAAAAAAAACAAACAAAAQAAI=</HashCode>
+      <FileName>BaseObjects.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="cours_m2G.Pyramide" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseObjects.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="cours_m2G.ModelComponent" Collapsed="true">
+    <Position X="11.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAgAAAAAA=</HashCode>
       <FileName>ModelComponent.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="cours_m2G.IVisitor" Collapsed="true">
-    <Position X="5" Y="4.75" Width="1.5" />
+    <Position X="5.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Visitor.cs</FileName>
     </TypeIdentifier>
   </Interface>
+  <Interface Name="cours_m2G.IObjects">
+    <Position X="15.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects.cs</FileName>
+      <NewMemberFileName>BaseObjects.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="cours_m2G.IBaseObjects" Collapsed="true">
+    <Position X="19" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseObjects.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="cours_m2G.MatrixType" Collapsed="true">
+    <Position X="15.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAIAAAAAEAAAAAAAAAAEAAABAAA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cours_m2G.CameraDirection" Collapsed="true">
+    <Position X="19" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAABAAAAAAAAAgAAAAAAAAAAAAICAAAgAIAAAAAAAAA=</HashCode>
+      <FileName>BaseObjects.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

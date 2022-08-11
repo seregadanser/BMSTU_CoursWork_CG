@@ -1,8 +1,8 @@
 ﻿namespace cours_m2G
 {
-    interface IBaseObjects
+    interface IBaseObjects : IObjects
     {
-        public void action(IVisitor visitor);
+     
     }
 
    public enum CameraDirection
@@ -12,10 +12,12 @@
 
     class Axes : IBaseObjects
     {
+        public Color Color { get; set; } = Color.Black;
         readonly LineComponent XAxis, YAxis, ZAxis;
+        PointComponent[] point;
         public Axes()
         {
-            PointComponent[] point = new PointComponent[6];
+            point = new PointComponent[6];
 
             point[0] = new PointComponent(0, 100, 0);
             point[1] = new PointComponent(0, -100, 0);
@@ -37,22 +39,34 @@
             YAxis.action(visitor);
             ZAxis.action(visitor);
         }
+
+        public bool isget(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
+        {
+            foreach (PointComponent p in point)
+            {
+                if (p.IsGet(ray_pos, ray_dir))
+                    return true;
+            }
+            return false;
+        }
     }
 
     class Camera : IBaseObjects
     {
+        public Color Color { get; set; } = Color.Black;
         public PointComponent Position;
         public MatrixCoord3D Target;
         public MatrixCoord3D Direction;
         protected MatrixCoord3D Up;
         protected MatrixCoord3D Right;
         private MatrixTransformation3D RotationMatrix;
-        public MatrixTransformation3D? LookAt { get; set; }
+        public MatrixTransformation3D LookAt { get; set; }
 
-        private MatrixTransformation3D projection;
+        private MatrixProjection projection;
         private double fovy;
         private double aspect;
-        public MatrixTransformation3D Projection { get { return projection; } set { projection = value; } }
+
+        public MatrixProjection Projection { get { return projection; } set { projection = value; } }
         public double Fovy
         {
             get { return fovy; }
@@ -60,7 +74,7 @@
             {
                 fovy = value;
                 if (projection.Type == MatrixType.Perspective)
-                    projection = new MatrixPerspectiveProjection(fovy, aspect, 1, 1000);
+                    projection = new MatrixPerspectiveProjection(projection.Fovy, projection.Aspect, projection.N, projection.F);
             }
         }
         public double Aspect
@@ -70,13 +84,11 @@
             {
                 aspect = value;
                 if (projection.Type == MatrixType.Perspective)
-                    projection = new MatrixPerspectiveProjection(fovy, aspect, 1, 1000);
+                    projection = new MatrixPerspectiveProjection(projection.Fovy, projection.Aspect, projection.N, projection.F);
             }
         }
 
-
-
-        public Camera(PointComponent position, MatrixCoord3D Target, MatrixCoord3D Up)
+        public Camera(PointComponent position, MatrixCoord3D Target, MatrixCoord3D Up, MatrixProjection projection)
         {
             this.Position = position;
             this.Target = Target;
@@ -89,29 +101,9 @@
             Up = (Direction * Right);
             Up.Normalise();
             RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
-            CountLookAt();
-            aspect = 2;
-            fovy = 90;
-            projection = new MatrixPerspectiveProjection(fovy, Aspect, 1, 1000);
-
-        }
-
-        public Camera(PointComponent position, MatrixCoord3D Target, MatrixCoord3D Up, MatrixTransformation3D projection)
-        {
-            this.Position = position;
-            this.Target = Target;
-            this.Up = Up;
-
-            Direction = Position.Coords - Target;
-            Direction.Normalise();
-            Right = Up * Direction;
-            Right.Normalise();
-            Up = (Direction * Right);
-            Up.Normalise();
-            RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
-            CountLookAt();
-            aspect = 2;
-            fovy = 90;
+            LookAt = RotationMatrix * new MatrixAuxiliary(Position.Coords, Right, Up, Direction);
+            aspect = projection.Aspect;
+            fovy = projection.Fovy;
             this.projection = projection;
 
         }
@@ -197,7 +189,7 @@
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
 
-              //  case 10:
+                    //  case 10:
                     ////вращение по вокруг y относительно  задаваемой точки
                     //MatrixTransformation3D transfer3 = new MatrixTransformationTransfer3D(-100, -0, -0);
                     //MatrixTransformation3D transfer4 = new MatrixTransformationTransfer3D(100, 0, 0);
@@ -211,6 +203,7 @@
 
                     //RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
 
+              
 
                  //   break;
 
@@ -228,6 +221,7 @@
 
     class Pyramide : IBaseObjects
     {
+        public Color Color { get; set; } = Color.Black;
         LineComponent[] lines;
         public Pyramide()
         {

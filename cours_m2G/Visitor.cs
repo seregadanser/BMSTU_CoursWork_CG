@@ -7,29 +7,39 @@ using System.Drawing;
 
 namespace cours_m2G
 {
-    interface IVisitor
+    enum TypeVisitor {Drawer, Reader, Transform }
+     interface IVisitor
     {
+        public TypeVisitor type { get; }
         abstract public void visit(PointComponent point);
         abstract public void visit(LineComponent line);
+        abstract public void visit(PolygonComponent polygon);
+        abstract public void visit(Model model);
     }
 
     abstract class ScreenVisitor : IVisitor
     {
          protected int scale;
          protected Size screen;
-
+        
         public int Scale { get { return scale; } set { if(value>0) scale = value; } }
         public Size Screen { get { return screen; } set { screen = value; } }
 
+        public abstract TypeVisitor type { get; }
+
         public abstract void visit(PointComponent p);
         public abstract void visit(LineComponent l);
+        public abstract void visit(PolygonComponent polygon);
+        abstract public void visit(Model model);
 
     }
 
     class DrawVisitor : ScreenVisitor
     {
+        public override TypeVisitor type { get; } = TypeVisitor.Drawer;
         protected PaintEventArgs e;
         public PaintEventArgs E { set { e = value; } }
+        public bool PrintText { get; set; } = true;
         public DrawVisitor(PaintEventArgs e, Size screen, int scale)
         {
             this.e = e;
@@ -39,16 +49,19 @@ namespace cours_m2G
 
         public override void visit(PointComponent point)
         {
-            Pen pen = new Pen(Color.Black);
+            Pen pen = new Pen(point.Color);
             MatrixCoord3D p1 = actions(point);
-            if(p1!=null)
-            try
-            {
-                string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
-                e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Black), (int)p1.X, (int)p1.Y);
-                e.Graphics.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
-            }
-            catch { }
+            if (p1 != null)
+                try
+                {
+                    if (PrintText)
+                    {
+                        string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
+                        e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Black), (int)p1.X, (int)p1.Y);
+                    }
+                    e.Graphics.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
+                }
+                catch { }
         }
         public override void visit(LineComponent line)
         {
@@ -64,6 +77,16 @@ namespace cours_m2G
 
             //line.Point1.action(this);
             //line.Point2.action(this);
+        }
+
+        public override void visit(PolygonComponent polygon)
+        {
+
+        }
+
+        public override void visit(Model model)
+        {
+
         }
 
         protected virtual MatrixCoord3D actions(PointComponent point)
@@ -107,6 +130,14 @@ namespace cours_m2G
             }
         }
 
+        public override void visit(Model model)
+        {
+            foreach(LineComponent l in model.Lines)
+            {
+                l.action(this);
+            }
+        }
+
         protected override MatrixCoord3D actions(PointComponent point)
         {
             MatrixCoord3D? p1 = point.Coords;
@@ -138,6 +169,7 @@ namespace cours_m2G
 
     class ReadVisitor : ScreenVisitor
     {
+        public override TypeVisitor type { get; } = TypeVisitor.Reader;
         public ReadVisitor(Size screen, int scale)
         {
             this.screen = screen;
@@ -155,6 +187,16 @@ namespace cours_m2G
         public override void visit(LineComponent l)
         {
             throw new NotImplementedException();
+        }
+
+        public override void visit(PolygonComponent polygon)
+        {
+
+        }
+
+        public override void visit(Model model)
+        {
+
         }
 
     }
@@ -202,7 +244,7 @@ namespace cours_m2G
 
     class EasyTransformVisitor : IVisitor
     {
-        
+        public TypeVisitor type { get; } = TypeVisitor.Transform;
         MatrixTransformation3D TransformMatrix;
         public EasyTransformVisitor(MatrixTransformation3D transformMatrix)
         {
@@ -218,9 +260,25 @@ namespace cours_m2G
             line.Point1 = line.Point1 * TransformMatrix;
             line.Point2 = line.Point2 * TransformMatrix;
         }
+        public void visit(PolygonComponent polygon)
+        {
+            foreach(PointComponent p in polygon.Points)
+            {
+                p.action(this);
+            }
+        }
+
+        public void visit(Model model)
+        {
+            foreach (PointComponent p in model.Points)
+            {
+                p.action(this);
+            }
+        }
     }
     class HardTransformVisitor : IVisitor
     {
+        public TypeVisitor type { get; } = TypeVisitor.Transform;
         MatrixTransformation3D TransformMatrix;
         PointComponent pointp;
         public HardTransformVisitor(MatrixTransformation3D transformMatrix, PointComponent point)
@@ -241,6 +299,22 @@ namespace cours_m2G
         {
             line.Point1.action(this);
             line.Point2.action(this);
+        }
+
+        public void visit(PolygonComponent polygon)
+        {
+            foreach (PointComponent p in polygon.Points)
+            {
+                p.action(this);
+            }
+        }
+
+        public void visit(Model model)
+        {
+            foreach (PointComponent p in model.Points)
+            {
+                p.action(this);
+            }
         }
     }
 

@@ -423,6 +423,21 @@ namespace cours_m2G
 
     abstract class MatrixProjection : MatrixTransformation3D
     {
+        protected double fovy, aspect, n, f;
+        public double Fovy { get { return fovy; } set { fovy = value; } }
+        public double Aspect { get { return aspect; } set { aspect = value; } }
+        public double N { get { return n; } set { n = value; } }
+        public double F { get { return f; } set { f = value; } }
+
+
+        protected double xmin, xmax, ymin, ymax, zmin, zmax;
+
+        public double Xmin { get { return xmin; } set { xmin = value; } }
+        public double Xmax { get { return xmax; } set { xmax = value; } }
+        public double Ymin { get { return ymin; } set { ymin = value; } }
+        public double Ymax { get { return ymax; } set { ymax = value; } }
+        public double Zmax { get { return zmax; } set { zmax = value; } }
+        public double Zmin { get { return zmin; } set { zmin = value; } }
 
     }
 
@@ -433,6 +448,10 @@ namespace cours_m2G
     {
         public MatrixPerspectiveProjection(double fovy, double aspect, double n, double f)
         {
+            this.fovy = fovy;
+            this.aspect = aspect;
+            this.n = n;
+            this.f =f ;
             coeff = new double[4, 4];
             size = 4;
             type = MatrixType.Perspective;
