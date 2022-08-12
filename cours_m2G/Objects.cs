@@ -39,55 +39,150 @@ namespace cours_m2G
         public int NumberLines { get { return lines.Count; } }
         public int NumberPolygons { get { return polygons.Count; } }
 
-        IObjects curobject;
+        List<IObjects> activeComponents;
+        List<PointComponent> activePoints;
+        List<int> activePointsCount;
         
         public Model()
         {
             points = new List<PointComponent>();
             lines = new List<LineComponent>();
             polygons = new List<PolygonComponent>();
-            curobject = this;
+            activeComponents = new List<IObjects>();
+            activePoints = new List<PointComponent>();
+            activePointsCount = new List<int>();
+       
         }
 
         public void action(IVisitor visitor)
         {
             if (visitor.type == TypeVisitor.Drawer)
-            { visitor.visit(this); return; }
+            {
+                visitor.visit(this);
+                return;
+            }
 
-            if (curobject != this)
-                curobject.action(visitor);
+            if (activeComponents.Count>0 && activeComponents[0] != this)
+                foreach(PointComponent i in activePoints)
+                 i.action(visitor);
             else
             {
                 visitor.visit(this);
             }
         }
 
-        public void SetCurComponent(string what, int what1)
+        public void AddActiveComponent(string what, int what1)
         {
-            if (curobject == this)
-                Console.WriteLine("dsdsd");
-            curobject.Color = Color.Black;
-            switch(what)
+            if (activeComponents.Count > 0)
+                if (activeComponents[0] == this)
+                    DeliteActive();
+            int i = -1;
+            switch (what)
             {
                 case "Point":
-                    curobject = points[what1 - 1];
-                    Console.WriteLine("set POI");
+                  i= IsPointInList(points[what1 - 1], activePoints);
+                    if (i == -1)
+                    {
+                        activeComponents.Add(points[what1 - 1]);
+                        activePoints.Add(points[what1 - 1]);
+                        activePointsCount.Add(1);
+                    }
+                    else
+                    {
+                        activePointsCount[i] = activePointsCount[i] + 1;
+                    }
+                    points[what1 - 1].Color = Color.Green;
                     break;
                 case "Line":
-                    curobject = lines[what1 - 1];
-                    Console.WriteLine("set L");
+                    i = IsObjectInList(lines[what1 - 1], activeComponents);
+                    if(i ==-1)
+                    {
+                        activeComponents.Add(lines[what1 - 1]);
+                        i = IsPointInList(lines[what1 - 1].Point1, activePoints);
+                        if (i == -1)
+                        {
+                            activePoints.Add(lines[what1 - 1].Point1);
+                            activePointsCount.Add(1);
+                        }
+                        else
+                        {
+                            activePointsCount[i] = activePointsCount[i] + 1;
+                        }
+                        i = IsPointInList(lines[what1 - 1].Point2, activePoints);
+                        if (i == -1)
+                        {
+                            activePoints.Add(lines[what1 - 1].Point2);
+                            activePointsCount.Add(1);
+                        }
+                        else
+                        {
+                            activePointsCount[i] = activePointsCount[i] + 1;
+                        }
+                    }
+                    lines[what1 - 1].Color = Color.Green;
                     break;
                 case "Polygon":
-                    curobject = polygons[what1 - 1];
-                    Console.WriteLine("set POL");
+                    i = IsObjectInList(polygons[what1 - 1], activeComponents);
+                    if(i==-1)
+                    {
+                        activeComponents.Add(polygons[what1 - 1]);
+                        foreach (PointComponent p in polygons[what1 - 1].Points)
+                        {
+                            i = IsPointInList(p, activePoints);
+                            if (i == -1)
+                            {
+                                activePoints.Add(p);
+                                activePointsCount.Add(1);
+                            }
+                            else
+                            {
+                                activePointsCount[i] = activePointsCount[i] + 1;
+                            }
+                        }
+                    }
+               
+                    polygons[what1 - 1].Color = Color.Green;
                     break;
                 case "Model":
-                    curobject = this;
-                    Console.WriteLine("set M");
+                    DeliteActive();
+                    activeComponents.Add(this);
+                    this.Color = Color.Green;
                     break;
             }
-            curobject.Color = Color.Green;
+        }
 
+        protected int IsPointInList(PointComponent p, List<PointComponent> list)
+        {
+            for(int i = 0; i <list.Count; i++)
+            {
+                if (p == list[i])
+                    return i;
+            }
+            return -1;
+        }
+        protected int IsObjectInList(IObjects c, List<IObjects> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (c == list[i])
+                    return i;
+            }
+            return -1;
+        }
+
+        public void DeliteActive()
+        {
+            foreach (IObjects i in activeComponents)
+                i.Color = Color.Black;
+            activeComponents.Clear();
+            activePoints.Clear();
+            activePointsCount.Clear();
+        }
+        public void DeliteActive(int what)
+        {
+            IObjects cur = activeComponents[what];
+            cur.Color = Color.Black;
+            activeComponents.Remove(cur);
         }
 
         public void DelitePoint(PointComponent p)
@@ -172,6 +267,7 @@ namespace cours_m2G
                     if (p == p1)
                     {
                         pi = true;
+                        polygon.ReplacePoint(p, p1);
                         break;
                     }
 
@@ -188,6 +284,7 @@ namespace cours_m2G
                     if (p == p1)
                     {
                         pi = true;
+                        polygon.ReplaceLine(p, p1);
                         break;
                     }
 
@@ -244,25 +341,29 @@ namespace cours_m2G
             AddLine(new LineComponent(p1, p2));
             AddLine(new LineComponent(p2, p3));
             AddLine(new LineComponent(p3, p4));
-            AddLine(new LineComponent(p4, p5));
+            AddLine(new LineComponent(p4, p1));
             AddLine(new LineComponent(p5, p6));
             AddLine(new LineComponent(p6, p7));
             AddLine(new LineComponent(p7, p8));
             AddLine(new LineComponent(p8, p5));
-            PointComponent p0 = new PointComponent(center.X - side / 2, center.Y + side / 2, center.Z + side / 2);
-            p0.Color = Color.Bisque;
-            AddLine(new LineComponent(p0, p5));
+            AddLine(new LineComponent(p1, p5));
             AddLine(new LineComponent(p2, p6));
             AddLine(new LineComponent(p3, p7));
             AddLine(new LineComponent(p4, p8));
 
 
-            AddPolygons(new PolygonComponent(lines[0], lines[9], lines[4], lines[8]));
-            AddPolygons(new PolygonComponent(lines[1], lines[10], lines[5], lines[9]));
-            AddPolygons(new PolygonComponent(lines[10], lines[6], lines[11], lines[2]));
-            AddPolygons(new PolygonComponent(lines[3], lines[11], lines[7], lines[8]));
-            AddPolygons(new PolygonComponent(lines[0], lines[1], lines[2], lines[3]));
-            AddPolygons(new PolygonComponent(lines[4], lines[5], lines[6], lines[7]));
+            AddPolygons(new PolygonComponent(p1, p2,p6));
+            AddPolygons(new PolygonComponent(p1,p6,p5));
+            AddPolygons(new PolygonComponent(p4,p3,p7));
+            AddPolygons(new PolygonComponent(p8,p7,p4));
+            AddPolygons(new PolygonComponent(p1,p4,p8));
+            AddPolygons(new PolygonComponent(p1,p5,p8));
+            AddPolygons(new PolygonComponent(p1,p2,p3));
+            AddPolygons(new PolygonComponent(p1,p3,p4));
+            AddPolygons(new PolygonComponent(p5,p8,p7));
+            AddPolygons(new PolygonComponent(p5,p6,p7));
+            AddPolygons(new PolygonComponent(p2,p3,p7));
+            AddPolygons(new PolygonComponent(p2,p7,p6));
         }
     }
 }

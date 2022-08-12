@@ -15,6 +15,8 @@ namespace cours_m2G
         {
             InitializeComponent();
             KeyPreview = true;
+            comboBox1.SelectedItem = "Model";
+            comboBox2.SelectedItem = "1";
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
             //cam = new DynamicCamera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 1, 0), -90, 0);
@@ -310,29 +312,44 @@ namespace cours_m2G
             pp.Clear();
         }
 
-   
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            whatobj = listBox1.SelectedItem.ToString();
-            if(numobj>0)
-            cub.SetCurComponent(whatobj, numobj);
-            pictureBox2.Refresh();
+        comboBox2.Items.Clear();
+            int max = 0;
+            switch (comboBox1.SelectedItem)
+            {
+                case "Point":
+                    max = cub.NumberPoints;
+                    break;
+                case "Line":
+                    max = cub.NumberLines;
+                    break;
+                case "Polygon":
+                    max = cub.NumberPolygons;
+                    break;
+                case "Model":
+                    max = 1;
+                    break;
+            }
+            for (int i = 1; i <= max; i++)
+                comboBox2.Items.Add(i);
+
+            comboBox2.SelectedIndex = 0;
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            try
-            {
-                numobj = Convert.ToInt32(textBox1.Text);
-            }
-            catch
-            {
-                numobj = -1;
-            }
-             if(numobj>0)
-                 cub.SetCurComponent(whatobj, numobj);
-            pictureBox2.Refresh();
+          
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            cub.AddActiveComponent(Convert.ToString(comboBox1.SelectedItem), Convert.ToInt32(comboBox2.SelectedItem));
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            cub.DeliteActive();
         }
     }
 }

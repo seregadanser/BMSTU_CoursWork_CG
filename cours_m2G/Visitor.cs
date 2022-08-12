@@ -130,9 +130,24 @@ namespace cours_m2G
             }
         }
 
+
+        public override void visit(PolygonComponent polygon)
+        {
+            foreach (LineComponent l in polygon.Lines)
+            {
+                l.action(this);
+            }
+        }
+
+
         public override void visit(Model model)
         {
             foreach(LineComponent l in model.Lines)
+            {
+                l.action(this);
+            }
+
+            foreach (PolygonComponent l in model.Polygons)
             {
                 l.action(this);
             }
@@ -260,6 +275,7 @@ namespace cours_m2G
             line.Point1 = line.Point1 * TransformMatrix;
             line.Point2 = line.Point2 * TransformMatrix;
         }
+
         public void visit(PolygonComponent polygon)
         {
             foreach(PointComponent p in polygon.Points)

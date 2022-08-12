@@ -43,8 +43,12 @@
             this.label5 = new System.Windows.Forms.Label();
             this.trackBar4 = new System.Windows.Forms.TrackBar();
             this.trackBar5 = new System.Windows.Forms.TrackBar();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).BeginInit();
@@ -52,6 +56,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -225,37 +230,78 @@
             this.trackBar5.TabIndex = 14;
             this.trackBar5.Scroll += new System.EventHandler(this.trackBar5_Scroll);
             // 
-            // listBox1
+            // comboBox1
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 15;
-            this.listBox1.Items.AddRange(new object[] {
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
             "Point",
             "Line",
             "Polygon",
             "Model"});
-            this.listBox1.Location = new System.Drawing.Point(1042, 25);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(120, 79);
-            this.listBox1.TabIndex = 16;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.comboBox1.Location = new System.Drawing.Point(3, 5);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 23);
+            this.comboBox1.TabIndex = 15;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // textBox1
+            // comboBox2
             // 
-            this.textBox1.Location = new System.Drawing.Point(1042, 129);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 17;
-            this.textBox1.Text = "0";
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "0"});
+            this.comboBox2.Location = new System.Drawing.Point(3, 34);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(121, 23);
+            this.comboBox2.TabIndex = 16;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.button3);
+            this.panel1.Controls.Add(this.button2);
+            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.comboBox1);
+            this.panel1.Controls.Add(this.comboBox2);
+            this.panel1.Location = new System.Drawing.Point(975, 30);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(261, 370);
+            this.panel1.TabIndex = 17;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(164, 63);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 55);
+            this.button3.TabIndex = 19;
+            this.button3.Text = "Очистить активные";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(84, 63);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(74, 55);
+            this.button2.TabIndex = 18;
+            this.button2.Text = "Просмотр активных";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(3, 63);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 55);
+            this.button1.TabIndex = 17;
+            this.button1.Text = "Добавить в активные";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1174, 578);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.listBox1);
+            this.ClientSize = new System.Drawing.Size(1266, 606);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.trackBar5);
             this.Controls.Add(this.trackBar4);
             this.Controls.Add(this.label5);
@@ -285,6 +331,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -307,7 +354,11 @@
         private Label label5;
         private TrackBar trackBar4;
         private TrackBar trackBar5;
-        private ListBox listBox1;
-        private TextBox textBox1;
+        private ComboBox comboBox1;
+        private ComboBox comboBox2;
+        private Panel panel1;
+        private Button button3;
+        private Button button2;
+        private Button button1;
     }
 }

@@ -164,14 +164,14 @@ namespace cours_m2G
 
         public static bool operator ==(LineComponent p1, LineComponent p2)
         {
-            if (p1.point1 == p2.point1 && p1.point2 == p2.point2)
+            if ((p1.point1 == p2.point1 && p1.point2 == p2.point2 )||( p1.point1 == p2.point2 && p1.point2 == p2.point1))
                 return true;
             return false;
         }
 
         public static bool operator !=(LineComponent p1, LineComponent p2)
         {
-            if (p1.point1 != p2.point1 || p1.point2 != p2.point2)
+            if (p1.point1 != p2.point1 || p1.point2 != p2.point2 )
                 return true;
             return false;
         }
@@ -193,6 +193,78 @@ namespace cours_m2G
             }
         }
 
+        private PointComponent[] points;
+        private LineComponent[] lines;
+        public PointComponent[] Points { get { return points; } set { points = value; } }
+        public LineComponent[] Lines { get { return lines; } set { lines = value; } }
+
+
+        public PolygonComponent(PointComponent p1, PointComponent p2, PointComponent p3)
+        {
+            points = new PointComponent[3];
+            lines = new LineComponent[3];
+            points[0] = p1;
+            points[1] = p2;
+            points[2] = p3;
+
+            lines[0] = new LineComponent(p1, p2);
+            lines[1] = new LineComponent(p2, p3);
+            lines[2] = new LineComponent(p3, p1);
+
+        }
+
+        public void ReplaceLine(LineComponent whatline, LineComponent whichline)
+        {
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i] == whatline)
+                {
+                    lines[i] = whichline;
+                    break;
+                }
+            }
+        }
+
+        public void ReplacePoint(PointComponent whatline, PointComponent whichline)
+        {
+            for (int i = 0; i < points.Length; i++)
+            {
+                if (points[i] == whatline)
+                {
+                    points[i] = whichline;
+                    break;
+                }
+            }
+        }
+
+        public void action(IVisitor visitor)
+        {
+            visitor.visit(this);
+        }
+        public bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
+        {
+            return false;
+        }
+
+    }
+
+    class PolygonComponentLines : ModelComponent
+    {
+        Color color = Color.Black;
+        public Color Color
+        {
+            get
+            { return color; }
+            set
+            {
+                foreach (LineComponent l in lines)
+                {
+                    l.Color = value;
+                }
+            }
+
+        }
+
         private List<PointComponent> points;
         private List<LineComponent> lines;
 
@@ -200,19 +272,19 @@ namespace cours_m2G
        
         public List<PointComponent> Points { get { return points; } set { points = value; }}
         public List<LineComponent> Lines { get { return lines; } set { lines = value; } }
-        public PolygonComponent ()
-        {
-            points = new List<PointComponent>();
-            lines = new List<LineComponent>();
-        }
-        public PolygonComponent(params LineComponent[] inlines)
-        {
-            points = new List<PointComponent>();
-            lines = new List<LineComponent>();
+        //public PolygonComponent ()
+        //{
+        //    points = new List<PointComponent>();
+        //    lines = new List<LineComponent>();
+        //}
+        //public PolygonComponent(params LineComponent[] inlines)
+        //{
+        //    points = new List<PointComponent>();
+        //    lines = new List<LineComponent>();
       
-            for (int i = 0; i < inlines.Length; i++)
-                AddLine(inlines[i]);
-        }
+        //    for (int i = 0; i < inlines.Length; i++)
+        //        AddLine(inlines[i]);
+        //}
 
         public void AddLine(LineComponent line)
         {
@@ -251,7 +323,7 @@ namespace cours_m2G
 
         public void action(IVisitor visitor)
         {
-           visitor.visit(this);
+          // visitor.visit(this);
         }
 
         public bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
