@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace cours_m2G
 {
-    enum TypeVisitor {Drawer, Reader, Transform }
+   
      interface IVisitor
     {
         public TypeVisitor type { get; }

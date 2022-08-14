@@ -6,14 +6,19 @@ using System.Threading.Tasks;
 
 namespace cours_m2G
 {
-    interface ModelComponent : IObjects
+    abstract class ModelComponent : IObjects
     {
-       
-        public bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir);
+        public abstract Color Color { get; set; }
+        protected Color color = Color.Black;
+        protected Id id;
+        public abstract Id Id { get; set; }
+        public abstract bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir);
+        public abstract void action(IVisitor visitor);
     }
 
     class PointComponent : ModelComponent
     {
+        public override Id Id { get { return id; } set { id = value; } }
         private MatrixCoord3D coords;
         private double hit_radius = 10;
         public double HitRadius { get { return hit_radius; } set { hit_radius = value; } }
@@ -22,30 +27,33 @@ namespace cours_m2G
         public double Y { get { return coords.Y; } }
         public double Z { get { return coords.Z; } }
 
-        public Color Color { get; set; } = Color.Black;
+        public override Color Color { get { return color; } set { color = value; } } 
 
         public PointComponent(MatrixCoord3D coords)
         {
             this.coords = coords;
-            
+            id = new Id("Point", "-1");
         }
         public PointComponent(double x, double y, double z)
         {
             coords = new MatrixCoord3D(x, y, z);
+            id = new Id("Point", "-1");
         }
-
-        public void action(IVisitor visitor)
+        public PointComponent(double x, double y, double z, Id id ) : this(x, y, z)
+        {
+            this.id = id;
+        }
+        public PointComponent(MatrixCoord3D coords, Id id) : this(coords)
+        {
+            this.id = id;
+        }
+        public override void action(IVisitor visitor)
         {
             visitor.visit(this);
         }
-        //public bool IsGet(MatrixCoord3D mouse) 
-        //{
-        //    if (Math.Pow(mouse.X - coords.X,2)+Math.Pow(mouse.Y - coords.Y, 2)<=Math.Pow(hit_radius, 2))
-        //        return true;
-        //    return false;
-        //}
+ 
 
-        public bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
+        public override bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
 
         {
 
@@ -64,40 +72,14 @@ namespace cours_m2G
             if (d >= 0)
 
             {
-
-                //float sqrtfd = sqrtf(d);
-
-                //// t, a == 1
-
-                //float t1 = -b + sqrtfd;
-
-                //float t2 = -b - sqrtfd;
-
-
-
-                //float min_t = min(t1, t2);
-
-                //float max_t = max(t1, t2);
-
-
-
-                //float t = (min_t >= 0) ? min_t : max_t;
-
-                //tResult = t;
-
-                //return (t > 0);
                 return true;
 
             }
             return false;
 
         }
-        public bool IsGet(PointComponent mouse)
-        {
-            if (Math.Pow(mouse.X - coords.X, 2) + Math.Pow(mouse.Y - coords.Y, 2) <= Math.Pow(hit_radius, 2))
-                return true;
-            return false;
-        }
+      
+
         public static PointComponent operator *(PointComponent point, MatrixTransformation3D transform)
         {
             return new PointComponent(point.Coords * transform);
@@ -105,14 +87,21 @@ namespace cours_m2G
 
         public static bool operator ==(PointComponent p1, PointComponent p2)
         {
-            if (p1.X == p2.X && p1.Y == p2.Y && p1.Z == p2.Z)
+            if (p1.id == p2.id)
                 return true;
             return false;
         }
 
         public static bool operator !=(PointComponent p1, PointComponent p2)
         {
-            if (p1.X != p2.X || p1.Y != p2.Y || p1.Z != p2.Z)
+            if (p1.id!=p2.id)
+                return true;
+            return false;
+        }
+        public override bool Equals(object obj)
+        {
+            PointComponent p = (PointComponent)obj;
+            if (p == this)
                 return true;
             return false;
         }
@@ -120,8 +109,9 @@ namespace cours_m2G
 
     class LineComponent : ModelComponent
     {
-        Color color = Color.Black;
-        public Color Color
+        public override Id Id { get { return id; } set { id = value; } }
+      
+        public override Color Color
         {
             get
             { return color; }
@@ -135,14 +125,24 @@ namespace cours_m2G
         private PointComponent point1, point2;
         public PointComponent Point1 { get { return point1; } set { point1.Coords = value.Coords; } }
         public PointComponent Point2 { get { return point2; } set { point2.Coords = value.Coords; } }
+
         public LineComponent(PointComponent point1, PointComponent point2)
         {
             this.point1 = point1;
             this.point2 = point2;
-      
+            string iddesc = "";
+            if (Convert.ToInt32(point1.Id.Description) < Convert.ToInt32(point2.Id.Description))
+                iddesc = point1.Id.Description + point2.Id.Description;
+            else
+                iddesc = point2.Id.Description + point1.Id.Description;
+            id = new Id("Line", iddesc);
+        }
+        public LineComponent(PointComponent point1, PointComponent point2, Id id) : this(point1, point2)
+        {
+            this.id = id;
         }
 
-        public void action(IVisitor visitor)
+        public override void action(IVisitor visitor)
         {
             //point1.action(visitor);
             //point2.action(visitor);
@@ -153,10 +153,20 @@ namespace cours_m2G
             MatrixCoord3D diff = point1.Coords - point2.Coords;
             return Math.Sqrt(diff.X*diff.X + diff.Y*diff.Y + diff.Z*diff.Z);
         }
-        public bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
+        public override bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
         {
             return false;
         }
+
+        public void ReplacePoint(PointComponent whatline, PointComponent whichline)
+        {
+            if (point1 == whatline)
+                point1 = whichline;
+            if (point2 == whatline)
+                point2 = whichline;
+        }
+
+
         public static LineComponent operator *(LineComponent line, MatrixTransformation3D transform)
         {
             return new LineComponent(line.point1 * transform, line.point2*transform);
@@ -164,14 +174,21 @@ namespace cours_m2G
 
         public static bool operator ==(LineComponent p1, LineComponent p2)
         {
-            if ((p1.point1 == p2.point1 && p1.point2 == p2.point2 )||( p1.point1 == p2.point2 && p1.point2 == p2.point1))
+            if (p1.id == p2.id)
                 return true;
             return false;
         }
 
         public static bool operator !=(LineComponent p1, LineComponent p2)
         {
-            if (p1.point1 != p2.point1 || p1.point2 != p2.point2 )
+            if (p1.id != p2.id)
+                return true;
+            return false;
+        }
+        public override bool Equals(object obj)
+        {
+            LineComponent p = (LineComponent)obj;
+            if (p == this)
                 return true;
             return false;
         }
@@ -179,8 +196,9 @@ namespace cours_m2G
 
     class PolygonComponent : ModelComponent
     {
-        Color color = Color.Black;
-        public Color Color
+        public override Id Id { get { return id; } set { id = value; } }
+       
+        public override Color Color
         {
             get
             { return color; }
@@ -211,6 +229,34 @@ namespace cours_m2G
             lines[1] = new LineComponent(p2, p3);
             lines[2] = new LineComponent(p3, p1);
 
+            string iddesc = "";
+
+            if (Convert.ToInt32(p1.Id.Description) < Convert.ToInt32(p2.Id.Description) && Convert.ToInt32(p1.Id.Description) < Convert.ToInt32(p3.Id.Description))
+            {
+                if (Convert.ToInt32(p2.Id.Description) < Convert.ToInt32(p3.Id.Description))
+                    iddesc = p1.Id.Description + p2.Id.Description + p3.Id.Description;
+                else
+                    iddesc = p1.Id.Description + p3.Id.Description + p2.Id.Description;
+            }
+            if (Convert.ToInt32(p2.Id.Description) < Convert.ToInt32(p1.Id.Description) && Convert.ToInt32(p2.Id.Description) < Convert.ToInt32(p3.Id.Description))
+            {
+                if (Convert.ToInt32(p1.Id.Description) < Convert.ToInt32(p3.Id.Description))
+                    iddesc = p2.Id.Description + p1.Id.Description + p3.Id.Description;
+                else
+                    iddesc = p2.Id.Description + p3.Id.Description + p1.Id.Description;
+            }
+            if (Convert.ToInt32(p3.Id.Description) < Convert.ToInt32(p1.Id.Description) && Convert.ToInt32(p3.Id.Description) < Convert.ToInt32(p2.Id.Description))
+            {
+                if (Convert.ToInt32(p1.Id.Description) < Convert.ToInt32(p2.Id.Description))
+                    iddesc = p3.Id.Description + p1.Id.Description + p2.Id.Description;
+                else
+                    iddesc = p3.Id.Description + p2.Id.Description + p1.Id.Description;
+            }
+            id = new Id("Polygon", iddesc);
+        }
+        public PolygonComponent(PointComponent p1, PointComponent p2, PointComponent p3, Id id) : this(p1, p2, p3)
+        {
+            this.id = id;
         }
 
         public void ReplaceLine(LineComponent whatline, LineComponent whichline)
@@ -220,6 +266,7 @@ namespace cours_m2G
                 if (lines[i] == whatline)
                 {
                     lines[i] = whichline;
+                  //  ReplacePoint();
                     break;
                 }
             }
@@ -237,12 +284,34 @@ namespace cours_m2G
             }
         }
 
-        public void action(IVisitor visitor)
+        public override void action(IVisitor visitor)
         {
             visitor.visit(this);
         }
-        public bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
+        public override bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
         {
+            return false;
+        }
+
+        public static bool operator ==(PolygonComponent p1, PolygonComponent p2)
+        {
+            if (p1.id == p2.id)
+                return true;
+            return false;
+        }
+
+        public static bool operator !=(PolygonComponent p1, PolygonComponent p2)
+        {
+            if (p1.id != p2.id)
+                return true;
+            return false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            PolygonComponent p = (PolygonComponent)obj;
+            if (p == this)
+                return true;
             return false;
         }
 
@@ -250,8 +319,9 @@ namespace cours_m2G
 
     class PolygonComponentLines : ModelComponent
     {
+        public override Id Id { get { return id; } set { id = value; } }
         Color color = Color.Black;
-        public Color Color
+        public override Color Color
         {
             get
             { return color; }
@@ -321,12 +391,12 @@ namespace cours_m2G
 
         }
 
-        public void action(IVisitor visitor)
+        public override void action(IVisitor visitor)
         {
           // visitor.visit(this);
         }
 
-        public bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
+        public override bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
         {
             return false;
         }

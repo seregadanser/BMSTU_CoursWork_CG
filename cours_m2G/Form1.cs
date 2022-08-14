@@ -15,8 +15,6 @@ namespace cours_m2G
         {
             InitializeComponent();
             KeyPreview = true;
-            comboBox1.SelectedItem = "Model";
-            comboBox2.SelectedItem = "1";
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
             //cam = new DynamicCamera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 1, 0), -90, 0);
@@ -327,9 +325,6 @@ namespace cours_m2G
                 case "Polygon":
                     max = cub.NumberPolygons;
                     break;
-                case "Model":
-                    max = 1;
-                    break;
             }
             for (int i = 1; i <= max; i++)
                 comboBox2.Items.Add(i);
@@ -350,6 +345,11 @@ namespace cours_m2G
         private void button3_Click(object sender, EventArgs e)
         {
             cub.DeliteActive();
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("sd");
         }
     }
 }

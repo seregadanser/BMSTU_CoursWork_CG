@@ -111,7 +111,7 @@ namespace cours_m2G
         }
     }
 
-    enum MatrixType { Rotate, Scale, Translate, Perspective, Orto }
+  
 
     class MatrixTransformation3D : Matrix
     {

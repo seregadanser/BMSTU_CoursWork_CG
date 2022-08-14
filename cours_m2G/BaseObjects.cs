@@ -5,14 +5,12 @@
      
     }
 
-   public enum CameraDirection
-    {
-        FORWARD, BACKWARD,LEFT,RIGHT,UP,DOWN, YAW, PICH, ROTATIONY
-    }
+
 
     class Axes : IBaseObjects
     {
         public Color Color { get; set; } = Color.Black;
+        public Id Id { get; set; }
         readonly LineComponent XAxis, YAxis, ZAxis;
         PointComponent[] point;
         public Axes()
@@ -54,6 +52,7 @@
     class Camera : IBaseObjects
     {
         public Color Color { get; set; } = Color.Black;
+        public Id Id { get; set; }
         public PointComponent Position;
         public MatrixCoord3D Target;
         public MatrixCoord3D Direction;
@@ -222,6 +221,7 @@
     class Pyramide : IBaseObjects
     {
         public Color Color { get; set; } = Color.Black;
+        public Id Id { get; set; }
         LineComponent[] lines;
         public Pyramide()
         {
