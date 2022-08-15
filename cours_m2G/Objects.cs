@@ -41,6 +41,10 @@ namespace cours_m2G
         public int NumberPolygons { get { return polygons.Count; } }
 
         Container<PointComponent> activeComponents;
+        List<IObjects> activeComponentsParents;
+        List<Id> activeComponentsId;
+
+        public List<Id> ActiveComponentsId { get { return activeComponentsId; } }
 
         public Model()
         {
@@ -48,8 +52,8 @@ namespace cours_m2G
             lines = new Container<LineComponent>();
             polygons = new Container<PolygonComponent>();
             activeComponents = new Container<PointComponent>();
-           
-
+            activeComponentsParents = new List<IObjects>();
+            activeComponentsId = new List<Id>();
         }
 
         public void action(IVisitor visitor)
@@ -70,93 +74,152 @@ namespace cours_m2G
         }
 
         public void AddActiveComponent(string what, int what1)
-        {
-           
+        { 
             int i = -1;
             switch (what)
             {
                 case "Point":
-                    activeComponents.Add(points[what1 - 1], points[what1 - 1].Id);
+                    activeComponents.Add(points[what1 - 1], points[what1 - 1].Id, points[what1 - 1].Id);
+                    activeComponentsParents.Add(points[what1 - 1]);
+                    activeComponentsId.Add(points[what1 - 1].Id);
                     points[what1 - 1].Color = Color.Green;
                     break;
                 case "Line":
-                    activeComponents.Add(lines[what1 - 1].Point1, lines[what1 - 1].Id);
-                    activeComponents.Add(lines[what1 - 1].Point2, lines[what1 - 1].Id);
+                    activeComponents.Add(lines[what1 - 1].Point1, lines[what1 - 1].Point1.Id, lines[what1 - 1].Id);
+                    activeComponents.Add(lines[what1 - 1].Point2, lines[what1 - 1].Point2.Id,lines[what1 - 1].Id);
+                    activeComponentsParents.Add(lines[what1 - 1]);
+                    activeComponentsId.Add(lines[what1 - 1].Id);
                     lines[what1 - 1].Color = Color.Green;
                     break;
                 case "Polygon":
-                    activeComponents.Add(polygons[what1 - 1].Points[0], polygons[what1 - 1].Id);
-                    activeComponents.Add(polygons[what1 - 1].Points[1], polygons[what1 - 1].Id);
-                    activeComponents.Add(polygons[what1 - 1].Points[2], polygons[what1 - 1].Id);
+                    activeComponents.Add(polygons[what1 - 1].Points[0], polygons[what1 - 1].Points[0].Id, polygons[what1 - 1].Id);
+                    activeComponents.Add(polygons[what1 - 1].Points[1], polygons[what1 - 1].Points[1].Id, polygons[what1 - 1].Id);
+                    activeComponents.Add(polygons[what1 - 1].Points[2], polygons[what1 - 1].Points[2].Id, polygons[what1 - 1].Id);
+                    activeComponentsParents.Add(polygons[what1 - 1]);
+                    activeComponentsId.Add(polygons[what1 - 1].Id);
                     polygons[what1 - 1].Color = Color.Green;
                     break;
             }
         }
-
-
+ 
         public void DeliteActive()
         {
            for (int j = activeComponents.Count-1; j >= 0; j--)
             {
                Tuple<List<Id>,List<Id> > w = activeComponents.Remove(j);
-               foreach(Id i in w.Item1)
+            }
+            foreach (IObjects i in activeComponentsParents)
+                i.Color = Color.Black;
+            activeComponentsParents.Clear();
+            activeComponentsId.Clear();
+        }
+        public void DeliteActive(Id id)
+        {
+            List<Id> r = activeComponents.RemoveParent(id);
+            foreach (Id i in r)
+            {
+                activeComponents.Remove(i);
+            }
+            activeComponentsId.Remove(id);
+
+            for (int i = 0; i < activeComponentsParents.Count; i++)
+            {
+                if (activeComponentsParents[i].Id == id)
                 {
-                    foreach(PointComponent p in points)
-                    {
-                        if (p.Id == i)
-                            p.Color = Color.Black;
-                    }
-                    foreach (LineComponent p in lines)
-                    {
-                        if (p.Id == i)
-                            p.Color = Color.Black;
-                    }
-                    foreach (PolygonComponent p in polygons)
-                    {
-                        if (p.Id == i)
-                            p.Color = Color.Black;
-                    }
-                    int y = 0;
+                    activeComponentsParents.RemoveAt(i);
+                    return;
                 }
             }
-
-        }
-        public void DeliteActive(int what)
-        {
-          
         }
 
         public void RemovePoint(Id id)
         {
-         
+            int delindex = -1;
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (points[i].Id == id)
+                { delindex = i; break; }
+            }
+            if (delindex != -1)
+            {
+                List<Id> parents = points.Remove(delindex).Item1;
+                List<Id> rrl = lines.RemoveChildren(id);
+                for (int i = 0; i < rrl.Count; i++)
+                {
+                    RemoveLine(rrl[i]);
+                }
+                List<Id> rrp = polygons.RemoveChildren(id);
+                for (int i = 0; i < rrp.Count; i++)
+                {
+                    RemovePolygon(rrp[i]);
+                }
+            }
         }
 
         public void RemoveLine(Id id)
         {
-
+            int delindex = -1;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].Id == id)
+                { delindex = i; break; }
+            }
+            if (delindex != -1)
+            {
+                lines.Remove(delindex);
+                List<Id> rrl = points.RemoveParent(id);
+                for (int i = 0; i < rrl.Count; i++)
+                {
+                    RemovePoint(rrl[i]);
+                }
+                List<Id> rrp = polygons.RemoveChildren(id);
+                for (int i = 0; i < rrp.Count; i++)
+                {
+                    RemovePolygon(rrp[i]);
+                }
+            }
         }
 
         public void RemovePolygon(Id id)
         {
-
+            int delindex = -1;
+            for(int i= 0; i < polygons.Count; i++)
+            {
+                if (polygons[i].Id == id)
+                { delindex = i;break; }
+            }
+            if (delindex != -1)
+            {
+                List<Id> children = polygons.Remove(delindex).Item2;
+                List<Id> rrl = lines.RemoveParent(id);
+                for (int i = 0; i < rrl.Count; i++)
+                {
+                    RemoveLine(rrl[i]);
+                }
+                List<Id> rrp = points.RemoveParent(id);
+                for (int i = 0; i < rrp.Count; i++)
+                {
+                    RemovePoint(rrp[i]);
+                }
+            }
         }
 
         public void AddPoint(PointComponent point)
         {
-            points.Add(point);
+            points.Add(point, point.Id);
         }
 
         public void AddLine(LineComponent line)
         {
-           int k = lines.Add(line, 0 ,line.Point1.Id, line.Point2.Id);
+           int k = lines.Add(line, line.Id,0 ,line.Point1.Id, line.Point2.Id);
             if(k ==-1)
             {
-               k= points.Add(line.Point1, line.Id);
+               k= points.Add(line.Point1, line.Point1.Id, line.Id);
                 if(k!=-1)
                 {
                     line.ReplacePoint(line.Point1, points[k]);
                 }
-                k= points.Add(line.Point2, line.Id);
+                k= points.Add(line.Point2, line.Point2.Id, line.Id);
                 if (k != -1)
                 {
                     line.ReplacePoint(line.Point2, points[k]);
@@ -166,20 +229,20 @@ namespace cours_m2G
 
         public void AddPolygons(PolygonComponent polygon)
         {
-            int k = polygons.Add(polygon, 0, polygon.Points[0].Id, polygon.Points[1].Id, polygon.Points[2].Id, polygon.Lines[0].Id, polygon.Lines[1].Id, polygon.Lines[2].Id);
+            int k = polygons.Add(polygon,polygon.Id ,0, polygon.Points[0].Id, polygon.Points[1].Id, polygon.Points[2].Id, polygon.Lines[0].Id, polygon.Lines[1].Id, polygon.Lines[2].Id);
             if(k == -1)
             {
                 for(int i = 0; i < polygon.Lines.Length;i++)
                 {
-                    k = lines.Add(polygon.Lines[i], polygon.Id, 0,polygon.Lines[i].Point1.Id, polygon.Lines[i].Point2.Id);
+                    k = lines.Add(polygon.Lines[i], polygon.Lines[i].Id, polygon.Id, 0,polygon.Lines[i].Point1.Id, polygon.Lines[i].Point2.Id);
                     if(k!=-1)
                     { 
                         polygon.ReplaceLine(polygon.Lines[i], lines[k]);
                     }
-                    k = points.Add(polygon.Lines[i].Point1, polygon.Id, polygon.Lines[i].Id);
+                    k = points.Add(polygon.Lines[i].Point1, polygon.Lines[i].Point1.Id, polygon.Id, polygon.Lines[i].Id);
                     if (k != -1)
                         polygon.ReplacePoint(polygon.Lines[i].Point1, points[k]);
-                    k= points.Add(polygon.Lines[i].Point2, polygon.Id, polygon.Lines[i].Id);
+                    k= points.Add(polygon.Lines[i].Point2, polygon.Lines[i].Point2.Id, polygon.Id, polygon.Lines[i].Id);
                     if (k != -1)
                         polygon.ReplacePoint(polygon.Lines[i].Point2, points[k]);
                 }
@@ -504,6 +567,10 @@ namespace cours_m2G
             AddPolygons(new PolygonComponent(p5,p6,p7));
             AddPolygons(new PolygonComponent(p2,p3,p7));
             AddPolygons(new PolygonComponent(p2,p7,p6));
+
+         //   RemovePoint(new Id("Point", "4"));
+            //RemovePolygon(new Id("Polygon", "126"));
+            //RemovePolygon(new Id("Polygon", "156"));
         }
     }
 }

@@ -58,6 +58,8 @@ namespace cours_m2G
                     {
                         string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
                         e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Black), (int)p1.X, (int)p1.Y);
+                        s = "[ "+point.Id.Description +" ]";
+                        e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Blue), (int)p1.X, (int)p1.Y+11);
                     }
                     e.Graphics.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
                 }

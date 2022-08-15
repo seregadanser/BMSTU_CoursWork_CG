@@ -15,6 +15,7 @@ namespace cours_m2G
         {
             InitializeComponent();
             KeyPreview = true;
+           panel2.Visible = false;
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
             //cam = new DynamicCamera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 1, 0), -90, 0);
@@ -312,7 +313,7 @@ namespace cours_m2G
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-        comboBox2.Items.Clear();
+            comboBox2.Items.Clear();
             int max = 0;
             switch (comboBox1.SelectedItem)
             {
@@ -340,16 +341,148 @@ namespace cours_m2G
         private void button1_Click_1(object sender, EventArgs e)
         {
             cub.AddActiveComponent(Convert.ToString(comboBox1.SelectedItem), Convert.ToInt32(comboBox2.SelectedItem));
+            pictureBox2.Refresh();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             cub.DeliteActive();
+            pictureBox2.Refresh();
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("sd");
+            cub.DeliteActive();
+            button6.Visible = true;
+            panel2.Visible = false;
+            pictureBox2.Refresh();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Id i = new Id(textBox1.Text, textBox2.Text);
+            if(textBox1.Text == "Point")
+            {
+                cub.RemovePoint(i);
+            }
+            if (textBox1.Text == "Line")
+            {
+                cub.RemoveLine(i);
+            }
+            if (textBox1.Text == "Polygon")
+            {
+                cub.RemovePolygon(i);
+            }
+            pictureBox2.Refresh();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            cub = new Cub(new PointComponent(0, 0, 0), 20);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+           // Form activeform = new Form();
+           // Label[] labes = new Label[cub.ActiveComponentsId.Count];
+           // int startposx= 5, startposy=10;
+           // for (int i = 0; i < labes.Length; i++)
+           // {   
+           //     labes[i] = new Label();
+           //     labes[i].AutoSize = true;
+           //     labes[i].Text = cub.ActiveComponentsId[i].Name + " " + cub.ActiveComponentsId[i].Description;
+           //     labes[i].Location =new Point( startposx, startposy + labes[i].Size.Height * i + 1);
+
+           //     activeform.Controls.Add(labes[i]);
+           // }
+           //activeform.Show();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox4.Items.Clear();
+            int max = 0;
+            switch (comboBox3.SelectedItem)
+            {
+                case "Point":
+                    max = cub.NumberPoints;
+                    break;
+                case "Line":
+                    max = cub.NumberLines;
+                    break;
+                case "Polygon":
+                    max = cub.NumberPolygons;
+                    break;
+            }
+            for (int i = 1; i <= max; i++)
+                comboBox4.Items.Add(i);
+
+            comboBox4.SelectedIndex = 0;
+        }
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            cub.AddActiveComponent(Convert.ToString(comboBox3.SelectedItem), Convert.ToInt32(comboBox4.SelectedItem));
+            panel2.Visible = true;
+            button6.Visible = false;
+            pictureBox2.Refresh();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            cub.DeliteActive();
+            button6.Visible = true;
+            panel2.Visible = false;
+            pictureBox2.Refresh();
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            Id i = new Id(comboBox3.SelectedItem.ToString(), cub.ActiveComponentsId[0].Description);
+            cub.DeliteActive();
+            switch (comboBox3.SelectedItem)
+            {
+                case "Point":
+                    cub.RemovePoint(i);
+                    break;
+                case "Line":
+                    cub.RemoveLine(i);
+                    break;
+                case "Polygon":
+                    cub.RemovePolygon(i);
+                    break;
+            }
+            panel2.Visible = false;
+            button6.Visible = true;
+            comboBox4.Items.Clear();
+            int max = 0;
+            switch (comboBox3.SelectedItem)
+            {
+                case "Point":
+                    max = cub.NumberPoints;
+                    break;
+                case "Line":
+                    max = cub.NumberLines;
+                    break;
+                case "Polygon":
+                    max = cub.NumberPolygons;
+                    break;
+            }
+            for (int ie = 1; ie <= max; ie++)
+                comboBox4.Items.Add(ie);
+
+            comboBox4.SelectedIndex = 0;
+            pictureBox2.Refresh();
         }
     }
 }
