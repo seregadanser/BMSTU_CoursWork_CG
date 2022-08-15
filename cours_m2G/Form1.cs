@@ -11,6 +11,7 @@ namespace cours_m2G
         DrawVisitor Drawer;
         ReadVisitor Reader;
         Model cub;
+        FormTransform f = new FormTransform();
         public Form1()
         {
             InitializeComponent();
@@ -41,62 +42,9 @@ namespace cours_m2G
         bool flag = true;
 
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            ////IVisitor vm = new HardTransformVisitor(new MatrixTransformationRotateX3D(1), new PointComponent(300,400,300));
-            //IVisitor vm = new EasyTransformVisitor(new MatrixTransformationTransfer3D(1, 0, 0));
-            //IVisitor vmm = new HardTransformVisitor(new MatrixTransformationRotateX3D(-1), new PointComponent(300, 400, 300));
-            //IVisitor vn = new HardTransformVisitor(new MatrixTransformationRotateY3D(1), new PointComponent(300, 400, 300));
-            //IVisitor vnn = new HardTransformVisitor(new MatrixTransformationRotateY3D(-1), new PointComponent(300, 400, 300));
-            //int i = 0;
-            ////while (true)
-            //{
-            //    if (i == 90)
-            //        flag = false;
-            //    if (i == 0)
-            //        flag = true;
-            //    if (flag)
-            //    {
-            //        i++;
-            //        cam.action(vm);
-            //        // cam.action(vn);
-            //        //foreach (LineComponent line in line)
-            //        //{ line.action(vm); line.action(vn); }
-            //    }
-            //    else
-            //    {
-            //        i--;
-            //        cam.action(vmm);
-            //        //cam.action(vnn);
-            //        //foreach (LineComponent line in line)
-            //        //{ line.action(vmm); line.action(vnn); }
-            //    }
-            //    Refresh();
-            //    //pictureBox1.Refresh();
+    
 
-        }
-
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-
-
-        }
-
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-
-            // IVisitor v = new DrawVisitor(e, cams[0], this.Size, trackBar1.Value);
-            //IVisitor v = new DrawVisitor(e, curcam, this.Size, trackBar1.Value);
-            //axes.action(v);
-            //pyramide.action(v);
-            //foreach (Camera cam in cams)
-            //{
-            //    if (cam != curcam)
-            //        cam.action(v);
-            //}
-            //cam.action(v);
-            //curcam.action(v);
-        }
+    
 
         private void Form1_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -182,54 +130,12 @@ namespace cours_m2G
 
         }
 
-        private void trackBar1_Scroll(object sender, EventArgs e)
-        {
-            // Refresh();
-            cams[1].Fovy = trackBar1.Value;
-            pictureBox2.Refresh();
-        }
-        bool firstMouse = true;
-
-        private void trackBar2_Scroll(object sender, EventArgs e)
-        {
-            
-
-        }
-
-        private void trackBar3_Scroll(object sender, EventArgs e)
-        {
-            pictureBox1.Refresh();
-        }
-
-
-
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-            curcam = cams[0];
-
-        }
-
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            curcam = cams[1];
-
-        }
-
-        private void radioButton3_CheckedChanged(object sender, EventArgs e)
-        {
-            curcam = cams[2];
-
-        }
+    
+   
 
         private void pictureBox1_Paint_1(object sender, PaintEventArgs e)
         {
-            DrawVisitor v = new DrawVisitorCamera(e, cams[0], pictureBox1.Size, trackBar3.Value);
-            v.PrintText = false;
-            axes.action(v);
-            pyramide.action(v);
-            curcam.action(v);
-            //foreach (PointComponent ppp in pp)
-            //    ppp.action(Drawer);
+         
         }
 
         private void pictureBox2_Paint(object sender, PaintEventArgs e)
@@ -248,17 +154,14 @@ namespace cours_m2G
         List<PointComponent> pp = new List<PointComponent>();
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
-            label1.Text = Convert.ToString(e.X);
-            label2.Text = Convert.ToString(e.Y);
+         
             
             PointComponent p1 = new PointComponent(e.X, e.Y, 0);
             // p1 *= sc; 
             p1.action(Reader);
-            label4.Text = Convert.ToString(p1.X);
-            label5.Text = Convert.ToString(p1.Y);
-
+          
            bool jj =  axes.isget(curcam.Position.Coords, p1.Coords);
-            label1.Text = Convert.ToString(jj);
+        
             //pp.Add(p1);
             //for (int i = 0; i < 400; i++)
             //{
@@ -270,18 +173,7 @@ namespace cours_m2G
 
         }
 
-        private void trackBar4_Scroll(object sender, EventArgs e)
-        {
-            cams[1].Projection = new MatrixOrtoProjection(-300, 300, -300, 300, trackBar4.Value, trackBar5.Value);
-            pictureBox2.Refresh();
-        }
-
-        private void trackBar5_Scroll(object sender, EventArgs e)
-        {
-            cams[1].Projection = new MatrixOrtoProjection(-300, 300, -300, 300, trackBar4.Value, trackBar5.Value);
-            pictureBox2.Refresh();
-        }
-
+      
         private void pictureBox2_Click(object sender, EventArgs e)
         {
 
@@ -306,11 +198,7 @@ namespace cours_m2G
             pictureBox2.Refresh();
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-            pp.Clear();
-        }
-
+      
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             comboBox2.Items.Clear();
@@ -358,24 +246,7 @@ namespace cours_m2G
             pictureBox2.Refresh();
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            Id i = new Id(textBox1.Text, textBox2.Text);
-            if(textBox1.Text == "Point")
-            {
-                cub.RemovePoint(i);
-            }
-            if (textBox1.Text == "Line")
-            {
-                cub.RemoveLine(i);
-            }
-            if (textBox1.Text == "Polygon")
-            {
-                cub.RemovePolygon(i);
-            }
-            pictureBox2.Refresh();
-        }
-
+     
         private void button5_Click(object sender, EventArgs e)
         {
             cub = new Cub(new PointComponent(0, 0, 0), 20);
@@ -481,7 +352,20 @@ namespace cours_m2G
             for (int ie = 1; ie <= max; ie++)
                 comboBox4.Items.Add(ie);
 
+            if(max>0)
             comboBox4.SelectedIndex = 0;
+            pictureBox2.Refresh();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+          
+            f.Show();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            cub.action(f.transformvisitor);
             pictureBox2.Refresh();
         }
     }
