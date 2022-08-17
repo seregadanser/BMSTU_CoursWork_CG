@@ -8,10 +8,11 @@ namespace cours_m2G
         Camera curcam;
         Axes axes;
         Pyramide pyramide;
-        DrawVisitor Drawer;
+        DrawVisitorCamera Drawer;
         ReadVisitor Reader;
         Model cub;
         FormTransform f = new FormTransform();
+        Bitmap bmp;
         public Form1()
         {
             InitializeComponent();
@@ -24,12 +25,12 @@ namespace cours_m2G
             cams[0] = new Camera(new PointComponent(0, 400, 0), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 0, 1), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));
             cams[2] = new Camera(new PointComponent(300, 300, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(-1, 1, -1), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));
             cams[1] = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
-
+            bmp = new Bitmap(pictureBox2.Width, pictureBox2.Height);
             //cams[1] = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixOrtoProjection(0-pictureBox2.Size.Width/2, 0+ pictureBox2.Size.Width / 2, 0 - pictureBox2.Size.Height / 2, 0 + pictureBox2.Size.Height / 2, 1, 1000));
             curcam = cams[1];
             axes = new Axes();
             pyramide = new Pyramide();
-            Drawer = new DrawVisitorCamera(null, cams[1], pictureBox2.Size, 1);
+            Drawer = new DrawVisitorCamera(null, cams[1], pictureBox2.Size, 1,bmp);
             Reader = new ReadVisitorCamera(cams[1], pictureBox2.Size, 1);
             cub = new Cub(new PointComponent(0, 0, 0), 20);
             // MatrixTransformation3D ry = new MatrixTransformationScale3D(2, 2,2);
@@ -140,11 +141,13 @@ namespace cours_m2G
 
         private void pictureBox2_Paint(object sender, PaintEventArgs e)
         {
+          
+            var gr = Graphics.FromImage(bmp);
+           // gr.Clear(Color.White);
 
-            
             Drawer.E = e;
             cub.action(Drawer);
-        
+        pictureBox2.Image = Drawer.GetResult();
             // axes.action(Drawer);
             // foreach (PointComponent ppp in pp)
             //  ppp.action(Drawer);

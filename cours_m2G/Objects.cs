@@ -89,7 +89,7 @@ namespace cours_m2G
                     activeComponents.Add(lines[what1 - 1].Point2, lines[what1 - 1].Point2.Id,lines[what1 - 1].Id);
                     activeComponentsParents.Add(lines[what1 - 1]);
                     activeComponentsId.Add(lines[what1 - 1].Id);
-                    lines[what1 - 1].Color = Color.Green;
+                    lines[what1 - 1].Color = Color.Red;
                     break;
                 case "Polygon":
                     activeComponents.Add(polygons[what1 - 1].Points[0], polygons[what1 - 1].Points[0].Id, polygons[what1 - 1].Id);

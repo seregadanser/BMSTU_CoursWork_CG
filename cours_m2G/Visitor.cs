@@ -57,11 +57,11 @@ namespace cours_m2G
                     if (PrintText)
                     {
                         string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
-                        e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Black), (int)p1.X, (int)p1.Y);
-                        s = "[ "+point.Id.Description +" ]";
-                        e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Blue), (int)p1.X, (int)p1.Y+11);
+                      //  e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Black), (int)p1.X, (int)p1.Y);
+                     //   s = "[ "+point.Id.Description +" ]";
+                    //    e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Blue), (int)p1.X, (int)p1.Y+11);
                     }
-                    e.Graphics.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
+                  //  e.Graphics.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
                 }
                 catch { }
         }
@@ -107,10 +107,13 @@ namespace cours_m2G
     {
         Camera cam;
         public Camera Cam { get { return cam; } set { cam = value; } }
-
-        public DrawVisitorCamera(PaintEventArgs e, Camera cam, Size screen, int scale) : base(e, screen, scale)
+        R1 raster;
+        public Bitmap GetResult() { return raster.GetResult(); }
+        public PaintEventArgs E { set { raster.e = value; e = value; } }
+        public DrawVisitorCamera(PaintEventArgs e, Camera cam, Size screen, int scale, Bitmap bmp) : base(e, screen, scale)
         {
             this.cam = cam;
+            raster = new R1(bmp, screen, true,e);
         }
 
         public override void visit(LineComponent line)
@@ -121,7 +124,8 @@ namespace cours_m2G
                 MatrixCoord3D p1 = actions(line.Point1);
                 MatrixCoord3D p2 = actions(line.Point2);
                 if (p1 != null && p2 != null)
-                    Rasterizator.DrawLine(new PointComponent(p1), new PointComponent(p2), e.Graphics);
+                    raster.drawLine(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2) }, line.Color);
+                    //Rasterizator.DrawLine(new PointComponent(p1), new PointComponent(p2), e.Graphics);
                 //try
                 //{
                 //    e.Graphics.DrawLine(pen, (int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y);
@@ -136,24 +140,30 @@ namespace cours_m2G
 
         public override void visit(PolygonComponent polygon)
         {
-            foreach (LineComponent l in polygon.Lines)
-            {
-                l.action(this);
-            }
+            //foreach (LineComponent l in polygon.Lines)
+            //{
+            //    l.action(this);
+            //}
+            MatrixCoord3D p1 = actions(polygon.Points[0]);
+            MatrixCoord3D p2 = actions(polygon.Points[1]);
+            MatrixCoord3D p3 = actions(polygon.Points[2]);
+            if (p1 != null && p2 != null && p3 != null)
+             raster.drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.Color);
         }
 
 
         public override void visit(Model model)
         {
-            foreach(LineComponent l in model.Lines)
-            {
-                l.action(this);
-            }
-
+            
             foreach (PolygonComponent l in model.Polygons)
             {
                 l.action(this);
             }
+            foreach (LineComponent l in model.Lines)
+            {
+                l.action(this);
+            }
+
         }
 
         protected override MatrixCoord3D actions(PointComponent point)
@@ -166,9 +176,10 @@ namespace cours_m2G
             p1 = p1 * cam.Projection;
             if (p1.X < p1.W && p1.Y < p1.W && p1.Z < p1.W)
             {
-                p1.W = 1 / p1.W;
-                p1.X = p1.X * p1.W;
-                p1.Y = p1.Y * p1.W;
+                //p1.W = 1 / p1.W;
+                p1.X = p1.X / p1.W;
+                p1.Y = p1.Y / p1.W;
+                p1.Z = p1.W;
             }
             else
             {
