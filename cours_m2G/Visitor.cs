@@ -120,12 +120,13 @@ namespace cours_m2G
             {
                 MatrixCoord3D p1 = actions(line.Point1);
                 MatrixCoord3D p2 = actions(line.Point2);
-                if(p1 != null && p2 != null)
-                try
-                {
-                    e.Graphics.DrawLine(pen, (int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y);
-                }
-                catch { }
+                if (p1 != null && p2 != null)
+                    Rasterizator.DrawLine(new PointComponent(p1), new PointComponent(p2), e.Graphics);
+                //try
+                //{
+                //    e.Graphics.DrawLine(pen, (int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y);
+                //}
+                //catch { }
 
                 line.Point1.action(this);
                 line.Point2.action(this);
@@ -159,14 +160,15 @@ namespace cours_m2G
         {
             MatrixCoord3D? p1 = point.Coords;
             MatrixTransformation3D sc = new MatrixTransformationScale3D(scale, scale, scale);
-
-            MatrixTransformation3D projection = cam.LookAt * cam.Projection;
-
-            p1 = p1 * projection;
+            p1 = p1 * cam.LookAt;
+            //MatrixTransformation3D projection = cam.LookAt * cam.Projection;
+            //p1.W = 1;
+            p1 = p1 * cam.Projection;
             if (p1.X < p1.W && p1.Y < p1.W && p1.Z < p1.W)
             {
-                p1.X = p1.X / p1.W;
-                p1.Y = p1.Y / p1.W;
+                p1.W = 1 / p1.W;
+                p1.X = p1.X * p1.W;
+                p1.Y = p1.Y * p1.W;
             }
             else
             {
