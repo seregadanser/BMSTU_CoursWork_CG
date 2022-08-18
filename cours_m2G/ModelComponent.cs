@@ -201,13 +201,23 @@ namespace cours_m2G
         public override Color Color
         {
             get
-            { return color; }
+            { return lines[0].Color; }
             set
             {
                 foreach (LineComponent l in lines)
                 {
                     l.Color = value;
                 }
+            }
+        }
+
+        public Color ColorF
+        {
+            get
+            { return color; }
+            set
+            {
+                color = value;
             }
         }
 
@@ -219,7 +229,7 @@ namespace cours_m2G
 
         public PolygonComponent(PointComponent p1, PointComponent p2, PointComponent p3)
         {
-            color = Color.White;
+            
             points = new PointComponent[3];
             lines = new LineComponent[3];
             points[0] = p1;

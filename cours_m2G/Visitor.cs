@@ -148,7 +148,7 @@ namespace cours_m2G
             MatrixCoord3D p2 = actions(polygon.Points[1]);
             MatrixCoord3D p3 = actions(polygon.Points[2]);
             if (p1 != null && p2 != null && p3 != null)
-             raster.drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.Color);
+             raster.drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.ColorF);
         }
 
 

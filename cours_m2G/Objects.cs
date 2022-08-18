@@ -82,7 +82,7 @@ namespace cours_m2G
                     activeComponents.Add(points[what1 - 1], points[what1 - 1].Id, points[what1 - 1].Id);
                     activeComponentsParents.Add(points[what1 - 1]);
                     activeComponentsId.Add(points[what1 - 1].Id);
-                    points[what1 - 1].Color = Color.Green;
+                    points[what1 - 1].Color = Color.Red;
                     break;
                 case "Line":
                     activeComponents.Add(lines[what1 - 1].Point1, lines[what1 - 1].Point1.Id, lines[what1 - 1].Id);
@@ -97,7 +97,7 @@ namespace cours_m2G
                     activeComponents.Add(polygons[what1 - 1].Points[2], polygons[what1 - 1].Points[2].Id, polygons[what1 - 1].Id);
                     activeComponentsParents.Add(polygons[what1 - 1]);
                     activeComponentsId.Add(polygons[what1 - 1].Id);
-                    polygons[what1 - 1].Color = Color.Green;
+                    polygons[what1 - 1].Color = Color.Red;
                     break;
             }
         }
@@ -555,7 +555,7 @@ namespace cours_m2G
             AddLine(new LineComponent(p4, p8));
 
 
-            AddPolygons(new PolygonComponent(p1, p2,p6));
+            AddPolygons(new PolygonComponent(p1,p2,p6));
             AddPolygons(new PolygonComponent(p1,p6,p5));
             AddPolygons(new PolygonComponent(p4,p3,p7));
             AddPolygons(new PolygonComponent(p8,p7,p4));
@@ -567,8 +567,19 @@ namespace cours_m2G
             AddPolygons(new PolygonComponent(p5,p6,p7));
             AddPolygons(new PolygonComponent(p2,p3,p7));
             AddPolygons(new PolygonComponent(p2,p7,p6));
-
-         //   RemovePoint(new Id("Point", "4"));
+            polygons[0].ColorF = Color.Green;
+            polygons[1].ColorF = Color.Aqua;
+            polygons[2].ColorF = Color.Beige;
+            polygons[3].ColorF = Color.Crimson;
+            polygons[4].ColorF = Color.DarkOrange;
+            polygons[5].ColorF = Color.Indigo;
+            polygons[6].ColorF = Color.Ivory;
+            polygons[7].ColorF = Color.Lime;
+            polygons[8].ColorF = Color.Navy;
+            polygons[9].ColorF = Color.Snow;
+            polygons[10].ColorF = Color.Olive;
+            polygons[11].ColorF = Color.Orange;
+            //   RemovePoint(new Id("Point", "4"));
             //RemovePolygon(new Id("Polygon", "126"));
             //RemovePolygon(new Id("Polygon", "156"));
         }
