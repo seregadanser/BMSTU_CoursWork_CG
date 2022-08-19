@@ -32,11 +32,12 @@ namespace cours_m2G
             pyramide = new Pyramide();
             Drawer = new DrawVisitorCamera(null, cams[1], pictureBox2.Size, 1,bmp);
             Reader = new ReadVisitorCamera(cams[1], pictureBox2.Size, 1);
-            cub = new Cub(new PointComponent(0, 0, 0), 20);
+          //  cub = new Cub(new PointComponent(0, 0, 0), 20);
             // MatrixTransformation3D ry = new MatrixTransformationScale3D(2, 2,2);
             //IVisitor v = new EasyTransformVisitor(ry);
             //pyramide.action(v);
-
+            ObjReader er = new ObjReader(@"D:\1.obj");
+            cub = er.ReadModel();
             // Refresh();
         }
 
