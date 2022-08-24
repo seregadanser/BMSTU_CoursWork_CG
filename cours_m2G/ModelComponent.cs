@@ -223,9 +223,10 @@ namespace cours_m2G
 
         private PointComponent[] points;
         private LineComponent[] lines;
+        private PointComponent[] texture;
         public PointComponent[] Points { get { return points; } set { points = value; } }
         public LineComponent[] Lines { get { return lines; } set { lines = value; } }
-
+        public PointComponent[] Text { get { return texture; } set { texture = value; } }
 
         public PolygonComponent(PointComponent p1, PointComponent p2, PointComponent p3)
         {
@@ -268,6 +269,13 @@ namespace cours_m2G
         public PolygonComponent(PointComponent p1, PointComponent p2, PointComponent p3, Id id) : this(p1, p2, p3)
         {
             this.id = id;
+        }
+        public PolygonComponent(PointComponent p1, PointComponent p2, PointComponent p3, PointComponent p4, PointComponent p5, PointComponent p6) : this(p1, p2, p3)
+        {
+            texture = new PointComponent[3];
+            texture[0] = p4;
+            texture[1] = p5;
+            texture[2] = p6;
         }
 
         public void ReplaceLine(LineComponent whatline, LineComponent whichline)

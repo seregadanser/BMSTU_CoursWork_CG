@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace cours_m2G
 {
-   static class Rasterizator
+   static class Rasterizator1
     {
         public static List<double> Interpolate(double i0, double d0, double i1, double d1)
         {
@@ -66,25 +66,210 @@ namespace cours_m2G
         }
     }
 
-
-    class R1
+    class VertexShader
     {
-        ZBuffer zBuffer;
-        public PaintEventArgs e;
-        Bitmap bmp;
-        Size s;
-        bool drawFill;
-        public Bitmap GetResult() { this.zBuffer.Down(); Bitmap b = bmp; bmp = new Bitmap(s.Width, s.Height); return b; }
-        public R1(Bitmap bmp, Size windowSize, bool drawFill, PaintEventArgs e)
+      protected  Size screen;
+      protected  double scale;
+        public double Scale { get { return scale; } set { if (value > 0) scale = value; } }
+        public VertexShader(Size screen, double scale)
         {
-            s = windowSize;
-            this.bmp = bmp;
-            zBuffer = new ZBuffer(windowSize);
-            this.drawFill = drawFill;
-            this.e = e;
+            this.screen = screen;
+            this.scale = scale;
         }
 
-        public void drawTriangleFill(List<PointComponent> vertices, Color color)
+        public virtual MatrixCoord3D VertexTransform(PointComponent point)
+        {
+            MatrixCoord3D? p1 = point.Coords;
+            MatrixTransformation3D sc = new MatrixTransformationScale3D(scale, scale, scale);
+
+            p1 *= sc;
+            p1.X += screen.Width / 2;
+            p1.Y = -(p1.Y - screen.Height / 2);
+            return p1;
+        }
+    }
+    class VertexShaderProjection : VertexShader
+    {
+        Camera cam;
+        public VertexShaderProjection(Size screen, double scale, Camera cam) : base(screen, scale)
+        {
+            this.screen = screen;
+            this.scale = scale;
+            this.cam = cam;
+        }
+
+        public override MatrixCoord3D VertexTransform(PointComponent point)
+        {
+            MatrixCoord3D? p1 = point.Coords;
+            MatrixTransformation3D sc = new MatrixTransformationScale3D(scale, scale, scale);
+            p1 = p1 * cam.LookAt;
+            p1 = p1 * cam.Projection;
+            if (p1.X < p1.W && p1.Y < p1.W && p1.Z < p1.W)
+            {
+                p1.X = p1.X / p1.W;
+                p1.Y = p1.Y / p1.W;
+                p1.Z = p1.W;
+            }
+            else
+            {
+                return null;
+            }
+
+            p1.X *= screen.Width / 2;
+            p1.Y *= screen.Height / 2;
+            p1 *= sc;
+            p1.X += screen.Width / 2;
+            p1.Y = -(p1.Y - screen.Height / 2);
+
+            return p1;
+        }
+    }
+
+    abstract class Rasterizator
+    {
+        protected Camera cam;
+        protected double scale;
+        public double Scale { get { return scale; } set { if (value > 0) { scale = value; shader.Scale = value; } } }
+        protected Size screen;
+        protected VertexShader shader;
+        protected Bitmap bmp; 
+        public virtual Bitmap Bmp { get { return bmp; } }
+        public abstract void DrawPoint(PointComponent point);
+        public abstract void DrawLine(LineComponent line);
+        public abstract void DrawPolygon(PolygonComponent polygon);
+
+    }
+
+    class RasterizatorNoCutter : Rasterizator
+    {
+        protected Graphics g;
+        public RasterizatorNoCutter(double scale, Size screen, Bitmap bmp)
+        {
+            //this.cam = cam;
+            this.scale = scale;
+            this.screen = screen;
+            this.bmp = bmp;
+            g = Graphics.FromImage(bmp);
+            shader = new VertexShader(screen, scale);
+        }
+
+        public RasterizatorNoCutter(Camera cam, double scale, Size screen, Bitmap bmp) : this(scale, screen, bmp)
+        {
+            shader = new VertexShaderProjection(screen, scale, cam);
+        }
+
+        public override void DrawPoint(PointComponent point)
+        {
+            Pen pen = new Pen(point.Color);
+            MatrixCoord3D p1 =shader.VertexTransform(point);
+            if (p1 != null)
+                try
+                {
+                    string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
+                    g.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Black), (int)p1.X, (int)p1.Y);
+                    s = "[ " + point.Id.Description + " ]";
+                    g.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Blue), (int)p1.X, (int)p1.Y + 11);
+                    g.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
+                }
+                catch { }
+        }
+
+        public override void DrawLine(LineComponent line)
+        {
+            Pen pen = new Pen(line.Color, 4);
+            MatrixCoord3D p1 = shader.VertexTransform(line.Point1);
+            MatrixCoord3D p2 = shader.VertexTransform(line.Point2);
+            if (p1 != null && p2 != null)
+            try
+            {
+               g.DrawLine(pen, (int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y);
+            }
+            catch { }
+        }
+        public override void DrawPolygon(PolygonComponent polygon)
+        {
+            //MatrixCoord3D p1 = shader.VertexTransform(polygon.Points[0]);
+            //MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
+            //MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
+        }
+    }
+    class RasterizatorNoText : RasterizatorNoCutter
+    {
+        public RasterizatorNoText(Camera cam, double scale, Size screen, Bitmap bmp) : base(cam, scale, screen, bmp)
+        {
+
+        }
+        public RasterizatorNoText(double scale, Size screen, Bitmap bmp) : base(scale, screen, bmp)
+        {
+
+        }
+
+        public override void DrawPoint(PointComponent point)
+        {
+            Pen pen = new Pen(point.Color);
+            MatrixCoord3D p1 = shader.VertexTransform(point);
+            if (p1 != null)
+                try
+                {
+                    g.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
+                }
+                catch { }
+        }
+    }
+    class RasterizatorNoPoints : RasterizatorNoCutter
+    {
+        public RasterizatorNoPoints(Camera cam, double scale, Size screen, Bitmap bmp) : base(cam, scale, screen, bmp)
+        {
+
+        }
+        public RasterizatorNoPoints(double scale, Size screen, Bitmap bmp) : base(scale, screen, bmp)
+        {
+
+        }
+
+        public override void DrawPoint(PointComponent point)
+        {
+
+        }
+    }
+    class RasterizatorCutter : Rasterizator
+    {
+        ZBuffer zBuffer;
+        public override Bitmap Bmp { get { zBuffer.Down(); return bmp; } }
+        public RasterizatorCutter(double scale, Size screen, Bitmap bmp)
+        {
+            this.scale = scale;
+            this.bmp = bmp;
+            zBuffer = new ZBuffer(screen);
+            this.screen = screen;
+        }
+        public RasterizatorCutter(Camera cam, double scale, Size screen, Bitmap bmp) : this(scale, screen, bmp)
+        {
+            shader = new VertexShaderProjection(screen, scale, cam);
+        }
+        public override void DrawPoint(PointComponent point)
+        {
+        }
+
+        public override void DrawLine(LineComponent line)
+        {
+            MatrixCoord3D p1 = shader.VertexTransform(line.Point1);
+            MatrixCoord3D p2 = shader.VertexTransform(line.Point2);
+            if (p1 != null && p2 != null)
+                drawLine(new List<PointComponent> {new PointComponent(p1),new PointComponent(p2) }, line.Color);
+        }
+
+        public override void DrawPolygon(PolygonComponent polygon)
+        {
+            MatrixCoord3D p1 = shader.VertexTransform(polygon.Points[0]);
+            MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
+            MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
+
+            if (p1 != null && p2 != null && p3 != null)
+                drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.ColorF);
+        }
+
+        private void drawTriangleFill(List<PointComponent> vertices, Color color)
         {
             var points = new List<PointComponent> { vertices[0], vertices[1], vertices[2] };
 
@@ -92,7 +277,7 @@ namespace cours_m2G
                 drawPoint(p, color);
         }
 
-        public void drawLine(List<PointComponent> vertices, Color color)
+        private void drawLine(List<PointComponent> vertices, Color color)
         {
             List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
             foreach (var p in pp)
@@ -101,19 +286,77 @@ namespace cours_m2G
 
         void drawPoint(PointComponent point, Color color)
         {
-            var p2D = (PointComponent)point;
+            var p2D = point;
 
             if (zBuffer[point.X, point.Y] <= point.Z-1)
                 return;
 
             zBuffer[point.X, point.Y] = point.Z;
-          //  e.Graphics.DrawRectangle(new Pen(color, 2), (int)p2D.X, (int)p2D.Y, 1, 1);
           if(color!=Color.White)
          bmp.SetPixelFast((int)p2D.X, (int)p2D.Y, color);
         }
     }
 
-     class ZBuffer
+    class R2
+    {
+        ZBuffer zBuffer;
+        public PaintEventArgs e;
+        Bitmap bmp;
+        Bitmap tex;
+        Size s;
+        bool drawFill;
+        public Bitmap GetResult() { this.zBuffer.Down(); Bitmap b = bmp; bmp = new Bitmap(s.Width, s.Height); return b; }
+        public R2(Bitmap bmp, Size windowSize, bool drawFill, PaintEventArgs e)
+        {
+            s = windowSize;
+            this.bmp = bmp;
+            zBuffer = new ZBuffer(windowSize);
+            this.drawFill = drawFill;
+            this.e = e;
+            tex = new Bitmap(Image.FromFile(@"D:\2.png"));
+        }
+
+        public void drawTriangleFill(List<PointComponent> vertices, List<PointComponent> texture)
+        {
+            var points = new List<Point3DTexture> { new Point3DTexture(vertices[0], texture[0]), new Point3DTexture(vertices[1], texture[1]), new Point3DTexture(vertices[2], texture[2]) };
+
+            foreach (var p in FillTexture.FillTriangle(points))
+                drawPoint(p);
+        }
+
+        public void drawLine(List<PointComponent> vertices, Color color)
+        {
+            //List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+           // foreach (var p in pp)
+          //      drawPoint(p, color);
+        }
+
+        void drawPoint(PointComponent point, Color color)
+        {
+            var p2D = (PointComponent)point;
+
+            if (zBuffer[point.X, point.Y] <= point.Z )
+                return;
+
+            zBuffer[point.X, point.Y] = point.Z;
+            //  e.Graphics.DrawRectangle(new Pen(color, 2), (int)p2D.X, (int)p2D.Y, 1, 1);
+            if (color != Color.White)
+                bmp.SetPixelFast((int)p2D.X, (int)p2D.Y, color);
+        }
+        void drawPoint(Point3DTexture point)
+        {
+            var p2D = point;
+
+            if (zBuffer[point.X, point.Y] <= point.Z)
+                return;
+
+            zBuffer[point.X, point.Y] = point.Z;
+            //  e.Graphics.DrawRectangle(new Pen(color, 2), (int)p2D.X, (int)p2D.Y, 1, 1);
+                bmp.SetPixelFast((int)p2D.X, (int)p2D.Y,tex.GetPixel(Ut.F(p2D.U*tex.Size.Width), Ut.F(p2D.V * tex.Size.Height)));
+        }
+    }
+
+    class ZBuffer
     {
         // minVal is at the top of the stack
         double[,] zBufferMap;
@@ -169,7 +412,8 @@ namespace cours_m2G
         //    return sb.ToString();
         //}
     }
-     static class Line
+    
+    static class Line
     {
         // Bresenham's Line in 3D
         // Source https://www.geeksforgeeks.org/bresenhams-algorithm-for-3-d-line-drawing/
@@ -412,6 +656,7 @@ namespace cours_m2G
             return points;
         }
     }
+    
     static class Fill
     // Source https://www.davrous.com/2013/06/21/tutorial-part-4-learning-how-to-write-a-3d-software-engine-in-c-ts-or-js-rasterization-z-buffering/
     {
@@ -499,6 +744,121 @@ namespace cours_m2G
             }
         }
     }
+    
+    static class FillTexture
+    // Source https://www.davrous.com/2013/06/21/tutorial-part-4-learning-how-to-write-a-3d-software-engine-in-c-ts-or-js-rasterization-z-buffering/
+    {
+        public static IEnumerable<Point3DTexture> FillTriangle(List<Point3DTexture> vertices)
+        {
+            vertices.Sort((x, y) => Ut.F(x.Y - y.Y));
+
+            var p1 = vertices[0];
+            var p2 = vertices[1];
+            var p3 = vertices[2];
+
+            double dP1P2, dP1P3;
+
+            if (p2.Y - p1.Y > 0)
+                dP1P2 = (p2.X - p1.X) / (p2.Y - p1.Y);
+            else
+                dP1P2 = 0;
+
+            if (p3.Y - p1.Y > 0)
+                dP1P3 = (p3.X - p1.X) / (p3.Y - p1.Y);
+            else
+                dP1P3 = 0;
+
+            if (dP1P2 > dP1P3)
+            {
+                for (var y = (int)p1.Y; y <= (int)p3.Y; y++)
+                {
+                    if (y < p2.Y)
+                        foreach (var p in ProcessScanLine(y, p1, p3, p1, p2))
+                            yield return p;
+                    else
+                        foreach (var p in ProcessScanLine(y, p1, p3, p2, p3))
+                            yield return p;
+                }
+            }
+            else
+            {
+                for (var y = (int)p1.Y; y <= (int)p3.Y; y++)
+                {
+                    if (y < p2.Y)
+                        foreach (var p in ProcessScanLine(y, p1, p2, p1, p3))
+                            yield return p;
+                    else
+                        foreach (var p in ProcessScanLine(y, p2, p3, p1, p3))
+                            yield return p;
+                }
+            }
+        }
+
+        static double Clamp(double value, double min = 0, double max = 1)
+        {
+            return Math.Max(min, Math.Min(value, max));
+        }
+
+        static double Interpolate(double min, double max, double gradient)
+        {
+            return min + (max - min) * Clamp(gradient);
+        }
+
+        static IEnumerable<Point3DTexture> ProcessScanLine(int y, Point3DTexture pa, Point3DTexture pb, Point3DTexture pc, Point3DTexture pd)
+        {
+            var gradient1 = pa.Y != pb.Y ? (y - pa.Y) / (pb.Y - pa.Y) : 1;
+            var gradient2 = pc.Y != pd.Y ? (y - pc.Y) / (pd.Y - pc.Y) : 1;
+
+            int sx = (int)Interpolate(pa.X, pb.X, gradient1);
+            int ex = (int)Interpolate(pc.X, pd.X, gradient2);
+
+            double z1 = Interpolate(pa.Z, pb.Z, gradient1);
+            double z2 = Interpolate(pc.Z, pd.Z, gradient2);
+
+            double u1 = Interpolate(pa.U, pb.U, gradient1);
+            double u2 = Interpolate(pc.U, pd.U, gradient2);
+
+            double v1 = Interpolate(pa.V, pb.V, gradient1); 
+            double v2 = Interpolate(pc.V, pd.V, gradient2);
+
+            for (var x = sx; x < ex; x++)
+            {
+                float gradient = (x - sx) / (float)(ex - sx);
+
+                var z = Interpolate(z1, z2, gradient);
+                var u = Interpolate(u1, u2, gradient);
+                var v = Interpolate(v1, v2, gradient);
+                yield return new Point3DTexture(new PointComponent(x, y, z), new PointComponent(u, v, 0));
+            }
+
+            for (var x = ex; x < sx; x++)
+            {
+                float gradient = (x - sx) / (float)(ex - sx);
+
+                var z = Interpolate(z1, z2, gradient);
+                var u = Interpolate(u1, u2, gradient);
+                var v = Interpolate(v1, v2, gradient);
+                yield return new Point3DTexture( new PointComponent(x, y, z),new PointComponent(u,v,0));
+            }
+        }
+    }
+    
+    class Point3DTexture
+    {
+        public double X { get { return coords.X; } }
+        public double Y { get { return coords.Y; } }
+        public double Z { get { return coords.Z; } }
+        public double U { get { return coordsTexture.X; } }
+        public double V { get { return coordsTexture.Y; } }
+        private MatrixCoord3D coordsTexture;
+        private MatrixCoord3D coords;
+        public Point3DTexture(PointComponent p, PointComponent texture)
+        {
+            coords = p.Coords;
+            coordsTexture = texture.Coords;
+        }
+    }
+    
     static class Ut
     {
         public static int F(double a)

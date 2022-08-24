@@ -22,7 +22,7 @@ namespace cours_m2G
          protected int scale;
          protected Size screen;
         
-        public int Scale { get { return scale; } set { if(value>0) scale = value; } }
+        public virtual int Scale { get { return scale; } set { if(value>0) scale = value; } }
         public Size Screen { get { return screen; } set { screen = value; } }
 
         public abstract TypeVisitor type { get; }
@@ -37,124 +37,58 @@ namespace cours_m2G
     class DrawVisitor : ScreenVisitor
     {
         public override TypeVisitor type { get; } = TypeVisitor.Drawer;
-        protected PaintEventArgs e;
-        public PaintEventArgs E { set { e = value; } }
+        protected Bitmap bmp;
+        public Bitmap Bmp { get { return raster.Bmp; } }
+        public override int Scale { get { return scale; } set { if (value > 0) { scale = value; raster.Scale = value; } } }
         public bool PrintText { get; set; } = true;
-        public DrawVisitor(PaintEventArgs e, Size screen, int scale)
+        protected Rasterizator raster;
+
+        public virtual int SetRaster
         {
-            this.e = e;
+            set
+            {
+                if(value==0)
+                    raster = new RasterizatorNoCutter(scale, screen, bmp);
+                if (value == 1)
+                    raster = new RasterizatorNoText(scale, screen, bmp);
+                if(value == 2)
+                    raster = new RasterizatorNoPoints(scale, screen, bmp);
+            }
+        }
+
+
+        public DrawVisitor(Size screen, int scale, Bitmap bmp)
+        {
+            this.bmp = bmp;
             this.screen = screen;
             this.scale = scale;
+            raster = new RasterizatorNoCutter(scale,screen,bmp);
+        }
+
+        public void Clear()
+        {
+            Graphics g = Graphics.FromImage(bmp);
+            g.Clear(Color.White);
         }
 
         public override void visit(PointComponent point)
         {
-            Pen pen = new Pen(point.Color);
-            MatrixCoord3D p1 = actions(point);
-            if (p1 != null)
-                try
-                {
-                    if (PrintText)
-                    {
-                       string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
-                        e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Black), (int)p1.X, (int)p1.Y);
-                        s = "[ "+point.Id.Description +" ]";
-                      e.Graphics.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Blue), (int)p1.X, (int)p1.Y+11);
-                    }
-                    e.Graphics.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
-                }
-                catch { }
+            raster.DrawPoint(point);
         }
         public override void visit(LineComponent line)
         {
-            Pen pen = new Pen(line.Color, 4);
-
-            MatrixCoord3D p1 = actions(line.Point1);
-            MatrixCoord3D p2 = actions(line.Point2);
-            try
-            {
-                e.Graphics.DrawLine(pen, (int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y);
-            }
-            catch { }
-
-            //line.Point1.action(this);
-            //line.Point2.action(this);
+            raster.DrawLine(line);
+            line.Point1.action(this);
+            line.Point2.action(this);
         }
 
         public override void visit(PolygonComponent polygon)
         {
-
+            raster.DrawPolygon(polygon);
         }
 
         public override void visit(Model model)
         {
-
-        }
-
-        protected virtual MatrixCoord3D actions(PointComponent point)
-        {
-            MatrixCoord3D? p1 = point.Coords;
-            MatrixTransformation3D sc = new MatrixTransformationScale3D(scale, scale, scale);
-
-            p1 *= sc;
-            p1.X += screen.Width / 2;
-            p1.Y = -(p1.Y - screen.Height / 2);
-            return p1;
-        }
-    }
-
-    class DrawVisitorCamera : DrawVisitor
-    {
-        Camera cam;
-        public Camera Cam { get { return cam; } set { cam = value; } }
-        R1 raster;
-        public Bitmap GetResult() { return raster.GetResult(); }
-        public PaintEventArgs E { set { raster.e = value; e = value; } }
-        public DrawVisitorCamera(PaintEventArgs e, Camera cam, Size screen, int scale, Bitmap bmp) : base(e, screen, scale)
-        {
-            this.cam = cam;
-            raster = new R1(bmp, screen, true,e);
-        }
-
-        public override void visit(LineComponent line)
-        {
-            Pen pen = new Pen(line.Color, 4);
-            //if (cam.IsVieved(line.Point1.Coords) && cam.IsVieved(line.Point2.Coords))
-            {
-                MatrixCoord3D p1 = actions(line.Point1);
-                MatrixCoord3D p2 = actions(line.Point2);
-                if (p1 != null && p2 != null)
-                    raster.drawLine(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2) }, line.Color);
-                //Rasterizator.DrawLine(new PointComponent(p1), new PointComponent(p2), e.Graphics);
-                try
-                {
-                //    e.Graphics.DrawLine(pen, (int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y);
-                }
-                catch { }
-
-              //  line.Point1.action(this);
-             //   line.Point2.action(this);
-            }
-        }
-
-
-        public override void visit(PolygonComponent polygon)
-        {
-            //foreach (LineComponent l in polygon.Lines)
-            //{
-            //    l.action(this);
-            //}
-            MatrixCoord3D p1 = actions(polygon.Points[0]);
-            MatrixCoord3D p2 = actions(polygon.Points[1]);
-            MatrixCoord3D p3 = actions(polygon.Points[2]);
-            if (p1 != null && p2 != null && p3 != null)
-             raster.drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.ColorF);
-        }
-
-
-        public override void visit(Model model)
-        {
-            
             foreach (PolygonComponent l in model.Polygons)
             {
                 l.action(this);
@@ -163,37 +97,29 @@ namespace cours_m2G
             {
                 l.action(this);
             }
-
         }
+    }
 
-        protected override MatrixCoord3D actions(PointComponent point)
+    class DrawVisitorCamera : DrawVisitor
+    {
+        Camera cam;
+        public Camera Cam { get { return cam; } set { cam = value; } }
+        public override int SetRaster
         {
-            MatrixCoord3D? p1 = point.Coords;
-            MatrixTransformation3D sc = new MatrixTransformationScale3D(scale, scale, scale);
-            p1 = p1 * cam.LookAt;
-            //MatrixTransformation3D projection = cam.LookAt * cam.Projection;
-            //p1.W = 1;
-            p1 = p1 * cam.Projection;
-            if (p1.X < p1.W && p1.Y < p1.W && p1.Z < p1.W)
+            set
             {
-                //p1.W = 1 / p1.W;
-                p1.X = p1.X / p1.W;
-                p1.Y = p1.Y / p1.W;
-                p1.Z = p1.W;
+                if (value == 0)
+                    raster = new RasterizatorNoCutter(cam, scale, screen, bmp);
+                if (value == 1)
+                    raster = new RasterizatorNoText(cam,scale, screen, bmp);
+                if (value == 2)
+                    raster = new RasterizatorNoPoints(cam,scale, screen, bmp);
             }
-            else
-            {
-                return null;
-            }
-
-            p1.X *= screen.Width / 2;
-            p1.Y *= screen.Height / 2;
-            p1 *= sc;
-            p1.X += screen.Width / 2;
-            p1.Y = -(p1.Y - screen.Height / 2);
-
-
-            return p1;
+        }
+        public DrawVisitorCamera(Size screen, int scale, Bitmap bmp, Camera cam) : base(screen, scale, bmp)
+        {
+            this.cam = cam;
+            raster = new RasterizatorNoCutter(cam, scale, screen, bmp);
         }
     }
 

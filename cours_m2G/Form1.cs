@@ -30,14 +30,16 @@ namespace cours_m2G
             curcam = cams[1];
             axes = new Axes();
             pyramide = new Pyramide();
-            Drawer = new DrawVisitorCamera(null, cams[1], pictureBox2.Size, 1,bmp);
+            Drawer = new DrawVisitorCamera(pictureBox2.Size, 1,bmp, cams[1]);
             Reader = new ReadVisitorCamera(cams[1], pictureBox2.Size, 1);
+            
           //  cub = new Cub(new PointComponent(0, 0, 0), 20);
             // MatrixTransformation3D ry = new MatrixTransformationScale3D(2, 2,2);
             //IVisitor v = new EasyTransformVisitor(ry);
             //pyramide.action(v);
             ObjReader er = new ObjReader(@"D:\1.obj");
             cub = er.ReadModel();
+            
             // Refresh();
         }
 
@@ -142,13 +144,11 @@ namespace cours_m2G
 
         private void pictureBox2_Paint(object sender, PaintEventArgs e)
         {
-          
-            var gr = Graphics.FromImage(bmp);
-           // gr.Clear(Color.White);
 
-            Drawer.E = e;
+            // gr.Clear(Color.White);
+            Drawer.Clear();
             cub.action(Drawer);
-        pictureBox2.Image = Drawer.GetResult();
+            pictureBox2.Image = Drawer.Bmp;
             // axes.action(Drawer);
             // foreach (PointComponent ppp in pp)
             //  ppp.action(Drawer);
@@ -363,7 +363,6 @@ namespace cours_m2G
 
         private void button4_Click(object sender, EventArgs e)
         {
-          
             f.Show();
         }
 
