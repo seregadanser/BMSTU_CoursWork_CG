@@ -58,7 +58,7 @@ namespace cours_m2G
 
         public void action(IVisitor visitor)
         {
-            if (visitor.type == TypeVisitor.Drawer)
+            if (visitor.type == TypeVisitor.Drawer || visitor.type == TypeVisitor.Reader)
             {
                 visitor.visit(this);
                 return;

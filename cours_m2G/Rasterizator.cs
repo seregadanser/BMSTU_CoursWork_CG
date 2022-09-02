@@ -132,28 +132,28 @@ namespace cours_m2G
         public double Scale { get { return scale; } set { if (value > 0) { scale = value; shader.Scale = value; } } }
         protected Size screen;
         protected VertexShader shader;
-        protected Bitmap bmp; 
-        public virtual Bitmap Bmp { get { return bmp; } }
+        protected RenderType type;
+        public RenderType Type { get { return type; } }
+        public virtual Bitmap Bmp { get { return PictureBuff.GetBitmap(); } }
         public abstract void DrawPoint(PointComponent point);
         public abstract void DrawLine(LineComponent line);
         public abstract void DrawPolygon(PolygonComponent polygon);
 
     }
-
     class RasterizatorNoCutter : Rasterizator
     {
         protected Graphics g;
-        public RasterizatorNoCutter(double scale, Size screen, Bitmap bmp)
+        public RasterizatorNoCutter(double scale, Size screen)
         {
             //this.cam = cam;
             this.scale = scale;
             this.screen = screen;
-            this.bmp = bmp;
-            g = Graphics.FromImage(bmp);
+          //  g = Graphics.FromImage(bmp);
             shader = new VertexShader(screen, scale);
+            type = RenderType.NOCUTTER;
         }
 
-        public RasterizatorNoCutter(Camera cam, double scale, Size screen, Bitmap bmp) : this(scale, screen, bmp)
+        public RasterizatorNoCutter(Camera cam, double scale, Size screen) : this(scale, screen)
         {
             shader = new VertexShaderProjection(screen, scale, cam);
         }
@@ -163,28 +163,24 @@ namespace cours_m2G
             Pen pen = new Pen(point.Color);
             MatrixCoord3D p1 =shader.VertexTransform(point);
             if (p1 != null)
-                try
-                {
-                    string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
-                    g.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Black), (int)p1.X, (int)p1.Y);
-                    s = "[ " + point.Id.Description + " ]";
-                    g.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Blue), (int)p1.X, (int)p1.Y + 11);
-                    g.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
-                }
-                catch { }
+            {
+                string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
+                string s1 = "[ " + point.Id.Description + " ]";
+                PictureBuff.SetText(p1, s, s1);
+                PictureBuff.SetPoint(p1, (int)point.HitRadius, point.Color);
+            }
+           
         }
 
         public override void DrawLine(LineComponent line)
         {
-            Pen pen = new Pen(line.Color, 4);
+           
             MatrixCoord3D p1 = shader.VertexTransform(line.Point1);
             MatrixCoord3D p2 = shader.VertexTransform(line.Point2);
             if (p1 != null && p2 != null)
-            try
-            {
-               g.DrawLine(pen, (int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y);
-            }
-            catch { }
+
+              PictureBuff.SetLine((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y,line.Color);
+ 
         }
         public override void DrawPolygon(PolygonComponent polygon)
         {
@@ -193,36 +189,34 @@ namespace cours_m2G
             //MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
         }
     }
+
     class RasterizatorNoText : RasterizatorNoCutter
     {
-        public RasterizatorNoText(Camera cam, double scale, Size screen, Bitmap bmp) : base(cam, scale, screen, bmp)
+        public RasterizatorNoText(Camera cam, double scale, Size screen) : base(cam, scale, screen)
         {
 
         }
-        public RasterizatorNoText(double scale, Size screen, Bitmap bmp) : base(scale, screen, bmp)
+        public RasterizatorNoText(double scale, Size screen) : base(scale, screen)
         {
 
         }
 
         public override void DrawPoint(PointComponent point)
         {
-            Pen pen = new Pen(point.Color);
+           
             MatrixCoord3D p1 = shader.VertexTransform(point);
             if (p1 != null)
-                try
-                {
-                    g.DrawEllipse(pen, (int)(p1.X - point.HitRadius), (int)(p1.Y - point.HitRadius), (int)point.HitRadius * 2, (int)point.HitRadius * 2);
-                }
-                catch { }
+                    PictureBuff.SetPoint(p1, (int)point.HitRadius, point.Color);
+
         }
     }
     class RasterizatorNoPoints : RasterizatorNoCutter
     {
-        public RasterizatorNoPoints(Camera cam, double scale, Size screen, Bitmap bmp) : base(cam, scale, screen, bmp)
+        public RasterizatorNoPoints(Camera cam, double scale, Size screen) : base(cam, scale, screen)
         {
 
         }
-        public RasterizatorNoPoints(double scale, Size screen, Bitmap bmp) : base(scale, screen, bmp)
+        public RasterizatorNoPoints(double scale, Size screen) : base(scale, screen)
         {
 
         }
@@ -235,15 +229,15 @@ namespace cours_m2G
     class RasterizatorCutter : Rasterizator
     {
         ZBuffer zBuffer;
-        public override Bitmap Bmp { get { zBuffer.Down(); return bmp; } }
-        public RasterizatorCutter(double scale, Size screen, Bitmap bmp)
+        public override Bitmap Bmp { get { zBuffer.Down(); return PictureBuff.GetBitmap(); } }
+        public RasterizatorCutter(double scale, Size screen)
         {
             this.scale = scale;
-            this.bmp = bmp;
             zBuffer = new ZBuffer(screen);
             this.screen = screen;
+            type = RenderType.ZBUFF;
         }
-        public RasterizatorCutter(Camera cam, double scale, Size screen, Bitmap bmp) : this(scale, screen, bmp)
+        public RasterizatorCutter(Camera cam, double scale, Size screen) : this(scale, screen)
         {
             shader = new VertexShaderProjection(screen, scale, cam);
         }
@@ -288,12 +282,13 @@ namespace cours_m2G
         {
             var p2D = point;
 
-            if (zBuffer[point.X, point.Y] <= point.Z-1)
+            if (zBuffer[point.X, point.Y] <= point.Z)
                 return;
 
             zBuffer[point.X, point.Y] = point.Z;
-          if(color!=Color.White)
-         bmp.SetPixelFast((int)p2D.X, (int)p2D.Y, color);
+            if (color != Color.White)
+                    //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
+            PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
         }
     }
 

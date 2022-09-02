@@ -66,6 +66,8 @@
         private double aspect;
 
         public MatrixProjection Projection { get { return projection; } set { projection = value; } }
+        public MatrixTransformation3D RotateMatrix { get { return RotationMatrix; } }
+
         public double Fovy
         {
             get { return fovy; }
@@ -166,6 +168,8 @@
                     rotation = new MatrixTransformationRotateVec3D(Up,(int)speed);
                     Direction *= rotation;
                     Right *= rotation;
+                    Direction.Normalise();
+                    Right.Normalise();
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
                 case CameraDirection.PICH:
@@ -173,6 +177,8 @@
                     rotation = new MatrixTransformationRotateVec3D(Right,(int)speed);
                     Direction *= rotation;
                     Up *= rotation;
+                    Direction.Normalise();
+                    Up.Normalise();
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
         
@@ -185,6 +191,9 @@
                     Direction = Direction * r;
                     Right = Right * r;
                     Up *= r;
+                    Direction.Normalise();
+                    Up.Normalise();
+                    Right.Normalise();
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
 

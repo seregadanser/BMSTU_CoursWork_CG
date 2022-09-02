@@ -1,77 +1,72 @@
 namespace cours_m2G
 {
+   delegate void Refresher();
+   
     public partial class Form1 : Form
     {
-        string whatobj = "Model";
-        int numobj;
-        Camera[] cams;
         Camera curcam;
-        Axes axes;
-        Pyramide pyramide;
-        DrawVisitorCamera Drawer;
-        ReadVisitor Reader;
+        DrawVisitor Drawer;
         Model cub;
         FormTransform f = new FormTransform();
         Bitmap bmp;
+        Thread renderThread;
         public Form1()
         {
             InitializeComponent();
             KeyPreview = true;
-           panel2.Visible = false;
+            panel2.Visible = false;
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
-            //cam = new DynamicCamera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 1, 0), -90, 0);
-            cams = new Camera[3];
-            cams[0] = new Camera(new PointComponent(0, 400, 0), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 0, 1), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));
-            cams[2] = new Camera(new PointComponent(300, 300, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(-1, 1, -1), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));
-            cams[1] = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
+         
+            curcam = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
             bmp = new Bitmap(pictureBox2.Width, pictureBox2.Height);
-            //cams[1] = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixOrtoProjection(0-pictureBox2.Size.Width/2, 0+ pictureBox2.Size.Width / 2, 0 - pictureBox2.Size.Height / 2, 0 + pictureBox2.Size.Height / 2, 1, 1000));
-            curcam = cams[1];
-            axes = new Axes();
-            pyramide = new Pyramide();
-            Drawer = new DrawVisitorCamera(pictureBox2.Size, 1,bmp, cams[1]);
-            Reader = new ReadVisitorCamera(cams[1], pictureBox2.Size, 1);
-            
-          //  cub = new Cub(new PointComponent(0, 0, 0), 20);
-            // MatrixTransformation3D ry = new MatrixTransformationScale3D(2, 2,2);
-            //IVisitor v = new EasyTransformVisitor(ry);
-            //pyramide.action(v);
+         
+            Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
+           
+            cub = new Cub(new PointComponent(0, 0, 0), 20);
+            reader = new ReadVisitorCamera(curcam, pictureBox2.Size, 1);
             ObjReader er = new ObjReader(@"D:\1.obj");
-            cub = er.ReadModel();
-            
-            // Refresh();
+          //  cub = er.ReadModel();
+            PictureBuff.Init(pictureBox2.Size, bmp, new Refresher(RefreshP));
+            renderThread = new Thread(RenderLoop);
+            renderThread.Name = "dra";
+            renderThread.IsBackground = true;
+            renderThread.Start();
         }
 
-        bool flag = true;
-
-
-    
-
+        private void RenderLoop()
+        {
+            while (true)
+            {
+                //    Drawer.Clear();
+               // Console.WriteLine(Thread.CurrentThread.Name);
+                cub.action(Drawer);
+              //  while (!PictureBuff.Filled)
+                  
+            }
+        }
+     
+        private void RefreshP()
+        {
+            if (pictureBox2.InvokeRequired)
+            {
+                pictureBox2.Invoke(new MethodInvoker(delegate
+                {//if(PictureBuff.Filled)
+                    lock(PictureBuff.locker)
+                        pictureBox2.Image = Drawer.Bmp;
+                }));
+            }
+        }
     
 
         private void Form1_KeyPress(object sender, KeyPressEventArgs e)
         {
 
         }
-        int io = 0;
+
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            //федоров алексей борисович
-            if (e.KeyValue == 'I')
-            {
-                EasyTransformVisitor vvv = new EasyTransformVisitor(new MatrixTransformationTransfer3D(1, 0, 0));
-                cub.action(vvv);
-            }
-            if (e.KeyValue == 'O')
-            {
-                EasyTransformVisitor vvv = new EasyTransformVisitor(new MatrixTransformationTransfer3D(-1, 0, 0));
-                cub.action(vvv);
-            }
-            if (e.KeyValue == 'L')
-            {
-              //  cub.DD();
-            }
+     
 
             if (e.KeyValue == 'W')
             {
@@ -123,10 +118,11 @@ namespace cours_m2G
                 curcam.Move(CameraDirection.PICH, -1);
             }
 
-
+            label1.Text = Convert.ToString(curcam.Position.Z);
             //Refresh();
             pictureBox1.Refresh();
-            pictureBox2.Refresh();
+            pictureBox_Paint();
+            //  pictureBox2.Refresh();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -145,35 +141,23 @@ namespace cours_m2G
         private void pictureBox2_Paint(object sender, PaintEventArgs e)
         {
 
-            // gr.Clear(Color.White);
-            Drawer.Clear();
-            cub.action(Drawer);
-            pictureBox2.Image = Drawer.Bmp;
-            // axes.action(Drawer);
-            // foreach (PointComponent ppp in pp)
-            //  ppp.action(Drawer);
-            //pyramide.action(Drawer);
-
         }
-        List<PointComponent> pp = new List<PointComponent>();
+ 
+        private void pictureBox_Paint()
+        {
+            //muljanov@mail.ru - анализ алгоритмов
+            //  Drawer.Clear();
+            //  RenderLoop();
+            //    cub.action(Drawer);
+ 
+            //  pictureBox2.Image = Drawer.Bmp;
+        }
+        ReadVisitorCamera reader ;
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
-         
-            
-            PointComponent p1 = new PointComponent(e.X, e.Y, 0);
-            // p1 *= sc; 
-            p1.action(Reader);
-          
-           bool jj =  axes.isget(curcam.Position.Coords, p1.Coords);
-        
-            //pp.Add(p1);
-            //for (int i = 0; i < 400; i++)
-            //{
-            //    PointComponent po = new PointComponent(0, 0, 0);
-            //    po.Coords = cams[1].Position.Coords + (p1.Coords * i);
-            //    pp.Add(po);
-            //}
-            //p1.Color = Color.DarkRed;
+            reader.InPoint = e.Location;
+            cub.action(reader);
+            ModelComponent io = reader.Find;
 
         }
 
@@ -188,18 +172,19 @@ namespace cours_m2G
                 if (e.Delta > 0)
                 {
                     Drawer.Scale++;
-                    Reader.Scale++;
+                
                 }
                 else
                 {
                     Drawer.Scale--;
-                    Reader.Scale--;
+             
                 }
-            pictureBox2.Refresh();
+            pictureBox_Paint();
+            //  pictureBox2.Refresh();
         }
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
-            pictureBox2.Refresh();
+         //   pictureBox2.Refresh();
         }
 
       
@@ -238,8 +223,7 @@ namespace cours_m2G
 
         private void button3_Click(object sender, EventArgs e)
         {
-            cub.DeliteActive();
-            pictureBox2.Refresh();
+            cub.DeliteActive(); 
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -247,7 +231,6 @@ namespace cours_m2G
             cub.DeliteActive();
             button6.Visible = true;
             panel2.Visible = false;
-            pictureBox2.Refresh();
         }
 
      
@@ -310,7 +293,6 @@ namespace cours_m2G
             cub.AddActiveComponent(Convert.ToString(comboBox3.SelectedItem), Convert.ToInt32(comboBox4.SelectedItem));
             panel2.Visible = true;
             button6.Visible = false;
-            pictureBox2.Refresh();
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -318,7 +300,6 @@ namespace cours_m2G
             cub.DeliteActive();
             button6.Visible = true;
             panel2.Visible = false;
-            pictureBox2.Refresh();
         }
 
         private void button8_Click(object sender, EventArgs e)
@@ -358,7 +339,6 @@ namespace cours_m2G
 
             if(max>0)
             comboBox4.SelectedIndex = 0;
-            pictureBox2.Refresh();
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -369,7 +349,27 @@ namespace cours_m2G
         private void button9_Click(object sender, EventArgs e)
         {
             cub.action(f.transformvisitor);
-            pictureBox2.Refresh();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            pictureBox_Paint();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox1.Text == "nc")
+                Drawer.SetRaster = 0;
+            if (textBox1.Text == "nt")
+                Drawer.SetRaster = 1;
+            if (textBox1.Text == "np")
+                Drawer.SetRaster = 2;
+            if (textBox1.Text == "c")
+                Drawer.SetRaster = 3;
+            if (textBox1.Text == "ray")
+                Drawer = new DrawVisitorR(pictureBox2.Size, 1, curcam);
+            if(textBox1.Text == "raster")
+                Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
         }
     }
 }

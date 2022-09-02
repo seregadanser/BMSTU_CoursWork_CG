@@ -40,5 +40,6 @@ namespace cours_m2G
     {
         FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN, YAW, PICH, ROTATIONY
     }
+    public enum RenderType {ZBUFF, RAY, NOCUTTER}
 
 }

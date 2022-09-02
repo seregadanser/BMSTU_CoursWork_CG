@@ -314,6 +314,12 @@ namespace cours_m2G
 
         public static bool operator ==(PolygonComponent p1, PolygonComponent p2)
         {
+            if ((Object)p1 == null && (Object)p2 == null)
+                return true;
+            if ((Object)p1 == null && (Object)p2 != null)
+                return false;
+            if ((Object)p1 != null && (Object)p2 == null)
+                return false;
             if (p1.id == p2.id)
                 return true;
             return false;

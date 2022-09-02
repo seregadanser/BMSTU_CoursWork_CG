@@ -37,8 +37,7 @@ namespace cours_m2G
     class DrawVisitor : ScreenVisitor
     {
         public override TypeVisitor type { get; } = TypeVisitor.Drawer;
-        protected Bitmap bmp;
-        public Bitmap Bmp { get { return raster.Bmp; } }
+        public virtual Bitmap Bmp { get { return raster.Bmp; } }
         public override int Scale { get { return scale; } set { if (value > 0) { scale = value; raster.Scale = value; } } }
         public bool PrintText { get; set; } = true;
         protected Rasterizator raster;
@@ -48,27 +47,22 @@ namespace cours_m2G
             set
             {
                 if(value==0)
-                    raster = new RasterizatorNoCutter(scale, screen, bmp);
+                    raster = new RasterizatorNoCutter(scale, screen);
                 if (value == 1)
-                    raster = new RasterizatorNoText(scale, screen, bmp);
+                    raster = new RasterizatorNoText(scale, screen);
                 if(value == 2)
-                    raster = new RasterizatorNoPoints(scale, screen, bmp);
+                    raster = new RasterizatorNoPoints(scale, screen);
+                if(value == 3)
+                    raster = new RasterizatorCutter(scale, screen);
             }
         }
 
 
-        public DrawVisitor(Size screen, int scale, Bitmap bmp)
+        public DrawVisitor(Size screen, int scale)
         {
-            this.bmp = bmp;
             this.screen = screen;
             this.scale = scale;
-            raster = new RasterizatorNoCutter(scale,screen,bmp);
-        }
-
-        public void Clear()
-        {
-            Graphics g = Graphics.FromImage(bmp);
-            g.Clear(Color.White);
+            raster = new RasterizatorNoCutter(scale,screen);
         }
 
         public override void visit(PointComponent point)
@@ -89,6 +83,9 @@ namespace cours_m2G
 
         public override void visit(Model model)
         {
+            PictureBuff.Filled = false;
+            PictureBuff.Creator = raster.Type;
+            PictureBuff.Clear();
             foreach (PolygonComponent l in model.Polygons)
             {
                 l.action(this);
@@ -97,6 +94,7 @@ namespace cours_m2G
             {
                 l.action(this);
             }
+            PictureBuff.Filled = true;
         }
     }
 
@@ -109,17 +107,148 @@ namespace cours_m2G
             set
             {
                 if (value == 0)
-                    raster = new RasterizatorNoCutter(cam, scale, screen, bmp);
+                    raster = new RasterizatorNoCutter(cam, scale, screen);
                 if (value == 1)
-                    raster = new RasterizatorNoText(cam,scale, screen, bmp);
+                    raster = new RasterizatorNoText(cam,scale, screen);
                 if (value == 2)
-                    raster = new RasterizatorNoPoints(cam,scale, screen, bmp);
+                    raster = new RasterizatorNoPoints(cam,scale, screen);
+                if (value == 3)
+                    raster = new RasterizatorCutter(cam, scale, screen);
             }
         }
-        public DrawVisitorCamera(Size screen, int scale, Bitmap bmp, Camera cam) : base(screen, scale, bmp)
+        public DrawVisitorCamera(Size screen, int scale, Camera cam) : base(screen, scale)
         {
             this.cam = cam;
-            raster = new RasterizatorNoCutter(cam, scale, screen, bmp);
+            raster = new RasterizatorNoCutter(cam, scale, screen);
+        }
+    }
+
+    class DrawVisitorR : DrawVisitor
+    {
+        Camera cam;
+        public override Bitmap Bmp { get { return PictureBuff.GetBitmap(); } }
+        public DrawVisitorR(Size screen, int scale, Camera cam) : base(screen, scale)
+        {
+            this.cam = cam;
+        }
+        public override void visit(PointComponent point)
+        {
+   
+        }
+        public override void visit(LineComponent line)
+        {
+
+        }
+
+        public override void visit(PolygonComponent polygon)
+        {
+
+        }
+
+        public async override void visit(Model model)
+        {
+            Console.WriteLine(Thread.CurrentThread.Name);
+            Console.WriteLine("0");
+            MatrixCoord3D CamPosition = cam.Position.Coords;
+            MatrixCoord3D CamDirection = cam.Direction;
+            MatrixTransformation3D RotateMatrix = cam.RotateMatrix;
+            PictureBuff.Filled = false;
+            PictureBuff.Creator = RenderType.RAY;
+            Parallel.For(0, screen.Width, x =>
+              {
+                  for (int y = 0; y < screen.Height; y++)
+                  {
+                      MatrixCoord3D D = CanvasToVieport(x, y) * RotateMatrix.InversedMatrix();// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
+                      D.Normalise();
+                      Color c = Color.White;
+                      c = RayT(model, D,CamPosition);
+                      PictureBuff.SetPixel(x, y, c.ToArgb());
+                  }
+              });
+            Console.WriteLine("100");
+            PictureBuff.Filled = true;
+        }
+
+        private Color RayT(Model model, MatrixCoord3D D, MatrixCoord3D position)
+        {
+            PolygonComponent closest = null;
+            double closest_t = double.MaxValue;
+        //  Parallel.ForEach<PolygonComponent>(model.Polygons, p=> { 
+            foreach (PolygonComponent p in model.Polygons)
+            {
+
+                MatrixCoord3D tt = GetTimeAndUvCoord(position, D, p.Points[0].Coords, p.Points[1].Coords, p.Points[2].Coords);
+                if (tt != null)
+                {
+                    if (tt.X < closest_t && tt.X > 1)
+                    {
+                        closest_t = tt.X;
+                        closest = p;
+                    }
+                }
+            }
+            
+            if (closest == null)
+                return Color.White;
+            return closest.ColorF;
+        }
+
+        private const double Epsilon = 0.000001d;
+
+        public static MatrixCoord3D? GetTimeAndUvCoord(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D vert0, MatrixCoord3D vert1, MatrixCoord3D vert2)
+        {
+            var edge1 = vert1 - vert0;
+            var edge2 = vert2 - vert0;
+
+            var pvec = (rayDirection* edge2);
+
+            var det = MatrixCoord3D.scalar(edge1, pvec);
+
+            if (det > -Epsilon && det < Epsilon)
+            {
+                return null;
+            }
+
+            var invDet = 1d / det;
+
+            var tvec = rayOrigin - vert0;
+
+            var u = MatrixCoord3D.scalar(tvec, pvec) * invDet;
+
+            if (u < 0 || u > 1)
+            {
+                return null;
+            }
+
+            var qvec = (tvec* edge1);
+
+            var v = MatrixCoord3D.scalar(rayDirection, qvec) * invDet;
+
+            if (v < 0 || u + v > 1)
+            {
+                return null;
+            }
+
+            var t = MatrixCoord3D.scalar(edge2, qvec) * invDet;
+
+            return new MatrixCoord3D(t, u, v);
+        }
+     
+
+        public static MatrixCoord3D GetTrilinearCoordinateOfTheHit(float t, MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection)
+        {
+            return rayDirection * t + rayOrigin;
+        }
+
+        private MatrixCoord3D CanvasToVieport(int x, int y)
+        {
+            double aspectRatio =screen.Width / screen.Height;
+            double fieldOfView = Math.Tan(cam.Fovy / 2 * Math.PI / 180.0f);
+
+            double fx = aspectRatio * fieldOfView * (2 * ((x + 0.5f) / screen.Width) - 1);
+            double fy = (1 - (2 * (y + 0.5f) / screen.Height)) * fieldOfView;
+
+            return new MatrixCoord3D(fx/scale, fy/scale, -1);
         }
     }
 
@@ -134,15 +263,11 @@ namespace cours_m2G
 
         public override void visit(PointComponent p)
         {
-            p.Coords.X -= screen.Width / 2;
-            p.Coords.Y = -(p.Coords.Y - screen.Height / 2);
-            MatrixTransformation3D sc = new MatrixTransformationScale3D((double)scale, (double)scale, (double)scale);
-            sc = sc.InversedMatrix();
-            p.Coords = p.Coords * sc;
+ 
         }
         public override void visit(LineComponent l)
         {
-            throw new NotImplementedException();
+     
         }
 
         public override void visit(PolygonComponent polygon)
@@ -160,41 +285,144 @@ namespace cours_m2G
     class ReadVisitorCamera : ReadVisitor
     {
         readonly Camera cam;
-      
+        public Point InPoint { get; set; }
+        private ModelComponent find;
+        public ModelComponent Find{get{return find;} }
+
         public ReadVisitorCamera(Camera cam, Size screen, int scale) : base(screen, scale)
         {
             this.cam = cam;
         }
 
-        public override void visit(PointComponent p)
+        public async override void visit(Model model)
         {
-            MatrixTransformation3D sc = new MatrixTransformationScale3D(scale, scale, scale);
-            MatrixCoord3D pNear = new MatrixCoord3D();
-            pNear = new MatrixCoord3D((2.0 * p.X / screen.Width) - 1.0, 1.0 - (2.0 * p.Y / screen.Height), -1);
-            //pNear.X = p.X;
-            //pNear.Y = p.Y;
-            pNear *= sc.InversedMatrix();
-    //        pNear.Z = 0;
-          //  pNear.Normalise();
-            //pNear.X -= screen.Width / 2;
-            //pNear.Y = -(pNear.Y - screen.Height / 2);
+            Console.WriteLine(Thread.CurrentThread.Name);
+            Console.WriteLine("0");
+            MatrixCoord3D CamPosition = cam.Position.Coords;
+            MatrixTransformation3D RotateMatrix = cam.RotateMatrix;
+            PictureBuff.Filled = false;
+            PictureBuff.Creator = RenderType.RAY;
 
-//            MatrixCoord3D pNear = new MatrixCoord3D((2.0*p.X/screen.Width)-1.0, 1.0 - (2.0*p.Y/screen.Height), -1);
-//pNear *= sc.InversedMatrix();
-            //pNear.X /= screen.Width / 2;
-            //pNear.Y /= screen.Height / 2;
-       //     pNear.Normalise();
-            pNear.Z = -1;
-          
-           
-            pNear *= cam.Projection.InversedMatrix();
-            pNear.Z = -1;
-            pNear.W = 0;
-            pNear *= cam.LookAt.InversedMatrix();
-            pNear.Normalise();
-            p.Coords = pNear;
+            MatrixCoord3D D = CanvasToVieport(InPoint.X, InPoint.Y) * RotateMatrix.InversedMatrix();// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
+            D.Normalise();
+            find = RayT(model, D, CamPosition);
 
 
+            Console.WriteLine("100");
+            PictureBuff.Filled = true;
+        }
+
+        private ModelComponent RayT(Model model, MatrixCoord3D D, MatrixCoord3D position)
+        {
+            ModelComponent closest = null;
+            double closest_t = double.MaxValue;
+            //  Parallel.ForEach<PolygonComponent>(model.Polygons, p=> { 
+            foreach (PolygonComponent p in model.Polygons)
+            {
+
+                MatrixCoord3D tt = GetTimeAndUvCoord(position, D, p.Points[0].Coords, p.Points[1].Coords, p.Points[2].Coords);
+                if (tt != null)
+                {
+                    if (tt.X < closest_t && tt.X > 1)
+                    {
+                        closest_t = tt.X;
+                        closest = p;
+                    }
+                }
+            }
+           //MatrixCoord3D f =  GetTrilinearCoordinateOfTheHit(closest_t, position, D);
+            foreach(PointComponent p in model.Points)
+            {
+                double tt = RaySphereIntersection(position, D, p.Coords, p.HitRadius); 
+                if(tt!=null)
+                {
+                    if(tt<=closest_t && tt>1)
+                    {
+                        closest_t = tt;
+                        closest = p;
+                    }
+                }
+            }
+            return closest;
+        }
+
+        private const double Epsilon = 0.000001d;
+
+        double RaySphereIntersection(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D spos, double r)
+        {
+            double t = Double.MaxValue;
+            //a == 1; // because rdir must be normalized
+            MatrixCoord3D k = rayOrigin - spos;
+            double b = MatrixCoord3D.scalar(k, rayDirection);
+            double c = MatrixCoord3D.scalar(k, k) - r * r;
+            double d = b * b - c;
+            if (d >= 0)
+            {
+                double sqrtfd = Math.Sqrt(d);
+                // t, a == 1
+                double t1 = -b + sqrtfd;
+                double t2 = -b - sqrtfd;
+                double min_t = Math.Min(t1, t2);
+                double max_t = Math.Max(t1, t2);
+                t = (min_t >= 0) ? min_t : max_t;
+            }
+            return t;
+        }
+
+        public static MatrixCoord3D? GetTimeAndUvCoord(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D vert0, MatrixCoord3D vert1, MatrixCoord3D vert2)
+        {
+            var edge1 = vert1 - vert0;
+            var edge2 = vert2 - vert0;
+
+            var pvec = (rayDirection * edge2);
+
+            var det = MatrixCoord3D.scalar(edge1, pvec);
+
+            if (det > -Epsilon && det < Epsilon)
+            {
+                return null;
+            }
+
+            var invDet = 1d / det;
+
+            var tvec = rayOrigin - vert0;
+
+            var u = MatrixCoord3D.scalar(tvec, pvec) * invDet;
+
+            if (u < 0 || u > 1)
+            {
+                return null;
+            }
+
+            var qvec = (tvec * edge1);
+
+            var v = MatrixCoord3D.scalar(rayDirection, qvec) * invDet;
+
+            if (v < 0 || u + v > 1)
+            {
+                return null;
+            }
+
+            var t = MatrixCoord3D.scalar(edge2, qvec) * invDet;
+
+            return new MatrixCoord3D(t, u, v);
+        }
+
+
+        public static MatrixCoord3D GetTrilinearCoordinateOfTheHit(double t, MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection)
+        {
+            return rayDirection * t + rayOrigin;
+        }
+
+        private MatrixCoord3D CanvasToVieport(int x, int y)
+        {
+            double aspectRatio = screen.Width / screen.Height;
+            double fieldOfView = Math.Tan(cam.Fovy / 2 * Math.PI / 180.0f);
+
+            double fx = aspectRatio * fieldOfView * (2 * ((x + 0.5f) / screen.Width) - 1);
+            double fy = (1 - (2 * (y + 0.5f) / screen.Height)) * fieldOfView;
+
+            return new MatrixCoord3D(fx / scale, fy / scale, -1);
         }
     }
 
