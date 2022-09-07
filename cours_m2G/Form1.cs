@@ -1,3 +1,6 @@
+using System.Drawing.Imaging;
+using System.Diagnostics;
+
 namespace cours_m2G
 {
    delegate void Refresher();
@@ -26,36 +29,62 @@ namespace cours_m2G
             cub = new Cub(new PointComponent(0, 0, 0), 20);
             reader = new ReadVisitorCamera(curcam, pictureBox2.Size, 1);
             ObjReader er = new ObjReader(@"D:\1.obj");
-          //  cub = er.ReadModel();
+           cub = er.ReadModel();
             PictureBuff.Init(pictureBox2.Size, bmp, new Refresher(RefreshP));
             renderThread = new Thread(RenderLoop);
-            renderThread.Name = "dra";
+            renderThread.Name = "drawing";
             renderThread.IsBackground = true;
             renderThread.Start();
+        
         }
 
-        private void RenderLoop()
+        public void RenderLoop()
         {
-            while (true)
+            Stopwatch st = new Stopwatch();
+            int k = 0;
+          while (true)
             {
-                //    Drawer.Clear();
-               // Console.WriteLine(Thread.CurrentThread.Name);
+               Console.WriteLine(Thread.CurrentThread.Name);
+                st.Start();
                 cub.action(Drawer);
-              //  while (!PictureBuff.Filled)
-                  
+                st.Stop();
+
+                TimeSpan ts = st.Elapsed;
+                st.Reset();
+                // Format and display the TimeSpan value.
+                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                    ts.Hours, ts.Minutes, ts.Seconds,
+                    ts.Milliseconds / 10);
+               Console.WriteLine("RunTime " + elapsedTime);
+                k++;
+              ///  if(ts.Milliseconds/10<10)
+               //     Thread.Sleep(100);
             }
         }
      
         private void RefreshP()
         {
+            //lock (PictureBuff.locker)
+            //    PictureBuff.bmp.Save("ss.png", ImageFormat.Png);
+        
+            Console.WriteLine("refresh "+ Thread.CurrentThread.Name);
+            Bitmap LocalBMP = new Bitmap(pictureBox2.Width, pictureBox2.Height);
+            if (PictureBuff.Filled)
+                LocalBMP = Drawer.Bmp;
+          //  LocalBMP.Save("ss.png", ImageFormat.Png);
             if (pictureBox2.InvokeRequired)
             {
                 pictureBox2.Invoke(new MethodInvoker(delegate
-                {//if(PictureBuff.Filled)
-                    lock(PictureBuff.locker)
-                        pictureBox2.Image = Drawer.Bmp;
+                {
+                    {
+                        Console.WriteLine("get pic");
+                        //lock (PictureBuff.locker)
+                        pictureBox2.Image = LocalBMP;
+                        Console.WriteLine("refresh " + Thread.CurrentThread.Name);
+                    }
                 }));
             }
+            Thread.Sleep(10);
         }
     
 
@@ -119,6 +148,7 @@ namespace cours_m2G
             }
 
             label1.Text = Convert.ToString(curcam.Position.Z);
+            label2.Text = Convert.ToString(curcam.Direction.Z);
             //Refresh();
             pictureBox1.Refresh();
             pictureBox_Paint();
@@ -145,20 +175,23 @@ namespace cours_m2G
  
         private void pictureBox_Paint()
         {
+         
             //muljanov@mail.ru - анализ алгоритмов
             //  Drawer.Clear();
-            //  RenderLoop();
+             // RenderLoop();
             //    cub.action(Drawer);
- 
+
             //  pictureBox2.Image = Drawer.Bmp;
         }
         ReadVisitorCamera reader ;
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
+            cub.DeliteActive();
             reader.InPoint = e.Location;
             cub.action(reader);
             ModelComponent io = reader.Find;
-
+            if(io!=null)
+            cub.AddActiveComponent(io.Id);
         }
 
       
@@ -364,7 +397,7 @@ namespace cours_m2G
                 Drawer.SetRaster = 1;
             if (textBox1.Text == "np")
                 Drawer.SetRaster = 2;
-            if (textBox1.Text == "c")
+            if (textBox1.Text == "b")
                 Drawer.SetRaster = 3;
             if (textBox1.Text == "ray")
                 Drawer = new DrawVisitorR(pictureBox2.Size, 1, curcam);

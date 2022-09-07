@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing.Imaging;
 
 namespace cours_m2G
 {
@@ -10,13 +11,13 @@ namespace cours_m2G
     {
         static int[,] rgb;
         static Graphics g;
-        static Bitmap bmp;
+        public static Bitmap bmp;
         static Size screen;
         static Refresher r;
         static bool filled;
        public static object locker = new();
         static public RenderType Creator { get; set; } = RenderType.NOCUTTER;
-        public static bool Filled { get { return filled; } set { if(value)r.Invoke();filled = value; } } 
+        public static bool Filled { get { return filled; } set { filled = value; if (value) r.Invoke(); } } 
         public static void Init(Size screen, Bitmap bmp ,Refresher r)
         {
             PictureBuff.bmp = bmp;
@@ -46,25 +47,28 @@ namespace cours_m2G
             Pen pen = new Pen(color);
             lock (locker)
                 g.DrawEllipse(pen, (int)(p1.X - HitRadius), (int)(p1.Y - HitRadius), HitRadius * 2, HitRadius * 2);
+           
         }
 
         public static void SetText(MatrixCoord3D p1, string s, string s1)
         {
             g.DrawString(s, new Font("Arial", 8), new SolidBrush(Color.Black), (int)p1.X, (int)p1.Y);
             g.DrawString(s1, new Font("Arial", 8), new SolidBrush(Color.Blue), (int)p1.X, (int)p1.Y + 11);
+
+          
         }
 
 
         public static Bitmap GetBitmap()
         {
-            lock(locker)
+         //   lock(locker)
             if (Creator != RenderType.NOCUTTER)
             {
                 for (int x = 0; x < screen.Width; x++)
                     for (int y = 0; y < screen.Height; y++)
                         bmp.SetPixelFast(x, y, Color.FromArgb(rgb[x, y]));
             }
-            lock (locker)
+           // lock (locker)
                 return bmp;
         }
         public static void Clear()
@@ -78,7 +82,7 @@ namespace cours_m2G
             }
             else
             {
-                Graphics.FromImage(bmp).Clear(Color.White);
+               g.Clear(Color.White);
             }
         }
     }

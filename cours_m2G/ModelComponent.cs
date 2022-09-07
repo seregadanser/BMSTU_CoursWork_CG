@@ -228,9 +228,13 @@ namespace cours_m2G
         public LineComponent[] Lines { get { return lines; } set { lines = value; } }
         public PointComponent[] Text { get { return texture; } set { texture = value; } }
 
+        public PointComponent norm;
+        private MatrixCoord3D normal;
+        public MatrixCoord3D Normal { get { return normal; } }
+
         public PolygonComponent(PointComponent p1, PointComponent p2, PointComponent p3)
         {
-            color = Color.White;
+            color = Color.Green;
             points = new PointComponent[3];
             lines = new LineComponent[3];
             points[0] = p1;
@@ -265,6 +269,9 @@ namespace cours_m2G
                     iddesc = p3.Id.Description + p2.Id.Description + p1.Id.Description;
             }
             id = new Id("Polygon", iddesc);
+            normal = (points[2].Coords - points[1].Coords)*(points[0].Coords - points[1].Coords);
+            normal.Normalise();
+            norm = new PointComponent(normal);
         }
         public PolygonComponent(PointComponent p1, PointComponent p2, PointComponent p3, Id id) : this(p1, p2, p3)
         {

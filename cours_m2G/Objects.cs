@@ -101,7 +101,35 @@ namespace cours_m2G
                     break;
             }
         }
- 
+
+        public void AddActiveComponent(Id id)
+        {
+            int i = -1;
+            switch (id.Name)
+            {
+                case "Point":
+                    activeComponents.Add(points[id], points[id].Id, points[id].Id);
+                    activeComponentsParents.Add(points[id]);
+                    activeComponentsId.Add(points[id].Id);
+                    points[id].Color = Color.Red;
+                    break;
+                case "Line":
+                    activeComponents.Add(lines[id].Point1, lines[id].Point1.Id, lines[id].Id);
+                    activeComponents.Add(lines[id].Point2, lines[id].Point2.Id, lines[id].Id);
+                    activeComponentsParents.Add(lines[id]);
+                    activeComponentsId.Add(lines[id].Id);
+                    lines[id].Color = Color.Red;
+                    break;
+                case "Polygon":
+                    activeComponents.Add(polygons[id].Points[0], polygons[id].Points[0].Id, polygons[id].Id);
+                    activeComponents.Add(polygons[id].Points[1], polygons[id].Points[1].Id, polygons[id].Id);
+                    activeComponents.Add(polygons[id].Points[2], polygons[id].Points[2].Id, polygons[id].Id);
+                    activeComponentsParents.Add(polygons[id]);
+                    activeComponentsId.Add(polygons[id].Id);
+                    polygons[id].Color = Color.Red;
+                    break;
+            }
+        }
         public void DeliteActive()
         {
            for (int j = activeComponents.Count-1; j >= 0; j--)
@@ -557,13 +585,13 @@ namespace cours_m2G
 
             AddPolygons(new PolygonComponent(p1,p2,p6));
             AddPolygons(new PolygonComponent(p1,p6,p5));
-            AddPolygons(new PolygonComponent(p4,p3,p7));
+            AddPolygons(new PolygonComponent(p3,p4,p7));
             AddPolygons(new PolygonComponent(p8,p7,p4));
-            AddPolygons(new PolygonComponent(p1,p4,p8));
+            AddPolygons(new PolygonComponent(p4,p1,p8));
             AddPolygons(new PolygonComponent(p1,p5,p8));
-            AddPolygons(new PolygonComponent(p1,p2,p3));
-            AddPolygons(new PolygonComponent(p1,p3,p4));
-            AddPolygons(new PolygonComponent(p5,p8,p7));
+            AddPolygons(new PolygonComponent(p1,p3,p2));
+            AddPolygons(new PolygonComponent(p1,p4,p3));
+            AddPolygons(new PolygonComponent(p5,p7,p8));
             AddPolygons(new PolygonComponent(p5,p6,p7));
             AddPolygons(new PolygonComponent(p2,p3,p7));
             AddPolygons(new PolygonComponent(p2,p7,p6));

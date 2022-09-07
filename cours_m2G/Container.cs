@@ -216,6 +216,28 @@ namespace cours_m2G
             set { components[i] = value; }
         }
 
+        public T this[Id j]
+        {
+            get
+            {
+                for (int i = 0; i < id.Count; i++)
+                    if (id[i] == j)
+                    {
+                        return components[i];
+                    };
+                return components[-1];
+            }
+            set
+            {
+                for (int i = 0; i < id.Count; i++)
+                    if (id[i] == j)
+                    {
+                        components[i] = value;
+                    };
+                ;
+            }
+        }
+
 
 
         public Enumerator GetEnumerator()

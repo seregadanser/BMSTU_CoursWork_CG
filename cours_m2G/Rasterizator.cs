@@ -266,25 +266,26 @@ namespace cours_m2G
         private void drawTriangleFill(List<PointComponent> vertices, Color color)
         {
             var points = new List<PointComponent> { vertices[0], vertices[1], vertices[2] };
+            
+           Parallel.ForEach<PointComponent>(Fill.FillTriangle(points), p => drawPoint(p, color));
 
-            foreach (var p in Fill.FillTriangle(points))
-                drawPoint(p, color);
+            //foreach (var p in Fill.FillTriangle(points))
+            //    drawPoint(p, color);
         }
 
         private void drawLine(List<PointComponent> vertices, Color color)
         {
             List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
-            foreach (var p in pp)
-                drawPoint(p, color);
+            Parallel.ForEach<PointComponent>(pp, p => drawPoint(p, color));
         }
 
         void drawPoint(PointComponent point, Color color)
         {
             var p2D = point;
-
+         
             if (zBuffer[point.X, point.Y] <= point.Z)
                 return;
-
+            
             zBuffer[point.X, point.Y] = point.Z;
             if (color != Color.White)
                     //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
@@ -366,7 +367,7 @@ namespace cours_m2G
         }
         public void Down()
         {
-            zBufferMap = new double[w.Width, w.Height];
+            //  zBufferMap = new double[w.Width, w.Height];
             for (int i = 0; i < w.Width * w.Height; i++)
                 zBufferMap[i % w.Width, Ut.F(i / w.Width)] = double.MaxValue;
         }

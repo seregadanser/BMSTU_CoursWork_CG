@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Linq;
+using System.Drawing.Imaging;
+
 
 namespace cours_m2G
 {
@@ -75,10 +78,13 @@ namespace cours_m2G
             line.Point1.action(this);
             line.Point2.action(this);
         }
-
+        int k = 0;
         public override void visit(PolygonComponent polygon)
         {
             raster.DrawPolygon(polygon);
+            foreach (LineComponent l in polygon.Lines)
+            { l.action(this);
+         }
         }
 
         public override void visit(Model model)
@@ -88,12 +94,14 @@ namespace cours_m2G
             PictureBuff.Clear();
             foreach (PolygonComponent l in model.Polygons)
             {
+                //if(MatrixCoord3D.scalar(l.Normal, ))
                 l.action(this);
+             
             }
-            foreach (LineComponent l in model.Lines)
-            {
-                l.action(this);
-            }
+            //foreach (LineComponent l in model.Lines)
+            //{
+            //    l.action(this);
+            //}
             PictureBuff.Filled = true;
         }
     }
@@ -121,6 +129,32 @@ namespace cours_m2G
             this.cam = cam;
             raster = new RasterizatorNoCutter(cam, scale, screen);
         }
+        int k = 0;
+        public override void visit(Model model)
+        {
+            PictureBuff.Creator = raster.Type;
+            PictureBuff.Clear();
+            PictureBuff.Filled = false;
+            string s = "file" + Convert.ToInt32(k) + ".png";
+          k++;
+
+          //lock (PictureBuff.locker)
+          //     PictureBuff.bmp.Save(s, ImageFormat.Png);
+            foreach (PolygonComponent l in model.Polygons)
+            {
+              // if(MatrixCoord3D.scalar(l.Normal,cam.Direction)>0)
+                l.action(this);
+                s = "file" + Convert.ToInt32(k) + ".png";
+              //k++;
+              //  lock (PictureBuff.locker)
+              //     PictureBuff.bmp.Save(s, ImageFormat.Png);
+            }
+           // s = "file" + Convert.ToInt32(k) + ".png";
+           // k++;
+           //lock (PictureBuff.locker)
+           //    PictureBuff.bmp.Save(s, ImageFormat.Png);
+            PictureBuff.Filled = true;
+        }
     }
 
     class DrawVisitorR : DrawVisitor
@@ -144,10 +178,49 @@ namespace cours_m2G
         {
 
         }
-
-        public async override void visit(Model model)
+        private Tuple<MatrixCoord3D, double> FoundCenter(Container<PointComponent> points)
         {
+            double minX, maxX, minY, maxY, minZ, maxZ;
+            minX = points[0].X;
+            maxX = points[0].X;
+            minY = points[0].Y;
+            maxY = points[0].Y;
+            minZ = points[0].Z;
+            maxZ = points[0].Z;
+
+            foreach (PointComponent p in points)
+            {
+                if (p.X < minX)
+                    minX = p.X;
+                if (p.X > maxX)
+                    maxX = p.X;
+                if (p.Y < minY)
+                    minY = p.Y;
+                if (p.Y > maxY)
+                    maxY = p.Y;
+                if (p.Z < minZ)
+                    minZ = p.Z;
+                if (p.Z > maxZ)
+                    maxZ = p.Z;
+            }
+
+            // Геометрический центр между всеми объектами.
+            MatrixCoord3D position = new MatrixCoord3D((minX + maxX) / 2f, (minY + maxY) / 2f, (minZ + maxZ) / 2f);
+            double r = 0;
+            foreach (PointComponent p in points)
+            {
+                LineComponent minx = new LineComponent(new PointComponent(position), p);
+                r = Math.Max(minx.Len(), r);
+            }
+       
+            return new Tuple<MatrixCoord3D,double>( position,r);
+        }
+    public async override void visit(Model model)
+        {
+            int x1 = 0;
+            string gg = "";
             Console.WriteLine(Thread.CurrentThread.Name);
+            Tuple<MatrixCoord3D, double> sphere = FoundCenter(model.Points);
             Console.WriteLine("0");
             MatrixCoord3D CamPosition = cam.Position.Coords;
             MatrixCoord3D CamDirection = cam.Direction;
@@ -161,8 +234,19 @@ namespace cours_m2G
                       MatrixCoord3D D = CanvasToVieport(x, y) * RotateMatrix.InversedMatrix();// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
                       D.Normalise();
                       Color c = Color.White;
-                      c = RayT(model, D,CamPosition);
+                      gg = "-";
+                      if (RaySphereIntersection(CamPosition, D, sphere.Item1, sphere.Item2) != double.MaxValue)
+                      { c = RayT(model, D, CamPosition);
+                          gg = "+";
+                      
+                      }
                       PictureBuff.SetPixel(x, y, c.ToArgb());
+                    //  lock(PictureBuff.locker)
+                      {
+                          x1++;
+                        //  Console.WriteLine(Convert.ToString(x1)+" "+gg);
+                      }
+
                   }
               });
             Console.WriteLine("100");
@@ -171,19 +255,22 @@ namespace cours_m2G
 
         private Color RayT(Model model, MatrixCoord3D D, MatrixCoord3D position)
         {
+
             PolygonComponent closest = null;
             double closest_t = double.MaxValue;
         //  Parallel.ForEach<PolygonComponent>(model.Polygons, p=> { 
-            foreach (PolygonComponent p in model.Polygons)
+           foreach (PolygonComponent p in model.Polygons)
             {
-
-                MatrixCoord3D tt = GetTimeAndUvCoord(position, D, p.Points[0].Coords, p.Points[1].Coords, p.Points[2].Coords);
-                if (tt != null)
-                {
-                    if (tt.X < closest_t && tt.X > 1)
+             //   if (MatrixCoord3D.scalar(p.Normal, cam.Direction) > 0)
+               {
+                    MatrixCoord3D tt = GetTimeAndUvCoord(position, D, p.Points[0].Coords, p.Points[1].Coords, p.Points[2].Coords);
+                    if (tt != null)
                     {
-                        closest_t = tt.X;
-                        closest = p;
+                        if (tt.X < closest_t && tt.X > 1)
+                        {
+                            closest_t = tt.X;
+                            closest = p;
+                        }
                     }
                 }
             }
@@ -191,6 +278,27 @@ namespace cours_m2G
             if (closest == null)
                 return Color.White;
             return closest.ColorF;
+        }
+
+        double RaySphereIntersection(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D spos, double r)
+        {
+            double t = Double.MaxValue;
+            //a == 1; // because rdir must be normalized
+            MatrixCoord3D k = rayOrigin - spos;
+            double b = MatrixCoord3D.scalar(k, rayDirection);
+            double c = MatrixCoord3D.scalar(k, k) - r * r;
+            double d = b * b - c;
+            if (d >= 0)
+            {
+                double sqrtfd = Math.Sqrt(d);
+                // t, a == 1
+                double t1 = -b + sqrtfd;
+                double t2 = -b - sqrtfd;
+                double min_t = Math.Min(t1, t2);
+                double max_t = Math.Max(t1, t2);
+                t = (min_t >= 0) ? min_t : max_t;
+            }
+            return t;
         }
 
         private const double Epsilon = 0.000001d;
@@ -297,25 +405,20 @@ namespace cours_m2G
         public async override void visit(Model model)
         {
             Console.WriteLine(Thread.CurrentThread.Name);
-            Console.WriteLine("0");
+      
             MatrixCoord3D CamPosition = cam.Position.Coords;
             MatrixTransformation3D RotateMatrix = cam.RotateMatrix;
-            PictureBuff.Filled = false;
             PictureBuff.Creator = RenderType.RAY;
 
             MatrixCoord3D D = CanvasToVieport(InPoint.X, InPoint.Y) * RotateMatrix.InversedMatrix();// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
             D.Normalise();
             find = RayT(model, D, CamPosition);
-
-
-            Console.WriteLine("100");
-            PictureBuff.Filled = true;
         }
 
         private ModelComponent RayT(Model model, MatrixCoord3D D, MatrixCoord3D position)
         {
             ModelComponent closest = null;
-            double closest_t = double.MaxValue;
+            double closest_t = double.MaxValue-1;
             //  Parallel.ForEach<PolygonComponent>(model.Polygons, p=> { 
             foreach (PolygonComponent p in model.Polygons)
             {
@@ -330,10 +433,12 @@ namespace cours_m2G
                     }
                 }
             }
-           //MatrixCoord3D f =  GetTrilinearCoordinateOfTheHit(closest_t, position, D);
+            if(closest == null)
+        
+                //MatrixCoord3D f =  GetTrilinearCoordinateOfTheHit(closest_t, position, D);
             foreach(PointComponent p in model.Points)
             {
-                double tt = RaySphereIntersection(position, D, p.Coords, p.HitRadius); 
+                double tt = RaySphereIntersection(position, D, p.Coords,1); 
                 if(tt!=null)
                 {
                     if(tt<=closest_t && tt>1)
