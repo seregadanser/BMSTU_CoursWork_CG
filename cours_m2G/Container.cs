@@ -17,6 +17,8 @@ namespace cours_m2G
         List<List<Id>> children;
         List<Id> id;
 
+        public List<T> CC { get { return components; } }
+
         public int Count { get { return components.Count; } }
 
         public Container()
@@ -139,7 +141,7 @@ namespace cours_m2G
             children.RemoveAt(index);
             return r;
         }
-      /// <summary>
+        /// <summary>
       /// 
       /// </summary>
       /// <param name="id"></param>
@@ -201,6 +203,18 @@ namespace cours_m2G
                     r.Add(id[i]);
             }
             return r;
+        }
+
+        public List<Id> GetConnectionObjects(Id id)
+        {
+            int ii = 0;
+            for (int i = 0; i < this.id.Count; i++)
+                if (id == this.id[i])
+                    ii = i;
+            List<Id> ff = new List<Id>();
+            ff.AddRange(parent[ii]);
+            ff.AddRange(children[ii]);
+            return  ff;
         }
 
         public void Clear()

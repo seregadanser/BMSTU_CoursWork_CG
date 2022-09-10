@@ -1,18 +1,19 @@
-using System.Drawing.Imaging;
 using System.Diagnostics;
 
 namespace cours_m2G
 {
-   delegate void Refresher();
-   
+    delegate void Refresher();
+
     public partial class Form1 : Form
     {
         Camera curcam;
         DrawVisitor Drawer;
         Model cub;
         FormTransform f = new FormTransform();
-        Bitmap bmp;
+       // Bitmap bmp;
         Thread renderThread;
+
+        private CancellationTokenSource _cancellation;
         public Form1()
         {
             InitializeComponent();
@@ -20,73 +21,80 @@ namespace cours_m2G
             panel2.Visible = false;
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
-         
+
             curcam = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
-            bmp = new Bitmap(pictureBox2.Width, pictureBox2.Height);
-         
+          //  bmp = new Bitmap(pictureBox2.Width, pictureBox2.Height);
+
             Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
-           
+        
             cub = new Cub(new PointComponent(0, 0, 0), 20);
             reader = new ReadVisitorCamera(curcam, pictureBox2.Size, 1);
             ObjReader er = new ObjReader(@"D:\1.obj");
-           cub = er.ReadModel();
-            PictureBuff.Init(pictureBox2.Size, bmp, new Refresher(RefreshP));
+            //   cub = er.ReadModel();
+        
+            PictureBuff.Init(pictureBox2.Size, new Refresher(RefreshP));
             renderThread = new Thread(RenderLoop);
             renderThread.Name = "drawing";
             renderThread.IsBackground = true;
-            renderThread.Start();
-        
-        }
+           renderThread.Start();
 
-        public void RenderLoop()
+        }
+        Stopwatch st = new Stopwatch();
+
+        public void RenderLoop(/*object boxedToken*/)
         {
-            Stopwatch st = new Stopwatch();
+           // var cancellationToken = (CancellationToken)boxedToken;
             int k = 0;
-          while (true)
+             while (true)//!cancellationToken.IsCancellationRequested)
             {
-               Console.WriteLine(Thread.CurrentThread.Name);
+                Console.WriteLine(Thread.CurrentThread.Name);
                 st.Start();
                 cub.action(Drawer);
-                st.Stop();
+
 
                 TimeSpan ts = st.Elapsed;
                 st.Reset();
-                // Format and display the TimeSpan value.
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
-               Console.WriteLine("RunTime " + elapsedTime);
+                Console.WriteLine("RenderTime " + elapsedTime);
                 k++;
-              ///  if(ts.Milliseconds/10<10)
-               //     Thread.Sleep(100);
+             
             }
         }
-     
+
         private void RefreshP()
         {
-            //lock (PictureBuff.locker)
-            //    PictureBuff.bmp.Save("ss.png", ImageFormat.Png);
-        
-            Console.WriteLine("refresh "+ Thread.CurrentThread.Name);
+            st.Stop();
+            st.Reset();
+            st.Start();
             Bitmap LocalBMP = new Bitmap(pictureBox2.Width, pictureBox2.Height);
             if (PictureBuff.Filled)
-                LocalBMP = Drawer.Bmp;
-          //  LocalBMP.Save("ss.png", ImageFormat.Png);
+                lock (PictureBuff.locker)
+                    LocalBMP = Drawer.Bmp;
+            //  LocalBMP.Save("ss.png", ImageFormat.Png);
             if (pictureBox2.InvokeRequired)
             {
                 pictureBox2.Invoke(new MethodInvoker(delegate
                 {
                     {
-                        Console.WriteLine("get pic");
-                        //lock (PictureBuff.locker)
+                    
+                 // lock (PictureBuff.locker)
                         pictureBox2.Image = LocalBMP;
-                        Console.WriteLine("refresh " + Thread.CurrentThread.Name);
+                   
                     }
                 }));
             }
+            st.Stop();
+            TimeSpan ts = st.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                   ts.Hours, ts.Minutes, ts.Seconds,
+                   ts.Milliseconds / 10);
+            Console.WriteLine("RefreshTime " + elapsedTime);
+            st.Reset();
             Thread.Sleep(10);
         }
-    
+
 
         private void Form1_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -95,7 +103,7 @@ namespace cours_m2G
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-     
+
 
             if (e.KeyValue == 'W')
             {
@@ -160,41 +168,32 @@ namespace cours_m2G
 
         }
 
-    
-   
+
+
 
         private void pictureBox1_Paint_1(object sender, PaintEventArgs e)
         {
-         
+
         }
 
         private void pictureBox2_Paint(object sender, PaintEventArgs e)
         {
 
         }
- 
+
         private void pictureBox_Paint()
         {
-         
-            //muljanov@mail.ru - анализ алгоритмов
-            //  Drawer.Clear();
-             // RenderLoop();
-            //    cub.action(Drawer);
 
-            //  pictureBox2.Image = Drawer.Bmp;
+            //muljanov@mail.ru - анализ алгоритмов
+
         }
-        ReadVisitorCamera reader ;
+        ReadVisitorCamera reader;
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
-            cub.DeliteActive();
-            reader.InPoint = e.Location;
-            cub.action(reader);
-            ModelComponent io = reader.Find;
-            if(io!=null)
-            cub.AddActiveComponent(io.Id);
+
         }
 
-      
+
         private void pictureBox2_Click(object sender, EventArgs e)
         {
 
@@ -205,22 +204,22 @@ namespace cours_m2G
                 if (e.Delta > 0)
                 {
                     Drawer.Scale++;
-                
+
                 }
                 else
                 {
                     Drawer.Scale--;
-             
+
                 }
             pictureBox_Paint();
             //  pictureBox2.Refresh();
         }
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
-         //   pictureBox2.Refresh();
+            //   pictureBox2.Refresh();
         }
 
-      
+
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             comboBox2.Items.Clear();
@@ -245,7 +244,7 @@ namespace cours_m2G
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-          
+
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -256,7 +255,7 @@ namespace cours_m2G
 
         private void button3_Click(object sender, EventArgs e)
         {
-            cub.DeliteActive(); 
+            cub.DeliteActive();
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -266,7 +265,7 @@ namespace cours_m2G
             panel2.Visible = false;
         }
 
-     
+
         private void button5_Click(object sender, EventArgs e)
         {
             cub = new Cub(new PointComponent(0, 0, 0), 20);
@@ -274,19 +273,19 @@ namespace cours_m2G
 
         private void button2_Click(object sender, EventArgs e)
         {
-           // Form activeform = new Form();
-           // Label[] labes = new Label[cub.ActiveComponentsId.Count];
-           // int startposx= 5, startposy=10;
-           // for (int i = 0; i < labes.Length; i++)
-           // {   
-           //     labes[i] = new Label();
-           //     labes[i].AutoSize = true;
-           //     labes[i].Text = cub.ActiveComponentsId[i].Name + " " + cub.ActiveComponentsId[i].Description;
-           //     labes[i].Location =new Point( startposx, startposy + labes[i].Size.Height * i + 1);
+            // Form activeform = new Form();
+            // Label[] labes = new Label[cub.ActiveComponentsId.Count];
+            // int startposx= 5, startposy=10;
+            // for (int i = 0; i < labes.Length; i++)
+            // {   
+            //     labes[i] = new Label();
+            //     labes[i].AutoSize = true;
+            //     labes[i].Text = cub.ActiveComponentsId[i].Name + " " + cub.ActiveComponentsId[i].Description;
+            //     labes[i].Location =new Point( startposx, startposy + labes[i].Size.Height * i + 1);
 
-           //     activeform.Controls.Add(labes[i]);
-           // }
-           //activeform.Show();
+            //     activeform.Controls.Add(labes[i]);
+            // }
+            //activeform.Show();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -370,8 +369,8 @@ namespace cours_m2G
             for (int ie = 1; ie <= max; ie++)
                 comboBox4.Items.Add(ie);
 
-            if(max>0)
-            comboBox4.SelectedIndex = 0;
+            if (max > 0)
+                comboBox4.SelectedIndex = 0;
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -386,7 +385,10 @@ namespace cours_m2G
 
         private void button10_Click(object sender, EventArgs e)
         {
-            pictureBox_Paint();
+            //renderThread = new Thread(RenderLoop);
+            //renderThread.Name = "drawing";
+            //renderThread.IsBackground = true;
+            //renderThread.Start();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -401,8 +403,38 @@ namespace cours_m2G
                 Drawer.SetRaster = 3;
             if (textBox1.Text == "ray")
                 Drawer = new DrawVisitorR(pictureBox2.Size, 1, curcam);
-            if(textBox1.Text == "raster")
+            if (textBox1.Text == "raster")
                 Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
+        }
+
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+
+        }
+
+        private void pictureBox2_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if(ModifierKeys != Keys.ShiftKey)
+                cub.DeliteActive();
+
+            reader.InPoint = e.Location;
+            cub.action(reader);
+            ModelComponent io = reader.Find;
+            if (io != null)
+            {
+                cub.GetConnectedElements(io.Id);
+                
+            }
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            Drawer.NumberofThreads = trackBar1.Value;
+        }
+
+        private void One_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

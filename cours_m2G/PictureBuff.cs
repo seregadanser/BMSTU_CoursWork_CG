@@ -9,7 +9,8 @@ namespace cours_m2G
 {
     static class PictureBuff
     {
-        static int[,] rgb;
+        static int[] rgb;
+        public static Semaphore sem;
         static Graphics g;
         public static Bitmap bmp;
         static Size screen;
@@ -18,22 +19,25 @@ namespace cours_m2G
        public static object locker = new();
         static public RenderType Creator { get; set; } = RenderType.NOCUTTER;
         public static bool Filled { get { return filled; } set { filled = value; if (value) r.Invoke(); } } 
-        public static void Init(Size screen, Bitmap bmp ,Refresher r)
+        public static void Init(Size screen,Refresher r)
         {
-            PictureBuff.bmp = bmp;
-            g = Graphics.FromImage(bmp);
+            
+          
             PictureBuff.screen = screen;
-            rgb = new int[screen.Width, screen.Height];
+            PictureBuff.bmp = new Bitmap(screen.Width, screen.Height);
+            g = Graphics.FromImage(bmp);
+            rgb = new int[screen.Width * screen.Height];
             for (int x = 0; x < screen.Width; x++)
                 for (int y = 0; y < screen.Height; y++)
-                    rgb[x, y] = -1;
+                    rgb[x+ y*screen.Width] = -1;
             PictureBuff.r = r;
             filled = false;
+            sem = new Semaphore(1, 1);
         }
 
         public static void SetPixel(int x, int y, int color)
         {
-            rgb[x, y] = color;
+            rgb[x + y * screen.Width] = color;
         }
         public static void SetLine(int x1, int y1, int x2, int y2,Color color)
         {
@@ -61,24 +65,22 @@ namespace cours_m2G
 
         public static Bitmap GetBitmap()
         {
-         //   lock(locker)
             if (Creator != RenderType.NOCUTTER)
             {
                 for (int x = 0; x < screen.Width; x++)
                     for (int y = 0; y < screen.Height; y++)
-                        bmp.SetPixelFast(x, y, Color.FromArgb(rgb[x, y]));
+                            bmp.SetPixel(x, y, Color.FromArgb(rgb[x + y * screen.Width]));
             }
-           // lock (locker)
-                return bmp;
+            return bmp;
         }
         public static void Clear()
         {
             if (Creator != RenderType.NOCUTTER)
             {
-                rgb = new int[screen.Width, screen.Height];
+                rgb = new int[screen.Width* screen.Height];
                 for (int x = 0; x < screen.Width; x++)
                     for (int y = 0; y < screen.Height; y++)
-                        rgb[x, y] = -1;
+                        rgb[x + y * screen.Width] = -1;
             }
             else
             {
