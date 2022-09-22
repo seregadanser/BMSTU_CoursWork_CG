@@ -27,7 +27,6 @@ namespace cours_m2G
         
         public virtual int Scale { get { return scale; } set { if(value>0) scale = value; } }
         public Size Screen { get { return screen; } set { screen = value; } }
-        public virtual int NumberofThreads { get; set; }
 
         public abstract TypeVisitor type { get; }
 
@@ -143,9 +142,10 @@ namespace cours_m2G
     {
         Camera cam;
         RayTraiser rayt;
-        public override int NumberofThreads { get { return rayt.NumberofThreads; } set { rayt.NumberofThreads = value; } }
+       
 
         public override Bitmap Bmp { get { return PictureBuff.GetBitmap(); } }
+        
         public DrawVisitorR(Size screen, int scale, Camera cam) : base(screen, scale)
         {
             this.cam = cam;
@@ -157,7 +157,7 @@ namespace cours_m2G
         }
         public override void visit(LineComponent line)
         {
-
+             
         }
 
         public override void visit(PolygonComponent polygon)
@@ -179,6 +179,9 @@ namespace cours_m2G
     class ReadVisitor : ScreenVisitor
     {
         public override TypeVisitor type { get; } = TypeVisitor.Reader;
+        public Point InPoint { get; set; } = new Point(0, 0);
+        protected ModelComponent find;
+        public ModelComponent Find { get { return find; } }
         public ReadVisitor(Size screen, int scale)
         {
             this.screen = screen;
@@ -209,10 +212,7 @@ namespace cours_m2G
     class ReadVisitorCamera : ReadVisitor
     {
         readonly Camera cam;
-        public Point InPoint { get; set; }
-        private ModelComponent find;
-        public ModelComponent Find{get{return find;} }
-
+   
         public ReadVisitorCamera(Camera cam, Size screen, int scale) : base(screen, scale)
         {
             this.cam = cam;

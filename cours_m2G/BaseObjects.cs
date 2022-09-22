@@ -52,7 +52,7 @@ namespace cours_m2G
             return false;
         }
     }
-
+    [Serializable]
     class Camera : IBaseObjects
     {
         public Color Color { get; set; } = Color.Black;
@@ -92,7 +92,7 @@ namespace cours_m2G
                     projection = new MatrixPerspectiveProjection(projection.Fovy, projection.Aspect, projection.N, projection.F);
             }
         }
-
+      
         public Camera(PointComponent position, MatrixCoord3D Target, MatrixCoord3D Up, MatrixProjection projection)
         {
             this.Position = position;

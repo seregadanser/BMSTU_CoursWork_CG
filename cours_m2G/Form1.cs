@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace cours_m2G
 {
@@ -8,11 +9,12 @@ namespace cours_m2G
     {
         Camera curcam;
         DrawVisitor Drawer;
+        ReadVisitor reader;
         Model cub;
-        FormTransform f = new FormTransform();
+        FormTransform f;
        // Bitmap bmp;
         Thread renderThread;
-
+        CancellationTokenSource cancelTokenSource;
         private CancellationTokenSource _cancellation;
         public Form1()
         {
@@ -23,37 +25,55 @@ namespace cours_m2G
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
 
             curcam = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
-          //  bmp = new Bitmap(pictureBox2.Width, pictureBox2.Height);
-
             Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
         
             cub = new Cub(new PointComponent(0, 0, 0), 20);
             reader = new ReadVisitorCamera(curcam, pictureBox2.Size, 1);
             ObjReader er = new ObjReader(@"D:\1.obj");
-            //   cub = er.ReadModel();
+         //   cub = er.ReadModel();
         
-            PictureBuff.Init(pictureBox2.Size, new Refresher(RefreshP));
-            renderThread = new Thread(RenderLoop);
+            PictureBuff.Init(pictureBox2.Size.Width, pictureBox2.Size.Height, new Refresher(RefreshP));
+
+            cancelTokenSource = new CancellationTokenSource();
+            renderThread = new Thread(new ParameterizedThreadStart(RenderLoop));
             renderThread.Name = "drawing";
             renderThread.IsBackground = true;
-           renderThread.Start();
+            renderThread.Start(cancelTokenSource.Token);
 
         }
+
+        //protected override void WndProc(ref Message m)
+        //{
+        //    const int WM_NCLBUTTONDBLCLK = 0x00A3;
+        //    const int WM_LBUTTONDOWN = 0x0201;
+        //    base.WndProc(ref m);
+        //    Console.WriteLine(m);
+        //    switch (m.Msg)
+        //    {
+        //        case WM_NCLBUTTONDBLCLK:
+        //            MessageBox.Show("Произошел двойной щелчок вне клиентской области");
+        //            return;
+        //        case WM_LBUTTONDOWN:
+        //            MessageBox.Show("Произошел щелчок вне клиентской области");
+        //            return;
+        //    }
+        //}
+        #region Render
         Stopwatch st = new Stopwatch();
-
-        public void RenderLoop(/*object boxedToken*/)
+        Stopwatch st1 = new Stopwatch();
+        public void RenderLoop(object boxedToken)
         {
-           // var cancellationToken = (CancellationToken)boxedToken;
+           
+             var cancellationToken = (CancellationToken)boxedToken;
             int k = 0;
-             while (true)//!cancellationToken.IsCancellationRequested)
+             while (!cancellationToken.IsCancellationRequested)
             {
-                Console.WriteLine(Thread.CurrentThread.Name);
-                st.Start();
+             
+                st1.Start();
                 cub.action(Drawer);
+                TimeSpan ts = st1.Elapsed;
+                st1.Reset();
 
-
-                TimeSpan ts = st.Elapsed;
-                st.Reset();
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
@@ -62,49 +82,46 @@ namespace cours_m2G
              
             }
         }
-
+        public object locker = new();
         private void RefreshP()
         {
-            st.Stop();
+            st1.Stop();
             st.Reset();
             st.Start();
-            Bitmap LocalBMP = new Bitmap(pictureBox2.Width, pictureBox2.Height);
-            if (PictureBuff.Filled)
-                lock (PictureBuff.locker)
-                    LocalBMP = Drawer.Bmp;
-            //  LocalBMP.Save("ss.png", ImageFormat.Png);
-            if (pictureBox2.InvokeRequired)
+            lock (locker)
             {
-                pictureBox2.Invoke(new MethodInvoker(delegate
+                Bitmap LocalBMP = new Bitmap(pictureBox2.Width, pictureBox2.Height);
+                if (PictureBuff.Filled)
+                    LocalBMP = Drawer.Bmp;
+                //  LocalBMP.Save("ss.png", ImageFormat.Png);
+                if (pictureBox2.InvokeRequired)
                 {
+                    pictureBox2.Invoke(new MethodInvoker(delegate
                     {
-                    
-                 // lock (PictureBuff.locker)
-                        pictureBox2.Image = LocalBMP;
-                   
-                    }
-                }));
+                        {
+
+                            {
+                                pictureBox2.Image = LocalBMP;
+                            }
+
+
+                        }
+                    }));
+                }
             }
             st.Stop();
             TimeSpan ts = st.Elapsed;
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                    ts.Hours, ts.Minutes, ts.Seconds,
                    ts.Milliseconds / 10);
-            Console.WriteLine("RefreshTime " + elapsedTime);
+           Console.WriteLine("RefreshTime " + elapsedTime);
             st.Reset();
             Thread.Sleep(10);
         }
-
-
-        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-
-        }
-
+        #endregion
+        #region SceneActions
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-
-
             if (e.KeyValue == 'W')
             {
                 curcam.Move(CameraDirection.FORWARD, 5);
@@ -129,7 +146,6 @@ namespace cours_m2G
             {
                 curcam.Move(CameraDirection.DOWN, 5);
             }
-
             if (e.KeyValue == 'Z')
             {
                 curcam.Move(CameraDirection.ROTATIONY, 1);
@@ -154,14 +170,127 @@ namespace cours_m2G
             {
                 curcam.Move(CameraDirection.PICH, -1);
             }
-
-            label1.Text = Convert.ToString(curcam.Position.Z);
-            label2.Text = Convert.ToString(curcam.Direction.Z);
-            //Refresh();
-            pictureBox1.Refresh();
-            pictureBox_Paint();
-            //  pictureBox2.Refresh();
         }
+        private void pictureBox2_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (ModifierKeys == Keys.Control)
+                if (e.Delta > 0)
+                {
+                    Drawer.Scale++;
+                }
+                else
+                {
+                    Drawer.Scale--;
+                }
+        }
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox1.Text == "nc")
+                Drawer.SetRaster = 0;
+            if (textBox1.Text == "nt")
+                Drawer.SetRaster = 1;
+            if (textBox1.Text == "np")
+                Drawer.SetRaster = 2;
+            if (textBox1.Text == "b")
+                Drawer.SetRaster = 3;
+            if (textBox1.Text == "ray")
+                Drawer = new DrawVisitorR(pictureBox2.Size, 1, curcam);
+            if (textBox1.Text == "raster")
+                Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
+        }
+        private void button11_Click(object sender, EventArgs e)
+        {
+            cancelTokenSource.Cancel();
+        }
+        private void button12_Click(object sender, EventArgs e)
+        {
+            cancelTokenSource = new CancellationTokenSource();
+            renderThread = new Thread(new ParameterizedThreadStart(RenderLoop));
+            renderThread.Name = "drawing";
+            renderThread.IsBackground = true;
+            renderThread.Start(cancelTokenSource.Token);
+        }
+        #endregion
+        #region ObjectChoose
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            if (ModifierKeys != Keys.ShiftKey)
+            {
+                cub.DeliteActive();
+                panel2.Visible = false;
+                button6.Visible = true;
+            }
+
+            MouseEventArgs ee = (MouseEventArgs)e;
+
+            reader.InPoint = ee.Location;
+            cub.action(reader);
+            ModelComponent io = reader.Find;
+            if (io != null)
+            {
+                SetActiveWindow(cub.GetConnectedElements(io.Id), io.Id);
+            }
+            else
+            {
+                DelActiveWindow();
+            }
+        }
+        private void SetActiveWindow(List<Id> ids, Id ci)
+        {
+            comboBox5.Items.Clear();
+            comboBox5.Items.Add(ci.ToString());
+            foreach (Id i in ids)
+                comboBox5.Items.Add(i.ToString());
+            comboBox5.SelectedIndex = 0;
+        }
+        private void DelActiveWindow()
+        {
+            comboBox5.Text = "";
+            comboBox5.Items.Clear();
+
+        }
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string g = comboBox5.Text;
+            if (g != "")
+            {
+                string[] g1 = g.Split(new char[] { ' ' });
+                Id id = new Id(g1[0], g1[1]);
+                cub.AddActiveComponent(id);
+                panel2.Visible = true;
+                button6.Visible = false;
+            }
+        }
+        private void button8_Click(object sender, EventArgs e)
+        {
+            string g = comboBox5.Text;
+            if (g != "")
+            {
+                string[] g1 = g.Split(new char[] { ' ' });
+                Id id = new Id(g1[0], g1[1]);
+
+                cub.RemovebyId(id);
+                comboBox5.Text = "";
+                comboBox5.Items.Clear();
+                panel2.Visible = false;
+                button6.Visible = true;
+            }
+        }
+        private void button7_Click(object sender, EventArgs e)
+        {
+            cub.DeliteActive();
+            button6.Visible = true;
+            panel2.Visible = false;
+        }
+        #endregion
+
+
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+        }
+
+ 
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -187,32 +316,10 @@ namespace cours_m2G
             //muljanov@mail.ru - анализ алгоритмов
 
         }
-        ReadVisitorCamera reader;
+      
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
 
-        }
-
-
-        private void pictureBox2_Click(object sender, EventArgs e)
-        {
-
-        }
-        private void pictureBox2_MouseWheel(object sender, MouseEventArgs e)
-        {
-            if (ModifierKeys == Keys.Control)
-                if (e.Delta > 0)
-                {
-                    Drawer.Scale++;
-
-                }
-                else
-                {
-                    Drawer.Scale--;
-
-                }
-            pictureBox_Paint();
-            //  pictureBox2.Refresh();
         }
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
@@ -273,19 +380,7 @@ namespace cours_m2G
 
         private void button2_Click(object sender, EventArgs e)
         {
-            // Form activeform = new Form();
-            // Label[] labes = new Label[cub.ActiveComponentsId.Count];
-            // int startposx= 5, startposy=10;
-            // for (int i = 0; i < labes.Length; i++)
-            // {   
-            //     labes[i] = new Label();
-            //     labes[i].AutoSize = true;
-            //     labes[i].Text = cub.ActiveComponentsId[i].Name + " " + cub.ActiveComponentsId[i].Description;
-            //     labes[i].Location =new Point( startposx, startposy + labes[i].Size.Height * i + 1);
 
-            //     activeform.Controls.Add(labes[i]);
-            // }
-            //activeform.Show();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -293,88 +388,9 @@ namespace cours_m2G
 
         }
 
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            comboBox4.Items.Clear();
-            int max = 0;
-            switch (comboBox3.SelectedItem)
-            {
-                case "Point":
-                    max = cub.NumberPoints;
-                    break;
-                case "Line":
-                    max = cub.NumberLines;
-                    break;
-                case "Polygon":
-                    max = cub.NumberPolygons;
-                    break;
-            }
-            for (int i = 1; i <= max; i++)
-                comboBox4.Items.Add(i);
-
-            comboBox4.SelectedIndex = 0;
-        }
-
-        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            cub.AddActiveComponent(Convert.ToString(comboBox3.SelectedItem), Convert.ToInt32(comboBox4.SelectedItem));
-            panel2.Visible = true;
-            button6.Visible = false;
-        }
-
-        private void button7_Click(object sender, EventArgs e)
-        {
-            cub.DeliteActive();
-            button6.Visible = true;
-            panel2.Visible = false;
-        }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-            Id i = new Id(comboBox3.SelectedItem.ToString(), cub.ActiveComponentsId[0].Description);
-            cub.DeliteActive();
-            switch (comboBox3.SelectedItem)
-            {
-                case "Point":
-                    cub.RemovePoint(i);
-                    break;
-                case "Line":
-                    cub.RemoveLine(i);
-                    break;
-                case "Polygon":
-                    cub.RemovePolygon(i);
-                    break;
-            }
-            panel2.Visible = false;
-            button6.Visible = true;
-            comboBox4.Items.Clear();
-            int max = 0;
-            switch (comboBox3.SelectedItem)
-            {
-                case "Point":
-                    max = cub.NumberPoints;
-                    break;
-                case "Line":
-                    max = cub.NumberLines;
-                    break;
-                case "Polygon":
-                    max = cub.NumberPolygons;
-                    break;
-            }
-            for (int ie = 1; ie <= max; ie++)
-                comboBox4.Items.Add(ie);
-
-            if (max > 0)
-                comboBox4.SelectedIndex = 0;
-        }
-
         private void button4_Click(object sender, EventArgs e)
         {
+            f = new FormTransform();
             f.Show();
         }
 
@@ -382,6 +398,7 @@ namespace cours_m2G
         {
             cub.action(f.transformvisitor);
         }
+
 
         private void button10_Click(object sender, EventArgs e)
         {
@@ -391,21 +408,6 @@ namespace cours_m2G
             //renderThread.Start();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            if (textBox1.Text == "nc")
-                Drawer.SetRaster = 0;
-            if (textBox1.Text == "nt")
-                Drawer.SetRaster = 1;
-            if (textBox1.Text == "np")
-                Drawer.SetRaster = 2;
-            if (textBox1.Text == "b")
-                Drawer.SetRaster = 3;
-            if (textBox1.Text == "ray")
-                Drawer = new DrawVisitorR(pictureBox2.Size, 1, curcam);
-            if (textBox1.Text == "raster")
-                Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
-        }
 
         private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
@@ -414,27 +416,38 @@ namespace cours_m2G
 
         private void pictureBox2_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if(ModifierKeys != Keys.ShiftKey)
-                cub.DeliteActive();
+            //if(ModifierKeys != Keys.ShiftKey)
+            //    cub.DeliteActive();
 
-            reader.InPoint = e.Location;
-            cub.action(reader);
-            ModelComponent io = reader.Find;
-            if (io != null)
-            {
-                cub.GetConnectedElements(io.Id);
-                
-            }
+            //reader.InPoint = e.Location;
+            //cub.action(reader);
+            //ModelComponent io = reader.Find;
+            //if (io != null)
+            //{
+            //  SetActiveWindow(cub.GetConnectedElements(io.Id));
+            //}
         }
 
+    
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            Drawer.NumberofThreads = trackBar1.Value;
         }
 
         private void One_Click(object sender, EventArgs e)
         {
 
         }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        {
+         
+        }
+
+       
     }
 }

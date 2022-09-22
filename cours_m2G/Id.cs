@@ -32,6 +32,11 @@ namespace cours_m2G
                 return false;
             return true;
         }
+
+        public override string ToString()
+        {
+            return Name + " " + description;
+        }
     }
 
     enum MatrixType { Rotate, Scale, Translate, Perspective, Orto }

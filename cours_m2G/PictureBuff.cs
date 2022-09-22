@@ -9,7 +9,7 @@ namespace cours_m2G
 {
     static class PictureBuff
     {
-        static int[] rgb;
+        public static int[] rgb;
         public static Semaphore sem;
         static Graphics g;
         public static Bitmap bmp;
@@ -18,13 +18,13 @@ namespace cours_m2G
         static bool filled;
        public static object locker = new();
         static public RenderType Creator { get; set; } = RenderType.NOCUTTER;
-        public static bool Filled { get { return filled; } set { filled = value; if (value) r.Invoke(); } } 
-        public static void Init(Size screen,Refresher r)
+        public static bool Filled { get { return filled; } set { filled = value; if (value) r.Invoke();} } 
+        public static void Init(int W, int H,Refresher r)
         {
             
           
-            PictureBuff.screen = screen;
-            PictureBuff.bmp = new Bitmap(screen.Width, screen.Height);
+            PictureBuff.screen = new Size(W, H);
+            bmp = new Bitmap(screen.Width, screen.Height);
             g = Graphics.FromImage(bmp);
             rgb = new int[screen.Width * screen.Height];
             for (int x = 0; x < screen.Width; x++)
@@ -32,7 +32,7 @@ namespace cours_m2G
                     rgb[x+ y*screen.Width] = -1;
             PictureBuff.r = r;
             filled = false;
-            sem = new Semaphore(1, 1);
+        
         }
 
         public static void SetPixel(int x, int y, int color)
@@ -43,7 +43,11 @@ namespace cours_m2G
         {
             Pen pen = new Pen(color, 4);
             lock (locker)
-                g.DrawLine(pen, x1, y1, x2, y2);
+                try
+                {
+                    g.DrawLine(pen, x1, y1, x2, y2);
+                }
+                catch { }
 
         }
         public static void SetPoint(MatrixCoord3D p1, int HitRadius,Color color)
@@ -65,11 +69,12 @@ namespace cours_m2G
 
         public static Bitmap GetBitmap()
         {
+            
             if (Creator != RenderType.NOCUTTER)
             {
                 for (int x = 0; x < screen.Width; x++)
                     for (int y = 0; y < screen.Height; y++)
-                            bmp.SetPixel(x, y, Color.FromArgb(rgb[x + y * screen.Width]));
+                        bmp.SetPixel(x, y, Color.FromArgb(rgb[x + y * screen.Width])); 
             }
             return bmp;
         }

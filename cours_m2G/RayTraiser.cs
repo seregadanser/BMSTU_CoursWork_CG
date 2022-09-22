@@ -19,17 +19,19 @@ namespace cours_m2G
             this.scale = scale;
         }
 
-        public void RayTrasing(Model model)
+        public virtual void RayTrasing(Model model)
         {
             Tuple<MatrixCoord3D, double> sphere = FoundCenter(model.Points);
             MatrixCoord3D CamPosition = cam.Position.Coords;
             MatrixTransformation3D RotateMatrix = cam.RotateMatrix.InversedMatrix();
+            double aspect = screen.Width / screen.Height;
+            double field = Math.Tan(cam.Fovy / 2 * Math.PI / 180.0f);
 
             Parallel.For(0, screen.Width, x =>
             {
                 for (int y = 0; y < screen.Height; y++)
                 {
-                    MatrixCoord3D D = CanvasToVieport(x, y) * RotateMatrix;// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
+                    MatrixCoord3D D = CanvasToVieport(x, y, aspect, field) * RotateMatrix;// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
                     D.Normalise();
                     Color c = Color.White;
                     if (RaySphereIntersection(CamPosition, D, sphere.Item1, sphere.Item2) != double.MaxValue)
@@ -102,7 +104,7 @@ namespace cours_m2G
 
             return new Tuple<MatrixCoord3D, double>(position, r);
         }
-        double RaySphereIntersection(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D spos, double r)
+       private double RaySphereIntersection(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D spos, double r)
         {
             double t = Double.MaxValue;
             //a == 1; // because rdir must be normalized
@@ -125,7 +127,7 @@ namespace cours_m2G
 
         private const double Epsilon = 0.000001d;
 
-        public MatrixCoord3D? GetTimeAndUvCoord(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D vert0, MatrixCoord3D vert1, MatrixCoord3D vert2)
+        private MatrixCoord3D? GetTimeAndUvCoord(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D vert0, MatrixCoord3D vert1, MatrixCoord3D vert2)
         {
             var edge1 = vert1 - vert0;
             var edge2 = vert2 - vert0;
@@ -164,18 +166,16 @@ namespace cours_m2G
             return new MatrixCoord3D(t, u, v);
         }
 
-        public MatrixCoord3D GetTrilinearCoordinateOfTheHit(float t, MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection)
+        private MatrixCoord3D GetTrilinearCoordinateOfTheHit(float t, MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection)
         {
             return rayDirection * t + rayOrigin;
         }
 
-        private MatrixCoord3D CanvasToVieport(int x, int y)
+        private MatrixCoord3D CanvasToVieport(int x, int y, double aspect, double fov)
         {
-            double aspectRatio = screen.Width / screen.Height;
-            double fieldOfView = Math.Tan(cam.Fovy / 2 * Math.PI / 180.0f);
 
-            double fx = aspectRatio * fieldOfView * (2 * ((x + 0.5f) / screen.Width) - 1);
-            double fy = (1 - (2 * (y + 0.5f) / screen.Height)) * fieldOfView;
+            double fx = aspect * fov * (2 * ((x + 0.5f) / screen.Width) - 1);
+            double fy = (1 - (2 * (y + 0.5f) / screen.Height)) * fov;
 
             return new MatrixCoord3D(fx / scale, fy / scale, -1);
         }
@@ -196,7 +196,7 @@ namespace cours_m2G
             this.scale = scale;
         }
 
-        public new void RayTrasing(Model model)
+        public override void RayTrasing(Model model)
         {
 
             Tuple<MatrixCoord3D, double> sphere = FoundCenter(model.Points);
@@ -266,7 +266,8 @@ namespace cours_m2G
                 return Color.White;
             return closest.ColorF;
         }
-        private Tuple<MatrixCoord3D, double> FoundCenter(Container<PointComponent> points)
+
+        protected Tuple<MatrixCoord3D, double> FoundCenter(Container<PointComponent> points)
         {
             double minX, maxX, minY, maxY, minZ, maxZ;
             minX = points[0].X;
@@ -301,7 +302,7 @@ namespace cours_m2G
 
             return new Tuple<MatrixCoord3D, double>(position, r);
         }
-        double RaySphereIntersection(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D spos, double r)
+        protected double RaySphereIntersection(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D spos, double r)
         {
             double t = Double.MaxValue;
             //a == 1; // because rdir must be normalized
@@ -321,8 +322,10 @@ namespace cours_m2G
             }
             return t;
         }
+
         private const double Epsilon = 0.000001d;
-        private new MatrixCoord3D? GetTimeAndUvCoord(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D vert0, MatrixCoord3D vert1, MatrixCoord3D vert2)
+
+        protected MatrixCoord3D? GetTimeAndUvCoord(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D vert0, MatrixCoord3D vert1, MatrixCoord3D vert2)
         {
             var edge1 = vert1 - vert0;
             var edge2 = vert2 - vert0;
@@ -360,17 +363,21 @@ namespace cours_m2G
 
             return new MatrixCoord3D(t, u, v);
         }
-        private MatrixCoord3D GetTrilinearCoordinateOfTheHit(float t, MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection)
+
+        protected MatrixCoord3D GetTrilinearCoordinateOfTheHit(float t, MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection)
         {
             return rayDirection * t + rayOrigin;
         }
-        private MatrixCoord3D CanvasToVieport(int x, int y, double aspect, double field)
+
+        protected MatrixCoord3D CanvasToVieport(int x, int y, double aspect, double fov)
         {
-            double fx = aspect * field * (2 * ((x + 0.5f) / screen.Width) - 1);
-            double fy = (1 - (2 * (y + 0.5f) / screen.Height)) * field;
+
+            double fx = aspect * fov * (2 * ((x + 0.5f) / screen.Width) - 1);
+            double fy = (1 - (2 * (y + 0.5f) / screen.Height)) * fov;
 
             return new MatrixCoord3D(fx / scale, fy / scale, -1);
         }
+
 
         class Limit
         {

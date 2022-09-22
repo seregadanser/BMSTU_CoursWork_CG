@@ -186,7 +186,7 @@ namespace cours_m2G
                     RemoveLine(id);
                     break;
                 case "Polygon":
-                    RemoveLine(id);
+                    RemovePolygon(id);
                     break;
             }
         }

@@ -20,6 +20,7 @@ namespace cours_m2G
         public List<T> CC { get { return components; } }
 
         public int Count { get { return components.Count; } }
+        public List<Id> Id { get { return id; } }
 
         public Container()
         {

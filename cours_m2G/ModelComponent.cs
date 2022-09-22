@@ -87,16 +87,16 @@ namespace cours_m2G
 
         public static bool operator ==(PointComponent p1, PointComponent p2)
         {
-            if (p1.id == p2.id)
+            if (p1.X == p2.X && p1.Y == p2.Y && p1.Z == p2.Z)
                 return true;
             return false;
         }
 
         public static bool operator !=(PointComponent p1, PointComponent p2)
         {
-            if (p1.id!=p2.id)
-                return true;
-            return false;
+            if (p1==p2)
+                return false;
+            return true;
         }
         public override bool Equals(object obj)
         {
