@@ -259,9 +259,13 @@ namespace cours_m2G
             {
                 string[] g1 = g.Split(new char[] { ' ' });
                 Id id = new Id(g1[0], g1[1]);
-               
-               if( f1.AddActive(id, cub.GetConnectedElements(id)))
-                  cub.AddActiveComponent(id);
+
+                if (cub.AddActiveComponent(id))
+                {
+                    f1.Del();
+                    foreach (Id i in cub.ActiveComponentsId)
+                        f1.AddActive(i);
+                }
             }
             DelActiveWindow();
             button6.Visible = false;
@@ -283,7 +287,7 @@ namespace cours_m2G
             f1 = new ActiveElementsForm(new Action(DelitFromModel), new Action(DelitFromActive), new CallBack(ShowActiveElemButton));
             
             foreach (Id i in cub.ActiveComponentsId)
-                f1.AddActive(i, cub.GetConnectedElements(i));
+                f1.AddActive(i);
             f1.Show();
             button13.Visible = false;
         }

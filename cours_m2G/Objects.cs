@@ -26,10 +26,13 @@ namespace cours_m2G
                 color = value;
             }
         }
+        public int Count { get { return activeComponents.Count; } }
 
         List<IObjects> activeComponents;
         List<Id> activeComponentsId;
         List<List<Id>> parents, childeren;
+
+        public List<Id> ActiveComponentsId { get { return activeComponentsId; } }
 
         public ActiveElements()
         {
@@ -55,7 +58,7 @@ namespace cours_m2G
                 foreach (Id id in childeren[i])
                     if (id == eid)
                         return false;
-            for (int i = 0; i < activeComponents.Count; i++)
+            for (int i = activeComponents.Count -1; i> -1; i--)
                 foreach (Id id in parents[i])
                     if (id == eid)
                     {
@@ -123,20 +126,15 @@ namespace cours_m2G
         public int NumberLines { get { return lines.Count; } }
         public int NumberPolygons { get { return polygons.Count; } }
 
-        Container<PointComponent> activeComponents;
-        List<IObjects> activeComponentsParents;
-        List<Id> activeComponentsId;
-
-        public List<Id> ActiveComponentsId { get { return activeComponentsId; } }
+        ActiveElements active;
+        public List<Id> ActiveComponentsId { get { return active.ActiveComponentsId; } }
 
         public Model()
         {
             points = new Container<PointComponent>();
             lines = new Container<LineComponent>();
             polygons = new Container<PolygonComponent>();
-            activeComponents = new Container<PointComponent>();
-            activeComponentsParents = new List<IObjects>();
-            activeComponentsId = new List<Id>();
+            active = new ActiveElements();
         }
 
         public void action(IVisitor visitor)
@@ -147,101 +145,51 @@ namespace cours_m2G
                 return;
             }
 
-            if (activeComponents.Count > 0 )
-                foreach (PointComponent i in activeComponents)
-                    i.action(visitor);
+            if (active.Count > 0)
+                active.action(visitor);
             else
             {
-               visitor.visit(this);
+                visitor.visit(this);
             }
         }
 
-        public void AddActiveComponent(string what, int what1)
-        { 
-            int i = -1;
-            switch (what)
-            {
-                case "Point":
-                    activeComponents.Add(points[what1 - 1], points[what1 - 1].Id, points[what1 - 1].Id);
-                    activeComponentsParents.Add(points[what1 - 1]);
-                    activeComponentsId.Add(points[what1 - 1].Id);
-                    points[what1 - 1].Color = Color.Red;
-                    break;
-                case "Line":
-                    activeComponents.Add(lines[what1 - 1].Point1, lines[what1 - 1].Point1.Id, lines[what1 - 1].Id);
-                    activeComponents.Add(lines[what1 - 1].Point2, lines[what1 - 1].Point2.Id,lines[what1 - 1].Id);
-                    activeComponentsParents.Add(lines[what1 - 1]);
-                    activeComponentsId.Add(lines[what1 - 1].Id);
-                    lines[what1 - 1].Color = Color.Red;
-                    break;
-                case "Polygon":
-                    activeComponents.Add(polygons[what1 - 1].Points[0], polygons[what1 - 1].Points[0].Id, polygons[what1 - 1].Id);
-                    activeComponents.Add(polygons[what1 - 1].Points[1], polygons[what1 - 1].Points[1].Id, polygons[what1 - 1].Id);
-                    activeComponents.Add(polygons[what1 - 1].Points[2], polygons[what1 - 1].Points[2].Id, polygons[what1 - 1].Id);
-                    activeComponentsParents.Add(polygons[what1 - 1]);
-                    activeComponentsId.Add(polygons[what1 - 1].Id);
-                    polygons[what1 - 1].Color = Color.Red;
-                    break;
-            }
-        }
+      
 
-        public void AddActiveComponent(Id id)
+        public bool AddActiveComponent(Id id)
         {
-            int i = -1;
             switch (id.Name)
             {
                 case "Point":
-                    activeComponents.Add(points[id], points[id].Id, points[id].Id);
-                    activeComponentsParents.Add(points[id]);
-                    activeComponentsId.Add(points[id].Id);
-                    points[id].Color = Color.Red;
+                    foreach(IObjects i in points)
+                        if(i.Id == id)
+                        {
+                         return  active.AddElement(i, points.GetParents(id), points.GetChildren(id));
+                        }
                     break;
                 case "Line":
-                    activeComponents.Add(lines[id].Point1, lines[id].Point1.Id, lines[id].Id);
-                    activeComponents.Add(lines[id].Point2, lines[id].Point2.Id, lines[id].Id);
-                    activeComponentsParents.Add(lines[id]);
-                    activeComponentsId.Add(lines[id].Id);
-                    lines[id].Color = Color.Red;
+                    foreach (IObjects i in lines)
+                        if (i.Id == id)
+                        {
+                          return  active.AddElement(i, lines.GetParents(id), lines.GetChildren(id));
+                        }
                     break;
                 case "Polygon":
-                    activeComponents.Add(polygons[id].Points[0], polygons[id].Points[0].Id, polygons[id].Id);
-                    activeComponents.Add(polygons[id].Points[1], polygons[id].Points[1].Id, polygons[id].Id);
-                    activeComponents.Add(polygons[id].Points[2], polygons[id].Points[2].Id, polygons[id].Id);
-                    activeComponentsParents.Add(polygons[id]);
-                    activeComponentsId.Add(polygons[id].Id);
-                    polygons[id].Color = Color.Red;
+                    foreach (IObjects i in polygons)
+                        if (i.Id == id)
+                        {
+                           return active.AddElement(i, polygons.GetParents(id), polygons.GetChildren(id));
+                        }
                     break;
             }
+            return false;
         }
         public void DeliteActive()
         {
-           for (int j = activeComponents.Count-1; j >= 0; j--)
-            {
-               Tuple<List<Id>,List<Id> > w = activeComponents.Remove(j);
-            }
-            foreach (IObjects i in activeComponentsParents)
-                i.Color = Color.Black;
-            activeComponentsParents.Clear();
-            activeComponentsId.Clear();
+            active.ClearElements();
         }
         public void DeliteActive(Id id)
         {
-            List<Id> r = activeComponents.RemoveParent(id);
-            foreach (Id i in r)
-            {
-                activeComponents.Remove(i);
-            }
-            activeComponentsId.Remove(id);
-
-            for (int i = 0; i < activeComponentsParents.Count; i++)
-            {
-                if (activeComponentsParents[i].Id == id)
-                {
-                    activeComponentsParents[i].Color = Color.Black;
-                    activeComponentsParents.RemoveAt(i);
-                    return;
-                }
-            }
+            active.RemoveElement(id);
         }
 
         public List<Id> GetConnectedElements(Id id)

@@ -15,7 +15,6 @@ namespace cours_m2G
     partial class ActiveElementsForm : Form
     {
         List<Elem> elements;
-        List<List<Id>> forbiden_elems;
         Action CallBack_Remove, CalBack_Delit;
         CallBack call;
         public ActiveElementsForm(Action remove, Action delite, CallBack call)
@@ -25,7 +24,7 @@ namespace cours_m2G
             CalBack_Delit = delite;
             this.call = call;
             elements = new List<Elem>();
-            forbiden_elems = new List<List<Id>>();
+
         }
 
         private void ActiveElementsForm_Load(object sender, EventArgs e)
@@ -40,9 +39,16 @@ namespace cours_m2G
                 {
                     TableLayoutHelper.RemoveArbitraryRow(tableLayoutPanel1, i);
                     elements.RemoveAt(i);
-                    forbiden_elems.RemoveAt(i);
                     return;
                 }
+        }
+
+        public void Del()
+        {
+            while (tableLayoutPanel1.Controls.Count > 0)
+            {
+                tableLayoutPanel1.Controls[0].Dispose();
+            }
         }
 
         private void ActiveElementsForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -50,18 +56,10 @@ namespace cours_m2G
             call.Invoke();
         }
 
-        public bool AddActive(Id id, List<Id> forbiden_elems1)
+        public bool AddActive(Id id)
         {
-            for (int i = 0; i < elements.Count; i++)
-                if (elements[i].id == id)
-                    return false;
-            for (int i = 0; i < forbiden_elems.Count; i++)
-                for (int j = 0; j < forbiden_elems[i].Count; j++)
-                    if (forbiden_elems[i][j] == id)
-                        return false;
             tableLayoutPanel1.RowCount++;
             elements.Add(new Elem(id, elements.Count, tableLayoutPanel1, CallBack_Remove, CalBack_Delit, new calback(Update1)));
-            forbiden_elems.Add(forbiden_elems1);
             return true;
         }
     }
