@@ -1,9 +1,12 @@
 using System.Diagnostics;
+using System.Text;
 using System.Windows.Forms;
 
 namespace cours_m2G
 {
     delegate void Refresher();
+    delegate void Action(Id id);
+    delegate void CallBack();
 
     public partial class Form1 : Form
     {
@@ -12,6 +15,7 @@ namespace cours_m2G
         ReadVisitor reader;
         Model cub;
         FormTransform f;
+        ActiveElementsForm f1;
        // Bitmap bmp;
         Thread renderThread;
         CancellationTokenSource cancelTokenSource;
@@ -20,7 +24,7 @@ namespace cours_m2G
         {
             InitializeComponent();
             KeyPreview = true;
-            panel2.Visible = false;
+          
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
 
@@ -40,6 +44,7 @@ namespace cours_m2G
             renderThread.IsBackground = true;
             renderThread.Start(cancelTokenSource.Token);
 
+            f1 = new ActiveElementsForm(new Action(DelitFromModel), new Action(DelitFromActive), new CallBack(ShowActiveElemButton));
         }
 
         //protected override void WndProc(ref Message m)
@@ -120,6 +125,10 @@ namespace cours_m2G
         }
         #endregion
         #region SceneActions
+        private void ShowActiveElemButton()
+        {
+            button13.Visible = true;
+        }
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyValue == 'W')
@@ -214,15 +223,7 @@ namespace cours_m2G
         #region ObjectChoose
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            if (ModifierKeys != Keys.ShiftKey)
-            {
-                cub.DeliteActive();
-                panel2.Visible = false;
-                button6.Visible = true;
-            }
-
             MouseEventArgs ee = (MouseEventArgs)e;
-
             reader.InPoint = ee.Location;
             cub.action(reader);
             ModelComponent io = reader.Find;
@@ -237,6 +238,7 @@ namespace cours_m2G
         }
         private void SetActiveWindow(List<Id> ids, Id ci)
         {
+            button6.Visible = true;
             comboBox5.Items.Clear();
             comboBox5.Items.Add(ci.ToString());
             foreach (Id i in ids)
@@ -247,40 +249,43 @@ namespace cours_m2G
         {
             comboBox5.Text = "";
             comboBox5.Items.Clear();
-
+            
         }
         private void button6_Click(object sender, EventArgs e)
         {
+           
             string g = comboBox5.Text;
             if (g != "")
             {
                 string[] g1 = g.Split(new char[] { ' ' });
                 Id id = new Id(g1[0], g1[1]);
-                cub.AddActiveComponent(id);
-                panel2.Visible = true;
-                button6.Visible = false;
+               
+               if( f1.AddActive(id, cub.GetConnectedElements(id)))
+                  cub.AddActiveComponent(id);
             }
+            DelActiveWindow();
+            button6.Visible = false;
         }
-        private void button8_Click(object sender, EventArgs e)
-        {
-            string g = comboBox5.Text;
-            if (g != "")
-            {
-                string[] g1 = g.Split(new char[] { ' ' });
-                Id id = new Id(g1[0], g1[1]);
 
-                cub.RemovebyId(id);
-                comboBox5.Text = "";
-                comboBox5.Items.Clear();
-                panel2.Visible = false;
-                button6.Visible = true;
-            }
-        }
-        private void button7_Click(object sender, EventArgs e)
+        private void DelitFromModel(Id id)
         {
-            cub.DeliteActive();
-            button6.Visible = true;
-            panel2.Visible = false;
+                DelitFromActive(id);
+                cub.RemovebyId(id);
+        }
+        private void DelitFromActive(Id id)
+        {
+            cub.DeliteActive(id);
+        }
+
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            f1 = new ActiveElementsForm(new Action(DelitFromModel), new Action(DelitFromActive), new CallBack(ShowActiveElemButton));
+            
+            foreach (Id i in cub.ActiveComponentsId)
+                f1.AddActive(i, cub.GetConnectedElements(i));
+            f1.Show();
+            button13.Visible = false;
         }
         #endregion
 
@@ -290,15 +295,10 @@ namespace cours_m2G
 
         }
 
- 
-
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
-
-
-
 
         private void pictureBox1_Paint_1(object sender, PaintEventArgs e)
         {
@@ -327,50 +327,11 @@ namespace cours_m2G
         }
 
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            comboBox2.Items.Clear();
-            int max = 0;
-            switch (comboBox1.SelectedItem)
-            {
-                case "Point":
-                    max = cub.NumberPoints;
-                    break;
-                case "Line":
-                    max = cub.NumberLines;
-                    break;
-                case "Polygon":
-                    max = cub.NumberPolygons;
-                    break;
-            }
-            for (int i = 1; i <= max; i++)
-                comboBox2.Items.Add(i);
-
-            comboBox2.SelectedIndex = 0;
-        }
-
+   
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-        }
-
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            cub.AddActiveComponent(Convert.ToString(comboBox1.SelectedItem), Convert.ToInt32(comboBox2.SelectedItem));
-            pictureBox2.Refresh();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            cub.DeliteActive();
-        }
-
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            cub.DeliteActive();
-            button6.Visible = true;
-            panel2.Visible = false;
-        }
+        } 
 
 
         private void button5_Click(object sender, EventArgs e)
@@ -448,6 +409,6 @@ namespace cours_m2G
          
         }
 
-       
+      
     }
 }

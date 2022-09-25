@@ -13,6 +13,89 @@ namespace cours_m2G
         public abstract void action(IVisitor visitor);
     }
 
+    class ActiveElements : IObjects
+    {
+        Color color = Color.Black;
+        public Id Id { get; set; }
+        public Color Color
+        {
+            get
+            { return color; }
+            set
+            {
+                color = value;
+            }
+        }
+
+        List<IObjects> activeComponents;
+        List<Id> activeComponentsId;
+        List<List<Id>> parents, childeren;
+
+        public ActiveElements()
+        {
+            activeComponents = new List<IObjects>();
+            activeComponentsId = new List<Id>();
+            parents = new List<List<Id>>();
+            childeren = new List<List<Id>>();
+        }
+
+        public void action(IVisitor visitor)
+        {
+            foreach (IObjects i in activeComponents)
+                i.action(visitor);
+        }
+
+        public bool AddElement(IObjects element, List<Id> parent, List<Id> child)
+        {
+            Id eid = element.Id;
+            foreach (Id i in activeComponentsId)
+                if (eid == i)
+                    return false;
+            for (int i = 0; i < activeComponents.Count; i++)
+                foreach (Id id in childeren[i])
+                    if (id == eid)
+                        return false;
+            for (int i = 0; i < activeComponents.Count; i++)
+                foreach (Id id in parents[i])
+                    if (id == eid)
+                    {
+                        RemoveElement(activeComponentsId[i]);
+                    }
+            element.Color = Color.Red;
+            activeComponents.Add(element);
+            activeComponentsId.Add(element.Id);
+            parents.Add(parent);
+            childeren.Add(child);
+            return true;
+        }
+        public bool RemoveElement(Id id)
+        {
+            int pos = -1;
+            for (int i = 0; i < activeComponents.Count; i++)
+                if (activeComponentsId[i] == id)
+                { pos = i; break; }
+            if(pos!=-1)
+            {
+                activeComponents[pos].Color = Color.Black;
+                activeComponents.RemoveAt(pos);
+                activeComponentsId.RemoveAt(pos);
+                parents.RemoveAt(pos);
+                childeren.RemoveAt(pos);
+                return true;
+            }
+            return false;
+        }
+        public void ClearElements()
+        {
+            foreach (IObjects i in activeComponents)
+                i.Color = Color.Black;
+            activeComponents.Clear();
+            activeComponentsId.Clear();
+            parents.Clear();
+            childeren.Clear();
+        }
+    }
+
     class Model : IObjects
     {
         Color color = Color.Black;
@@ -154,6 +237,7 @@ namespace cours_m2G
             {
                 if (activeComponentsParents[i].Id == id)
                 {
+                    activeComponentsParents[i].Color = Color.Black;
                     activeComponentsParents.RemoveAt(i);
                     return;
                 }
@@ -225,6 +309,7 @@ namespace cours_m2G
             }
             if (delindex != -1)
             {
+                lines[delindex].Color = Color.Black;
                 lines.Remove(delindex);
                 List<Id> rrl = points.RemoveParent(id);
                 for (int i = 0; i < rrl.Count; i++)
@@ -249,6 +334,7 @@ namespace cours_m2G
             }
             if (delindex != -1)
             {
+                polygons[delindex].Color = Color.Black;
                 List<Id> children = polygons.Remove(delindex).Item2;
                 List<Id> rrl = lines.RemoveParent(id);
                 for (int i = 0; i < rrl.Count; i++)

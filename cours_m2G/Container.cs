@@ -84,6 +84,7 @@ namespace cours_m2G
                 id.Add(objec);
                 this.parent.Add(new List<Id>());
                 this.parent[this.parent.Count - 1].Add(parent);
+                this.parent[this.parent.Count - 1].Add(parent2);
                 this.children.Add(new List<Id>());
                 foreach (Id i in children)
                 {
@@ -217,6 +218,27 @@ namespace cours_m2G
             ff.AddRange(children[ii]);
             return  ff;
         }
+        public List<Id> GetParents(Id id)
+        {
+            int ii = 0;
+            for (int i = 0; i < this.id.Count; i++)
+                if (id == this.id[i])
+                    ii = i;
+            List<Id> ff = new List<Id>();
+            ff.AddRange(parent[ii]);
+            return ff;
+        }
+        public List<Id> GetChildren(Id id)
+        {
+            int ii = 0;
+            for (int i = 0; i < this.id.Count; i++)
+                if (id == this.id[i])
+                    ii = i;
+            List<Id> ff = new List<Id>();
+            ff.AddRange(children[ii]);
+            return ff;
+        }
+
 
         public void Clear()
         {

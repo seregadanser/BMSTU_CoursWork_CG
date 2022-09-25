@@ -31,19 +31,8 @@
             this.components = new System.ComponentModel.Container();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.One = new System.Windows.Forms.TabPage();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.button8 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.comboBox5 = new System.Windows.Forms.ComboBox();
-            this.Many = new System.Windows.Forms.TabPage();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
@@ -58,12 +47,9 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button11 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
+            this.button13 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            this.tabControl1.SuspendLayout();
-            this.One.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.Many.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -91,122 +77,9 @@
             this.pictureBox2.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox2_MouseDoubleClick);
             this.pictureBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox2_MouseDown);
             // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Point",
-            "Line",
-            "Polygon"});
-            this.comboBox1.Location = new System.Drawing.Point(7, 8);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(171, 33);
-            this.comboBox1.TabIndex = 15;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "0"});
-            this.comboBox2.Location = new System.Drawing.Point(7, 48);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(171, 33);
-            this.comboBox2.TabIndex = 16;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(122, 93);
-            this.button3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(107, 92);
-            this.button3.TabIndex = 19;
-            this.button3.Text = "Очистить активные";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(7, 195);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(106, 92);
-            this.button2.TabIndex = 18;
-            this.button2.Text = "Просмотр активных";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(7, 93);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(107, 92);
-            this.button1.TabIndex = 17;
-            this.button1.Text = "Добавить в активные";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.One);
-            this.tabControl1.Controls.Add(this.Many);
-            this.tabControl1.Location = new System.Drawing.Point(1204, 12);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(336, 326);
-            this.tabControl1.TabIndex = 18;
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
-            // 
-            // One
-            // 
-            this.One.Controls.Add(this.panel2);
-            this.One.Controls.Add(this.button6);
-            this.One.Controls.Add(this.comboBox5);
-            this.One.Location = new System.Drawing.Point(4, 34);
-            this.One.Name = "One";
-            this.One.Padding = new System.Windows.Forms.Padding(3);
-            this.One.Size = new System.Drawing.Size(328, 288);
-            this.One.TabIndex = 0;
-            this.One.Text = "Один элемент";
-            this.One.UseVisualStyleBackColor = true;
-            this.One.Click += new System.EventHandler(this.One_Click);
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.button8);
-            this.panel2.Controls.Add(this.button7);
-            this.panel2.Location = new System.Drawing.Point(114, 86);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(144, 203);
-            this.panel2.TabIndex = 23;
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(3, 87);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(130, 109);
-            this.button8.TabIndex = 22;
-            this.button8.Text = "Удалить данный элемент из модели";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
-            // 
-            // button7
-            // 
-            this.button7.Location = new System.Drawing.Point(3, 3);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(131, 80);
-            this.button7.TabIndex = 21;
-            this.button7.Text = "Сделать неактивным";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
-            // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(7, 89);
+            this.button6.Location = new System.Drawing.Point(1226, 81);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(101, 80);
             this.button6.TabIndex = 20;
@@ -217,25 +90,10 @@
             // comboBox5
             // 
             this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Location = new System.Drawing.Point(7, 6);
+            this.comboBox5.Location = new System.Drawing.Point(1226, 25);
             this.comboBox5.Name = "comboBox5";
             this.comboBox5.Size = new System.Drawing.Size(182, 33);
             this.comboBox5.TabIndex = 27;
-            // 
-            // Many
-            // 
-            this.Many.Controls.Add(this.button3);
-            this.Many.Controls.Add(this.comboBox1);
-            this.Many.Controls.Add(this.button2);
-            this.Many.Controls.Add(this.comboBox2);
-            this.Many.Controls.Add(this.button1);
-            this.Many.Location = new System.Drawing.Point(4, 34);
-            this.Many.Name = "Many";
-            this.Many.Padding = new System.Windows.Forms.Padding(3);
-            this.Many.Size = new System.Drawing.Size(328, 288);
-            this.Many.TabIndex = 1;
-            this.Many.Text = "Несколько элементов";
-            this.Many.UseVisualStyleBackColor = true;
             // 
             // button5
             // 
@@ -360,11 +218,24 @@
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
+            // button13
+            // 
+            this.button13.Location = new System.Drawing.Point(1226, 659);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(112, 34);
+            this.button13.TabIndex = 33;
+            this.button13.Text = "button13";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1665, 1010);
+            this.Controls.Add(this.comboBox5);
+            this.Controls.Add(this.button13);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.checkBox1);
@@ -378,7 +249,6 @@
             this.Controls.Add(this.button9);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button5);
-            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.pictureBox1);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -389,10 +259,6 @@
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            this.tabControl1.ResumeLayout(false);
-            this.One.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.Many.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -402,19 +268,8 @@
         #endregion
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
-        private ComboBox comboBox1;
-        private ComboBox comboBox2;
-        private Button button3;
-        private Button button2;
-        private Button button1;
-        private TabControl tabControl1;
-        private TabPage One;
-        private TabPage Many;
         private Button button5;
-        private Button button7;
         private Button button6;
-        private Panel panel2;
-        private Button button8;
         private Button button4;
         private Button button9;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
@@ -429,5 +284,6 @@
         private CheckBox checkBox1;
         private Button button11;
         private Button button12;
+        private Button button13;
     }
 }
