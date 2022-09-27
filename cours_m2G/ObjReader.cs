@@ -50,9 +50,9 @@ namespace cours_m2G
             }
 
             foreach (PointComponent p in pointsObj)
-                M.AddPoint(p);
+                M.AddComponent(p);
             foreach (PolygonComponent p in polygonsObj)
-                M.AddPolygons(p);
+                M.AddComponent(p);
             return M;
         }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace cours_m2G
 {
+    [Serializable]
     class Id
     {
         private string name;
@@ -36,6 +37,11 @@ namespace cours_m2G
         public override string ToString()
         {
             return Name + " " + description;
+        }
+        public Id Clone()
+        {
+            Id i = new Id(name, description);
+            return i;
         }
     }
 

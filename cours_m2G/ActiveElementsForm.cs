@@ -1,4 +1,5 @@
 ﻿using cours_m2G;
+using Microsoft.Diagnostics.Tracing.Parsers.Clr;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,13 +17,15 @@ namespace cours_m2G
     {
         List<Elem> elements;
         Action CallBack_Remove, CalBack_Delit;
+        NewP nep;
         CallBack call;
-        public ActiveElementsForm(Action remove, Action delite, CallBack call)
+        public ActiveElementsForm(Action remove, Action delite,NewP newp , CallBack call)
         {
             InitializeComponent();
             CallBack_Remove = remove;
             CalBack_Delit = delite;
             this.call = call;
+            nep = newp;
             elements = new List<Elem>();
 
         }
@@ -59,25 +62,28 @@ namespace cours_m2G
         public bool AddActive(Id id)
         {
             tableLayoutPanel1.RowCount++;
-            elements.Add(new Elem(id, elements.Count, tableLayoutPanel1, CallBack_Remove, CalBack_Delit, new calback(Update1)));
+            elements.Add(new Elem(id, elements.Count, tableLayoutPanel1, CallBack_Remove, CalBack_Delit, nep,new calback(Update1)));
             return true;
         }
+
+   
     }
-
-
     class Elem
     {
         calback calback;
         Label name;
         Button rem;
         Button del;
+        Button add;
         public Id id;
         Action delDeleg, remDeleg;
-        public Elem(Id id, int num, TableLayoutPanel main, Action remove, Action delit, calback calback)
+        NewP np;
+        public Elem(Id id, int num, TableLayoutPanel main, Action remove, Action delit, NewP np, calback calback)
         {
             this.id = id;
             delDeleg = delit;
             remDeleg = remove;
+            this.np = np;
             name = new Label();
             name.AutoSize = true;
             name.Text = id.ToString();
@@ -89,10 +95,18 @@ namespace cours_m2G
             del.AutoSize = true;
             del.Text = "Delit from Active";
             del.Click += new EventHandler(DelClic);
-            main.Controls.Add(name,0, num);
+            main.Controls.Add(name, 0, num);
             main.Controls.Add(rem, 1, num);
-            main.Controls.Add(del,2, num);
+            main.Controls.Add(del, 2, num);
             this.calback = calback;
+            if (id.Name == "Line")
+            {
+                add = new Button();
+                add.Click += new EventHandler(NewPointClick);
+                add.AutoSize = true;
+                add.Text = "Add point to line";
+                main.Controls.Add(add, 3, num);
+            }
         }
 
         private void RemClic(object sender, EventArgs e)
@@ -105,12 +119,19 @@ namespace cours_m2G
             delDeleg.Invoke(id);
             calback.Invoke(id);
         }
+        private void NewPointClick(object sender, EventArgs e)
+        {
+            np.Invoke(this.id, new PointComponent(Convert.ToDouble(5), Convert.ToDouble(-10), Convert.ToDouble(20)));
+            calback.Invoke(id);
+        }
         public void Update(int pos, TableLayoutPanel p)
         {
-            
+          
         }
     }
-     static class TableLayoutHelper
+
+
+    static class TableLayoutHelper
     {
         public static void RemoveArbitraryRow(TableLayoutPanel panel, int rowIndex)
         {

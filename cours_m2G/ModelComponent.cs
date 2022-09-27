@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 namespace cours_m2G
 {
+    [Serializable]
     abstract class ModelComponent : IObjects
     {
         public abstract Color Color { get; set; }
         protected Color color = Color.Black;
         protected Id id;
         public abstract Id Id { get; set; }
-        public abstract bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir);
         public abstract void action(IVisitor visitor);
+        public abstract IObjects Clone();
     }
-
+    [Serializable]
     class PointComponent : ModelComponent
     {
         public override Id Id { get { return id; } set { id = value; } }
@@ -51,34 +52,6 @@ namespace cours_m2G
         {
             visitor.visit(this);
         }
- 
-
-        public override bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
-
-        {
-
-            //a == 1; // because rdir must be normalized
-
-            MatrixCoord3D k = ray_pos - coords;
-
-            double b = MatrixCoord3D.scalar(k, ray_dir);
-
-            double c = MatrixCoord3D.scalar(k, k) - hit_radius * hit_radius;
-
-            double d = b * b - c;
-
-
-
-            if (d >= 0)
-
-            {
-                return true;
-
-            }
-            return false;
-
-        }
-      
 
         public static PointComponent operator *(PointComponent point, MatrixTransformation3D transform)
         {
@@ -105,8 +78,19 @@ namespace cours_m2G
                 return true;
             return false;
         }
-    }
 
+        public override PointComponent Clone()
+        {
+            PointComponent p = new PointComponent(X, Y, Z, Id.Clone());
+            return p;
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(X) + "\n" + Convert.ToString(Y) + "\n" + Convert.ToString(Z);
+        }
+    }
+    [Serializable]
     class LineComponent : ModelComponent
     {
         public override Id Id { get { return id; } set { id = value; } }
@@ -153,11 +137,7 @@ namespace cours_m2G
             MatrixCoord3D diff = point1.Coords - point2.Coords;
             return Math.Sqrt(diff.X*diff.X + diff.Y*diff.Y + diff.Z*diff.Z);
         }
-        public override bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
-        {
-            return false;
-        }
-
+    
         public void ReplacePoint(PointComponent whatline, PointComponent whichline)
         {
             if (point1 == whatline)
@@ -192,8 +172,13 @@ namespace cours_m2G
                 return true;
             return false;
         }
+        public override LineComponent Clone()
+        {
+            LineComponent p = new LineComponent(point1.Clone(), point2.Clone(), Id.Clone());
+            return p;
+        }
     }
-
+    [Serializable]
     class PolygonComponent : ModelComponent
     {
         public override Id Id { get { return id; } set { id = value; } }
@@ -314,10 +299,7 @@ namespace cours_m2G
         {
             visitor.visit(this);
         }
-        public override bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
-        {
-            return false;
-        }
+      
 
         public static bool operator ==(PolygonComponent p1, PolygonComponent p2)
         {
@@ -346,11 +328,15 @@ namespace cours_m2G
                 return true;
             return false;
         }
-
+        public override PolygonComponent Clone()
+        {
+            return new PolygonComponent(points[0].Clone(), points[1].Clone(), points[2].Clone(), Id.Clone());
+        }
     }
 
     class PolygonComponentLines : ModelComponent
     {
+        public override IObjects Clone() { return null; }
         public override Id Id { get { return id; } set { id = value; } }
         Color color = Color.Black;
         public override Color Color
@@ -428,9 +414,6 @@ namespace cours_m2G
           // visitor.visit(this);
         }
 
-        public override bool IsGet(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
-        {
-            return false;
-        }
+    
     }
 }

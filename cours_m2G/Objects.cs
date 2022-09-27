@@ -11,8 +11,9 @@ namespace cours_m2G
         public abstract Color Color { get; set; }
         public Id Id { get; set; }
         public abstract void action(IVisitor visitor);
+        public abstract IObjects Clone();
     }
-
+    [Serializable]
     class ActiveElements : IObjects
     {
         Color color = Color.Black;
@@ -97,8 +98,27 @@ namespace cours_m2G
             parents.Clear();
             childeren.Clear();
         }
-    }
 
+        public IObjects Clone()
+        {
+            ActiveElements activeElements = new ActiveElements();
+            
+            for(int i = 0; i<activeComponents.Count;i++)
+            {
+                activeElements.activeComponents.Add(activeComponents[i].Clone());
+                activeElements.activeComponentsId.Add(activeComponentsId[i].Clone());
+                activeElements.parents.Add(new List<Id>());
+                for (int j = 0; j < parents[i].Count; j++)
+                    activeElements.parents[i].Add(parents[i][j].Clone());
+                activeElements.childeren.Add(new List<Id>());
+                for (int j = 0; j < childeren[i].Count; j++)
+                    activeElements.childeren[i].Add(childeren[i][j].Clone());
+            }
+
+            return activeElements;
+        }
+    }
+    [Serializable]
     class Model : IObjects
     {
         Color color = Color.Black;
@@ -153,8 +173,6 @@ namespace cours_m2G
             }
         }
 
-      
-
         public bool AddActiveComponent(Id id)
         {
             switch (id.Name)
@@ -183,10 +201,12 @@ namespace cours_m2G
             }
             return false;
         }
+
         public void DeliteActive()
         {
             active.ClearElements();
         }
+       
         public void DeliteActive(Id id)
         {
             active.RemoveElement(id);
@@ -207,6 +227,30 @@ namespace cours_m2G
             }
         }
 
+        public void AddPointToLine(Id LineId, PointComponent point)
+        {
+            List<Id> pa =  lines.GetParents(LineId);
+            List<PolygonComponent> poly = new List<PolygonComponent>();
+            poly.Add(polygons[pa[0]]);
+            poly.Add(polygons[pa[1]]);
+            LineComponent oldline = lines[LineId];
+            List<PolygonComponent> new_polygons = new List<PolygonComponent>();
+            for(int i =0; i<poly.Count;i++)
+            {
+                PointComponent thirdpoint = new PointComponent(0,0,0);
+                for (int j = 0; j < poly[i].Points.Length; j++)
+                    if (oldline.Point1 != poly[i].Points[j] && oldline.Point2 != poly[i].Points[j])
+                        thirdpoint = poly[i].Points[j];
+                new_polygons.Add(new PolygonComponent(thirdpoint, oldline.Point1, point));
+                new_polygons.Add(new PolygonComponent(thirdpoint, oldline.Point2, point));
+            }
+
+            foreach (PolygonComponent p in new_polygons)
+                AddPolygons(p);
+            DeliteActive(LineId);
+            RemoveLine(LineId);
+        }
+
         public void RemovebyId(Id id)
         {
             switch(id.Name)
@@ -223,7 +267,7 @@ namespace cours_m2G
             }
         }
 
-        public void RemovePoint(Id id)
+        protected void RemovePoint(Id id)
         {
             int delindex = -1;
             for (int i = 0; i < points.Count; i++)
@@ -247,7 +291,7 @@ namespace cours_m2G
             }
         }
 
-        public void RemoveLine(Id id)
+        protected void RemoveLine(Id id)
         {
             int delindex = -1;
             for (int i = 0; i < lines.Count; i++)
@@ -272,7 +316,7 @@ namespace cours_m2G
             }
         }
 
-        public void RemovePolygon(Id id)
+        protected void RemovePolygon(Id id)
         {
             int delindex = -1;
             for(int i= 0; i < polygons.Count; i++)
@@ -297,12 +341,28 @@ namespace cours_m2G
             }
         }
 
-        public void AddPoint(PointComponent point)
+        public void AddComponent(IObjects component)
+        {
+            switch (component.Id.Name)
+            {
+                case "Point":
+                    AddPoint((PointComponent)component);
+                    break;
+                case "Line":
+                    AddLine((LineComponent)component);
+                    break;
+                case "Polygon":
+                    AddPolygons((PolygonComponent)component);
+                    break;
+            }
+        }
+
+        protected void AddPoint(PointComponent point)
         {
             points.Add(point, point.Id);
         }
 
-        public void AddLine(LineComponent line)
+        protected void AddLine(LineComponent line)
         {
            int k = lines.Add(line, line.Id,0 ,line.Point1.Id, line.Point2.Id);
             if(k ==-1)
@@ -320,7 +380,7 @@ namespace cours_m2G
             }
         }
 
-        public void AddPolygons(PolygonComponent polygon)
+        protected void AddPolygons(PolygonComponent polygon)
         {
             int k = polygons.Add(polygon,polygon.Id ,0, polygon.Points[0].Id, polygon.Points[1].Id, polygon.Points[2].Id, polygon.Lines[0].Id, polygon.Lines[1].Id, polygon.Lines[2].Id);
             if(k == -1)
@@ -341,8 +401,17 @@ namespace cours_m2G
                 }
             }
         }
-    }
 
+        public IObjects Clone()
+        {
+            Model m = new Model();
+
+          
+
+            return m;
+        }
+    }
+    [Serializable]
     class Cub : Model
     {
         public Cub(PointComponent center, int side) : base()

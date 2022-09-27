@@ -10,6 +10,7 @@ namespace cours_m2G
     /// Контейнер состоящий из объекотв, их детей и их родителей
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [Serializable]
     class Container<T>
     {
         List<T> components;
@@ -262,7 +263,7 @@ namespace cours_m2G
                     {
                         return components[i];
                     };
-                return components[-1];
+                return components[0];
             }
             set
             {
@@ -281,7 +282,7 @@ namespace cours_m2G
         {
             return new Enumerator(this);
         }
-
+        [Serializable]
         public class Enumerator
         {
             int nIndex;

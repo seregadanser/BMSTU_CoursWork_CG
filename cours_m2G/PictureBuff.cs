@@ -18,12 +18,12 @@ namespace cours_m2G
         static bool filled;
        public static object locker = new();
         static public RenderType Creator { get; set; } = RenderType.NOCUTTER;
-        public static bool Filled { get { return filled; } set { filled = value; if (value) r.Invoke();} } 
-        public static void Init(int W, int H,Refresher r)
+        public static bool Filled { get { return filled; } set { filled = value; /*if (value) r.Invoke();*/} } 
+        public static void Init(Size screen,Refresher r)
         {
-            
-          
-            PictureBuff.screen = new Size(W, H);
+
+
+            PictureBuff.screen = screen;
             bmp = new Bitmap(screen.Width, screen.Height);
             g = Graphics.FromImage(bmp);
             rgb = new int[screen.Width * screen.Height];
@@ -54,7 +54,9 @@ namespace cours_m2G
         {
             Pen pen = new Pen(color);
             lock (locker)
-                g.DrawEllipse(pen, (int)(p1.X - HitRadius), (int)(p1.Y - HitRadius), HitRadius * 2, HitRadius * 2);
+           
+                    g.DrawEllipse(pen, (int)(p1.X - HitRadius), (int)(p1.Y - HitRadius), HitRadius * 2, HitRadius * 2);
+       
            
         }
 

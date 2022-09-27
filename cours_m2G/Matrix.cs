@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace cours_m2G
 {
+    [Serializable]
     abstract class Matrix
     {
         protected int size;
@@ -17,7 +18,7 @@ namespace cours_m2G
             }
         }
     }
-
+    [Serializable]
     class MatrixCoord3D : Matrix
     {
         readonly private double[] coords;

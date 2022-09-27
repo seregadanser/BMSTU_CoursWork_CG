@@ -164,7 +164,8 @@ namespace cours_m2G
             MatrixCoord3D p1 =shader.VertexTransform(point);
             if (p1 != null)
             {
-                string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
+                // string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
+                string s = "";
                 string s1 = "[ " + point.Id.Description + " ]";
                 PictureBuff.SetText(p1, s, s1);
                 PictureBuff.SetPoint(p1, (int)point.HitRadius, point.Color);

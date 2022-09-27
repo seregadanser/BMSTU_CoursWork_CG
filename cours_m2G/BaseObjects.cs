@@ -41,16 +41,11 @@ namespace cours_m2G
             YAxis.action(visitor);
             ZAxis.action(visitor);
         }
-
-        public bool isget(MatrixCoord3D ray_pos, MatrixCoord3D ray_dir)
+        public IObjects Clone()
         {
-            foreach (PointComponent p in point)
-            {
-                if (p.IsGet(ray_pos, ray_dir))
-                    return true;
-            }
-            return false;
+            return this;
         }
+
     }
     [Serializable]
     class Camera : IBaseObjects
@@ -60,8 +55,11 @@ namespace cours_m2G
         public PointComponent Position;
         public MatrixCoord3D Target;
         public MatrixCoord3D Direction;
-        protected MatrixCoord3D Up;
-        protected MatrixCoord3D Right;
+        protected MatrixCoord3D up;
+        protected MatrixCoord3D right;
+        public MatrixCoord3D Up { get { return up; } }
+        public MatrixCoord3D Right { get { return right; } }
+
         private MatrixTransformation3D RotationMatrix;
         public MatrixTransformation3D LookAt { get; set; }
 
@@ -79,7 +77,7 @@ namespace cours_m2G
             {
                 fovy = value;
                 if (projection.Type == MatrixType.Perspective)
-                    projection = new MatrixPerspectiveProjection(projection.Fovy, projection.Aspect, projection.N, projection.F);
+                    projection = new MatrixPerspectiveProjection(fovy, projection.Aspect, projection.N, projection.F);
             }
         }
         public double Aspect
@@ -89,7 +87,7 @@ namespace cours_m2G
             {
                 aspect = value;
                 if (projection.Type == MatrixType.Perspective)
-                    projection = new MatrixPerspectiveProjection(projection.Fovy, projection.Aspect, projection.N, projection.F);
+                    projection = new MatrixPerspectiveProjection(projection.Fovy, aspect, projection.N, projection.F);
             }
         }
       
@@ -97,16 +95,16 @@ namespace cours_m2G
         {
             this.Position = position;
             this.Target = Target;
-            this.Up = Up;
+            this.up = Up;
 
             Direction = Position.Coords - Target;
             Direction.Normalise();
-            Right = Up * Direction;
-            Right.Normalise();
-            Up = (Direction * Right);
-            Up.Normalise();
-            RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
-            LookAt = RotationMatrix * new MatrixAuxiliary(Position.Coords, Right, Up, Direction);
+            right = Up * Direction;
+            right.Normalise();
+            up = (Direction * right);
+            up.Normalise();
+            RotationMatrix = new MatrixAuxiliary(right, up, Direction);
+            LookAt = RotationMatrix * new MatrixAuxiliary(Position.Coords, right, up, Direction);
             aspect = projection.Aspect;
             fovy = projection.Fovy;
             this.projection = projection;
@@ -171,18 +169,18 @@ namespace cours_m2G
                     //вращение вокруг своей оси по Y
                     rotation = new MatrixTransformationRotateVec3D(Up,(int)speed);
                     Direction *= rotation;
-                    Right *= rotation;
+                    right *= rotation;
                     Direction.Normalise();
-                    Right.Normalise();
+                    right.Normalise();
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
                 case CameraDirection.PICH:
                     //вращение вокруг своей оси по X
                     rotation = new MatrixTransformationRotateVec3D(Right,(int)speed);
                     Direction *= rotation;
-                    Up *= rotation;
+                    up *= rotation;
                     Direction.Normalise();
-                    Up.Normalise();
+                    up.Normalise();
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
         
@@ -193,18 +191,18 @@ namespace cours_m2G
                     MatrixTransformation3D r = new MatrixTransformationRotateY3D((int)speed);
                     Position.Coords = Position.Coords * r;
                     Direction = Direction * r;
-                    Right = Right * r;
-                    Up *= r;
+                    right = Right * r;
+                    up *= r;
                     Direction.Normalise();
-                    Up.Normalise();
-                    Right.Normalise();
+                    up.Normalise();
+                    right.Normalise();
                     RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
                     break;
 
                     //  case 10:
                     ////вращение по вокруг y относительно  задаваемой точки
-                    //MatrixTransformation3D transfer3 = new MatrixTransformationTransfer3D(-100, -0, -0);
-                    //MatrixTransformation3D transfer4 = new MatrixTransformationTransfer3D(100, 0, 0);
+                    //MatrixTransformation3D transfer3 = new MatrixTransformationTransfer3D(-100, -0, -0);//vfnhbwf gthtyjcf
+                    //MatrixTransformation3D transfer4 = new MatrixTransformationTransfer3D(100, 0, 0);//vfnhbwf gthtyjcf
                     //MatrixTransformation3D r1t = new MatrixTransformationRotateY3D(-(int)speed);
                     //Position.Coords = Position.Coords * transfer3;
                     //Position.Coords = Position.Coords * r1t;
@@ -215,9 +213,9 @@ namespace cours_m2G
 
                     //RotationMatrix = new MatrixAuxiliary(Right, Up, Direction);
 
-              
 
-                 //   break;
+
+                    //   break;
 
             }
             CountLookAt();
@@ -226,6 +224,11 @@ namespace cours_m2G
         {
 
             LookAt = RotationMatrix * new MatrixAuxiliary(Position.Coords, Right, Up, Direction);
+        }
+
+        public IObjects Clone()
+        {
+            return this;
         }
 
     }
@@ -271,6 +274,10 @@ namespace cours_m2G
             {
                 line.action(visitor);
             }
+        }
+        public IObjects Clone()
+        {
+            return this;
         }
     }
 

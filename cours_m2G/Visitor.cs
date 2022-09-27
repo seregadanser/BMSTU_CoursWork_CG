@@ -182,6 +182,10 @@ namespace cours_m2G
         public Point InPoint { get; set; } = new Point(0, 0);
         protected ModelComponent find;
         public ModelComponent Find { get { return find; } }
+
+        protected PointComponent findpoint;
+        public PointComponent Findpoint { get { return findpoint; } }
+
         public ReadVisitor(Size screen, int scale)
         {
             this.screen = screen;
@@ -224,7 +228,7 @@ namespace cours_m2G
       
             MatrixCoord3D CamPosition = cam.Position.Coords;
             MatrixTransformation3D RotateMatrix = cam.RotateMatrix;
-            PictureBuff.Creator = RenderType.RAY;
+       
 
             MatrixCoord3D D = CanvasToVieport(InPoint.X, InPoint.Y) * RotateMatrix.InversedMatrix();// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
             D.Normalise();
@@ -250,7 +254,7 @@ namespace cours_m2G
                 }
             }
             //if(closest == null)
-        
+
             //    //MatrixCoord3D f =  GetTrilinearCoordinateOfTheHit(closest_t, position, D);
             //foreach(PointComponent p in model.Points)
             //{
@@ -262,8 +266,10 @@ namespace cours_m2G
             //            closest_t = tt;
             //            closest = p;
             //        }
-            //    }
+            //    } 
             //}
+            findpoint = new PointComponent(GetTrilinearCoordinateOfTheHit(closest_t, position, D));
+            
             return closest;
         }
 

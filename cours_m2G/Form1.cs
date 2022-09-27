@@ -1,11 +1,12 @@
 using System.Diagnostics;
-using System.Text;
-using System.Windows.Forms;
+using System.Collections.Generic;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace cours_m2G
 {
     delegate void Refresher();
     delegate void Action(Id id);
+    delegate void NewP(Id LineId, PointComponent point);
     delegate void CallBack();
 
     public partial class Form1 : Form
@@ -14,29 +15,32 @@ namespace cours_m2G
         DrawVisitor Drawer;
         ReadVisitor reader;
         Model cub;
+
         FormTransform f;
         ActiveElementsForm f1;
-       // Bitmap bmp;
+
+        Stack<Model> Mstack;
+
         Thread renderThread;
         CancellationTokenSource cancelTokenSource;
-        private CancellationTokenSource _cancellation;
         public Form1()
         {
             InitializeComponent();
             KeyPreview = true;
-          
+
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
 
-            curcam = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / pictureBox2.Size.Height, 1, 1000));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
+            curcam = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / (double)pictureBox2.Size.Height, 1, 1000));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
             Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
-        
+
             cub = new Cub(new PointComponent(0, 0, 0), 20);
             reader = new ReadVisitorCamera(curcam, pictureBox2.Size, 1);
             ObjReader er = new ObjReader(@"D:\1.obj");
-         //   cub = er.ReadModel();
-        
-            PictureBuff.Init(pictureBox2.Size.Width, pictureBox2.Size.Height, new Refresher(RefreshP));
+          //     cub = er.ReadModel();
+
+            Mstack = new Stack<Model>(10);
+            PictureBuff.Init(pictureBox2.Size, new Refresher(RefreshP));
 
             cancelTokenSource = new CancellationTokenSource();
             renderThread = new Thread(new ParameterizedThreadStart(RenderLoop));
@@ -44,7 +48,7 @@ namespace cours_m2G
             renderThread.IsBackground = true;
             renderThread.Start(cancelTokenSource.Token);
 
-            f1 = new ActiveElementsForm(new Action(DelitFromModel), new Action(DelitFromActive), new CallBack(ShowActiveElemButton));
+            f1 = new ActiveElementsForm(new Action(DelitFromModel), new Action(DelitFromActive), new NewP(cub.AddPointToLine), new CallBack(ShowActiveElemButton));
         }
 
         //protected override void WndProc(ref Message m)
@@ -68,12 +72,12 @@ namespace cours_m2G
         Stopwatch st1 = new Stopwatch();
         public void RenderLoop(object boxedToken)
         {
+
+            var cancellationToken = (CancellationToken)boxedToken;
            
-             var cancellationToken = (CancellationToken)boxedToken;
-            int k = 0;
-             while (!cancellationToken.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
-             
+
                 st1.Start();
                 cub.action(Drawer);
                 TimeSpan ts = st1.Elapsed;
@@ -83,8 +87,8 @@ namespace cours_m2G
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
                 Console.WriteLine("RenderTime " + elapsedTime);
-                k++;
-             
+                RefreshP();
+
             }
         }
         public object locker = new();
@@ -119,7 +123,7 @@ namespace cours_m2G
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                    ts.Hours, ts.Minutes, ts.Seconds,
                    ts.Milliseconds / 10);
-           Console.WriteLine("RefreshTime " + elapsedTime);
+            Console.WriteLine("RefreshTime " + elapsedTime);
             st.Reset();
             Thread.Sleep(10);
         }
@@ -157,12 +161,10 @@ namespace cours_m2G
             }
             if (e.KeyValue == 'Z')
             {
-                curcam.Move(CameraDirection.ROTATIONY, 1);
+                if(ModifierKeys == Keys.Control)
+                    cub = Mstack.Pop();
             }
-            if (e.KeyValue == 'X')
-            {
-                curcam.Move(CameraDirection.ROTATIONY, -1);
-            }
+           
             if (e.KeyValue == 'C')
             {
                 curcam.Move(CameraDirection.YAW, 1);
@@ -179,6 +181,7 @@ namespace cours_m2G
             {
                 curcam.Move(CameraDirection.PICH, -1);
             }
+      
         }
         private void pictureBox2_MouseWheel(object sender, MouseEventArgs e)
         {
@@ -227,6 +230,8 @@ namespace cours_m2G
             reader.InPoint = ee.Location;
             cub.action(reader);
             ModelComponent io = reader.Find;
+            PointComponent p = reader.Findpoint;
+            label2.Text = p.ToString();
             if (io != null)
             {
                 SetActiveWindow(cub.GetConnectedElements(io.Id), io.Id);
@@ -249,11 +254,11 @@ namespace cours_m2G
         {
             comboBox5.Text = "";
             comboBox5.Items.Clear();
-            
+
         }
         private void button6_Click(object sender, EventArgs e)
         {
-           
+
             string g = comboBox5.Text;
             if (g != "")
             {
@@ -273,8 +278,8 @@ namespace cours_m2G
 
         private void DelitFromModel(Id id)
         {
-                DelitFromActive(id);
-                cub.RemovebyId(id);
+            DelitFromActive(id);
+            cub.RemovebyId(id);
         }
         private void DelitFromActive(Id id)
         {
@@ -284,8 +289,8 @@ namespace cours_m2G
 
         private void button13_Click(object sender, EventArgs e)
         {
-            f1 = new ActiveElementsForm(new Action(DelitFromModel), new Action(DelitFromActive), new CallBack(ShowActiveElemButton));
-            
+            f1 = new ActiveElementsForm(new Action(DelitFromModel), new Action(DelitFromActive), new NewP(cub.AddPointToLine),new CallBack(ShowActiveElemButton));
+
             foreach (Id i in cub.ActiveComponentsId)
                 f1.AddActive(i);
             f1.Show();
@@ -320,22 +325,19 @@ namespace cours_m2G
             //muljanov@mail.ru - анализ алгоритмов
 
         }
-      
-        private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
-        {
 
-        }
+ 
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
             //   pictureBox2.Refresh();
         }
 
 
-   
+
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-        } 
+        }
 
 
         private void button5_Click(object sender, EventArgs e)
@@ -361,6 +363,7 @@ namespace cours_m2G
 
         private void button9_Click(object sender, EventArgs e)
         {
+            Mstack.Push(ObjectCopier.Clone(cub));
             cub.action(f.transformvisitor);
         }
 
@@ -393,9 +396,10 @@ namespace cours_m2G
             //}
         }
 
-    
+
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
+         //   curcam.Fovy = trackBar1.Value;
         }
 
         private void One_Click(object sender, EventArgs e)
@@ -410,9 +414,74 @@ namespace cours_m2G
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
-         
+
         }
 
-      
+        bool MousePressed = false;
+        private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            MousePressed = true;
+        }
+        private Point lastPoint;
+        private void pictureBox2_MouseMove(object sender, MouseEventArgs e)
+        {
+            var dx = e.Location.X - lastPoint.X;
+            var dy = e.Location.Y - lastPoint.Y;
+            string direction = "";
+            if (Math.Abs(dy) > Math.Abs(dx))
+                if (dy > 0)
+                    direction = "south";
+                else
+                    direction = "north";
+            else
+                if (dx > 0)
+                direction = "east";
+            else
+                direction = "west";
+
+
+            if (MousePressed)
+            {
+                EasyTransformVisitor tr;
+                MatrixTransformation3D trans = new MatrixTransformationTransfer3D(0, 0, 0);
+                switch (direction)
+                {
+                    case "south":
+                        trans = new MatrixTransformationTransfer3D(-curcam.Up.X, -curcam.Up.Y, -curcam.Up.Z);
+                        break;
+                    case "north":
+                        trans = new MatrixTransformationTransfer3D(curcam.Up.X, curcam.Up.Y, curcam.Up.Z);
+                        break;
+                    case "east":
+                        trans = new MatrixTransformationTransfer3D(curcam.Right.X, curcam.Right.Y, curcam.Right.Z);
+                        break;
+                    case "west":
+                        trans = new MatrixTransformationTransfer3D(-curcam.Right.X, -curcam.Right.Y, -curcam.Right.Z);
+                        break;
+                }
+                tr = new EasyTransformVisitor(trans);
+                cub.action(tr);
+            }
+            else
+             if (ModifierKeys == Keys.Control)
+            {
+                switch (direction)
+                {
+                    case "east":
+                        curcam.Move(CameraDirection.ROTATIONY, -2);
+                        break;
+                    case "west":
+                        curcam.Move(CameraDirection.ROTATIONY, 2);
+                        break;
+                }
+            }
+            lastPoint = e.Location;
+        }
+   
+
+        private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
+        {
+            MousePressed = false;
+        }
     }
 }
