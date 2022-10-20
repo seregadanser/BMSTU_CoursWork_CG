@@ -193,6 +193,7 @@ namespace cours_m2G
                 {
                     l.Color = value;
                 }
+                color = value;
             }
         }
 

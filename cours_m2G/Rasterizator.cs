@@ -41,7 +41,7 @@ namespace cours_m2G
     class VertexShaderProjection : VertexShader
     {
         Camera cam;
-        public override Camera up { set { cam = ObjectCopier.Clone(value); } }
+        public override Camera up { get { return cam; } set { cam = ObjectCopier.Clone(value); } }
         public VertexShaderProjection(Size screen, double scale, Camera cam) : base(screen, scale)
         {
             this.screen = screen;
@@ -213,10 +213,11 @@ namespace cours_m2G
             MatrixCoord3D p1 = shader.VertexTransform(polygon.Points[0]);
             MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
             MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
-
+            double cos = Math.Abs(MatrixCoord3D.scalar(polygon.Normal, shader.up.Direction));
+            Color c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
             if (p1 != null && p2 != null && p3 != null)
                 if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
-                    drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.ColorF);
+                    drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, c);
         }
 
         private void drawTriangleFill(List<PointComponent> vertices, Color color)
@@ -231,8 +232,8 @@ namespace cours_m2G
 
         private void drawLine(List<PointComponent> vertices, Color color)
         {
-            List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
-            Parallel.ForEach<PointComponent>(pp, p => drawPoint(p, color));
+            //List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+            //Parallel.ForEach<PointComponent>(pp, p => drawPoint1(p, color));
         }
 
         void drawPoint(PointComponent point, Color color)
@@ -240,6 +241,18 @@ namespace cours_m2G
             var p2D = point;
 
             if (zBuffer[point.X, point.Y] <= point.Z)
+                return;
+
+            zBuffer[point.X, point.Y] = point.Z;
+            if (color != Color.White)
+                //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
+                PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
+        }
+        void drawPoint1(PointComponent point, Color color)
+        {
+            var p2D = point;
+
+            if (zBuffer[point.X, point.Y] <= point.Z-1)
                 return;
 
             zBuffer[point.X, point.Y] = point.Z;
@@ -883,6 +896,12 @@ namespace cours_m2G
         public override void DrawLine(LineComponent line)
         {
 
+            MatrixCoord3D p1 = shader.VertexTransform(line.Point1);
+            MatrixCoord3D p2 = shader.VertexTransform(line.Point2);
+
+            if (p1 != null && p2 != null)
+                if (p1 != Double.NaN && p2 != Double.NaN)
+                    drawLine(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2) }, line.Color);
         }
 
         public override void DrawPolygon(PolygonComponent polygon)
@@ -890,10 +909,12 @@ namespace cours_m2G
             MatrixCoord3D p1 = shader.VertexTransform(polygon.Points[0]);
             MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
             MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
+            double cos =Math.Abs( MatrixCoord3D.scalar(polygon.Normal, shader.up.Direction));
+            Color c= Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G*cos), Convert.ToInt32(polygon.ColorF.B*cos));
 
-            if (p1 != null && p2 != null && p3 != null)
+                if (p1 != null && p2 != null && p3 != null)
                 if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
-                    drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.ColorF);
+                    drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) },c);
         }
 
         private void drawTriangleFill(List<PointComponent> vertices, Color color)
@@ -905,7 +926,7 @@ namespace cours_m2G
         private void drawLine(List<PointComponent> vertices, Color color)
         {
             List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
-            Parallel.ForEach<PointComponent>(pp, p => drawPoint(p, color));
+            Parallel.ForEach<PointComponent>(pp, p => drawPoint1(p, color));
         }
 
         void drawPoint(PointComponent point, Color color)
@@ -917,7 +938,18 @@ namespace cours_m2G
 
             zBuffer[point.X, point.Y] = point.Z;
             if (color != Color.White)
-                //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
+                PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
+        }
+
+        void drawPoint1(PointComponent point, Color color)
+        {
+            var p2D = point;
+
+            if (zBuffer[point.X, point.Y] <= point.Z-1)
+                return;
+
+            zBuffer[point.X, point.Y] = point.Z;
+            if (color != Color.White)
                 PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
         }
 
@@ -933,14 +965,21 @@ namespace cours_m2G
             y_min = Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
             x_max = Math.Max(p1.X, Math.Max(p2.X, p3.X));
             y_max = Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
-
+            if (x_min < 0)
+                x_min = 0;
+            if (x_max > screen.Width)
+                x_max = screen.Width;
+            if (y_min < 0)
+                y_min = 0;
+            if(y_max > screen.Height)
+                y_max = screen.Height;
             double det = ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
 
             double l1, l2, l3;
             double dy23 = (p2.Y - p3.Y), dy31 = (p3.Y - p1.Y), dx32 = (p3.X - p2.X), dx13 = (p1.X - p3.X);
-
-            for (double sx = x_min; sx <= x_max; sx++)
-                for (double sy = y_min; sy <= y_max; sy++)
+            int k = 0;
+            for (double sx = x_min-k; sx <= x_max+k; sx+=0.5)
+                for (double sy = y_min-k; sy <= y_max+k; sy+=0.5)
                 {
                     l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det;
                     l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
@@ -955,4 +994,7 @@ namespace cours_m2G
             //return points;
         }
     }
+
+
+   
 }

@@ -30,6 +30,7 @@ namespace cours_m2G
         public int Count { get { return activeComponents.Count; } }
 
         List<IObjects> activeComponents;
+        Container<PointComponent> activepoints;
         List<Id> activeComponentsId;
         List<List<Id>> parents, childeren;
 
@@ -38,6 +39,7 @@ namespace cours_m2G
         public ActiveElements()
         {
             activeComponents = new List<IObjects>();
+            activepoints = new Container<PointComponent>();
             activeComponentsId = new List<Id>();
             parents = new List<List<Id>>();
             childeren = new List<List<Id>>();
@@ -45,11 +47,11 @@ namespace cours_m2G
 
         public void action(IVisitor visitor)
         {
-            foreach (IObjects i in activeComponents)
+            foreach (IObjects i in activepoints)
                 i.action(visitor);
         }
 
-        public bool AddElement(IObjects element, List<Id> parent, List<Id> child)
+        public bool AddElement(IObjects element, List<Id> parent, List<Id> child, params PointComponent[] points)
         {
             Id eid = element.Id;
             foreach (Id i in activeComponentsId)
@@ -70,6 +72,8 @@ namespace cours_m2G
             activeComponentsId.Add(element.Id);
             parents.Add(parent);
             childeren.Add(child);
+            foreach (PointComponent i in points)
+                activepoints.Add(i, i.Id, element.Id);
             return true;
         }
         public bool RemoveElement(Id id)
@@ -81,6 +85,9 @@ namespace cours_m2G
             if(pos!=-1)
             {
                 activeComponents[pos].Color = Color.Black;
+              List<Id> l = activepoints.RemoveParent(id);
+                foreach (Id i in l)
+                    activepoints.Remove(i);
                 activeComponents.RemoveAt(pos);
                 activeComponentsId.RemoveAt(pos);
                 parents.RemoveAt(pos);
@@ -181,21 +188,21 @@ namespace cours_m2G
                     foreach(IObjects i in points)
                         if(i.Id == id)
                         {
-                         return  active.AddElement(i, points.GetParents(id), points.GetChildren(id));
+                         return  active.AddElement(i, points.GetParents(id), points.GetChildren(id), (PointComponent)i);
                         }
                     break;
                 case "Line":
                     foreach (IObjects i in lines)
                         if (i.Id == id)
                         {
-                          return  active.AddElement(i, lines.GetParents(id), lines.GetChildren(id));
+                          return  active.AddElement(i, lines.GetParents(id), lines.GetChildren(id), ((LineComponent)i).Point1, ((LineComponent)i).Point2);
                         }
                     break;
                 case "Polygon":
                     foreach (IObjects i in polygons)
                         if (i.Id == id)
                         {
-                           return active.AddElement(i, polygons.GetParents(id), polygons.GetChildren(id));
+                           return active.AddElement(i, polygons.GetParents(id), polygons.GetChildren(id), ((PolygonComponent)i).Points[0], ((PolygonComponent)i).Points[1], ((PolygonComponent)i).Points[2]);
                         }
                     break;
             }
