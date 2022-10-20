@@ -4,51 +4,45 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace cours_m2G
 {
-    delegate void Refresher();
-    delegate void Action(Id id);
+    
     delegate void NewP(Id LineId, PointComponent point);
-    delegate void CallBack();
+    
 
     public partial class Form1 : Form
     {
-        Camera curcam;
-        DrawVisitor Drawer;
+
+        Scene scene;
         ReadVisitor reader;
-        Model cub;
 
         FormTransform f;
         ActiveElementsForm f1;
 
         Stack<Model> Mstack;
 
-        Thread renderThread;
-        CancellationTokenSource cancelTokenSource;
         public Form1()
         {
             InitializeComponent();
             KeyPreview = true;
-
+            ObjReader er = new ObjReader(@"D:\1.obj");
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
+            PictureBuff.Init(pictureBox2.Size);
+            scene = new Scene(pictureBox2);
+          
 
-            curcam = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, pictureBox2.Size.Width / (double)pictureBox2.Size.Height, 1, 1000));//, new MatrixOrtoProjection(-300,300, -300, 300, 1, 1000));
-            Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
-
-            cub = new Cub(new PointComponent(0, 0, 0), 20);
-            reader = new ReadVisitorCamera(curcam, pictureBox2.Size, 1);
-            ObjReader er = new ObjReader(@"D:\1.obj");
-          //     cub = er.ReadModel();
+           
 
             Mstack = new Stack<Model>(10);
-            PictureBuff.Init(pictureBox2.Size, new Refresher(RefreshP));
 
-            cancelTokenSource = new CancellationTokenSource();
-            renderThread = new Thread(new ParameterizedThreadStart(RenderLoop));
-            renderThread.Name = "drawing";
-            renderThread.IsBackground = true;
-            renderThread.Start(cancelTokenSource.Token);
-
-            f1 = new ActiveElementsForm(new Action(DelitFromModel), new Action(DelitFromActive), new NewP(cub.AddPointToLine), new CallBack(ShowActiveElemButton));
+            CallBackDelegates del = new CallBackDelegates()
+            {
+                remove_active = scene.RemoveActiveComponent,
+                remove_object = scene.RemoveComponent,
+                close = ShowActiveElemButton
+            };
+            f1 = new ActiveElementsForm(del);
+            f1.Show();
+        
         }
 
         //protected override void WndProc(ref Message m)
@@ -67,67 +61,9 @@ namespace cours_m2G
         //            return;
         //    }
         //}
-        #region Render
-        Stopwatch st = new Stopwatch();
-        Stopwatch st1 = new Stopwatch();
-        public void RenderLoop(object boxedToken)
-        {
-
-            var cancellationToken = (CancellationToken)boxedToken;
-           
-            while (!cancellationToken.IsCancellationRequested)
-            {
-
-                st1.Start();
-                cub.action(Drawer);
-                TimeSpan ts = st1.Elapsed;
-                st1.Reset();
-
-                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                    ts.Hours, ts.Minutes, ts.Seconds,
-                    ts.Milliseconds / 10);
-                Console.WriteLine("RenderTime " + elapsedTime);
-                RefreshP();
-
-            }
-        }
-        public object locker = new();
-        private void RefreshP()
-        {
-            st1.Stop();
-            st.Reset();
-            st.Start();
-            lock (locker)
-            {
-                Bitmap LocalBMP = new Bitmap(pictureBox2.Width, pictureBox2.Height);
-                if (PictureBuff.Filled)
-                    LocalBMP = Drawer.Bmp;
-                //  LocalBMP.Save("ss.png", ImageFormat.Png);
-                if (pictureBox2.InvokeRequired)
-                {
-                    pictureBox2.Invoke(new MethodInvoker(delegate
-                    {
-                        {
-
-                            {
-                                pictureBox2.Image = LocalBMP;
-                            }
-
-
-                        }
-                    }));
-                }
-            }
-            st.Stop();
-            TimeSpan ts = st.Elapsed;
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                   ts.Hours, ts.Minutes, ts.Seconds,
-                   ts.Milliseconds / 10);
-            Console.WriteLine("RefreshTime " + elapsedTime);
-            st.Reset();
-            Thread.Sleep(10);
-        }
-        #endregion
+       
+       
+       
         #region SceneActions
         private void ShowActiveElemButton()
         {
@@ -135,112 +71,42 @@ namespace cours_m2G
         }
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyValue == 'W')
-            {
-                curcam.Move(CameraDirection.FORWARD, 5);
-            }
-            if (e.KeyValue == 'S')
-            {
-                curcam.Move(CameraDirection.BACKWARD, 5);
-            }
-            if (e.KeyValue == 'A')
-            {
-                curcam.Move(CameraDirection.LEFT, 5);
-            }
-            if (e.KeyValue == 'D')
-            {
-                curcam.Move(CameraDirection.RIGHT, 5);
-            }
-            if (e.KeyValue == 'Q')
-            {
-                curcam.Move(CameraDirection.UP, 5);
-            }
-            if (e.KeyValue == 'E')
-            {
-                curcam.Move(CameraDirection.DOWN, 5);
-            }
-            if (e.KeyValue == 'Z')
-            {
-                if(ModifierKeys == Keys.Control)
-                    cub = Mstack.Pop();
-            }
-           
-            if (e.KeyValue == 'C')
-            {
-                curcam.Move(CameraDirection.YAW, 1);
-            }
-            if (e.KeyValue == 'V')
-            {
-                curcam.Move(CameraDirection.YAW, -1);
-            }
-            if (e.KeyValue == 'G')
-            {
-                curcam.Move(CameraDirection.PICH, 1);
-            }
-            if (e.KeyValue == 'F')
-            {
-                curcam.Move(CameraDirection.PICH, -1);
-            }
-      
+            if (ModifierKeys != Keys.Control)
+                scene.Move(e.KeyValue);     
         }
+
         private void pictureBox2_MouseWheel(object sender, MouseEventArgs e)
         {
             if (ModifierKeys == Keys.Control)
-                if (e.Delta > 0)
-                {
-                    Drawer.Scale++;
-                }
-                else
-                {
-                    Drawer.Scale--;
-                }
+                scene.Scale(e.Delta);
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if (textBox1.Text == "nc")
-                Drawer.SetRaster = 0;
-            if (textBox1.Text == "nt")
-                Drawer.SetRaster = 1;
-            if (textBox1.Text == "np")
-                Drawer.SetRaster = 2;
-            if (textBox1.Text == "b")
-                Drawer.SetRaster = 3;
-            if (textBox1.Text == "ray")
-                Drawer = new DrawVisitorR(pictureBox2.Size, 1, curcam);
-            if (textBox1.Text == "raster")
-                Drawer = new DrawVisitorCamera(pictureBox2.Size, 1, curcam);
+            try
+            { scene.ChangeRender(Convert.ToInt32(textBox1.Text)); }
+            catch
+            { }
         }
         private void button11_Click(object sender, EventArgs e)
         {
-            cancelTokenSource.Cancel();
+            scene.StopThread();
         }
         private void button12_Click(object sender, EventArgs e)
         {
-            cancelTokenSource = new CancellationTokenSource();
-            renderThread = new Thread(new ParameterizedThreadStart(RenderLoop));
-            renderThread.Name = "drawing";
-            renderThread.IsBackground = true;
-            renderThread.Start(cancelTokenSource.Token);
+            scene.StartThread();
         }
         #endregion
         #region ObjectChoose
         private void pictureBox2_Click(object sender, EventArgs e)
         {
             MouseEventArgs ee = (MouseEventArgs)e;
-            reader.InPoint = ee.Location;
-            cub.action(reader);
-            ModelComponent io = reader.Find;
-            PointComponent p = reader.Findpoint;
-            label2.Text = p.ToString();
-            if (io != null)
-            {
-                SetActiveWindow(cub.GetConnectedElements(io.Id), io.Id);
-            }
+            Tuple<List< Id >, Id, PointComponent > r = scene.Read(ee.Location);
+            if(r.Item2!=null)
+                SetActiveWindow(r.Item1, r.Item2);
             else
-            {
                 DelActiveWindow();
-            }
         }
+
         private void SetActiveWindow(List<Id> ids, Id ci)
         {
             button6.Visible = true;
@@ -258,41 +124,24 @@ namespace cours_m2G
         }
         private void button6_Click(object sender, EventArgs e)
         {
-
             string g = comboBox5.Text;
             if (g != "")
             {
                 string[] g1 = g.Split(new char[] { ' ' });
                 Id id = new Id(g1[0], g1[1]);
 
-                if (cub.AddActiveComponent(id))
+                if (scene.AddComponentToActive(id))
                 {
-                    f1.Del();
-                    foreach (Id i in cub.ActiveComponentsId)
-                        f1.AddActive(i);
+                    f1.Update();
+                    f1.AddActive(id);
                 }
             }
             DelActiveWindow();
             button6.Visible = false;
         }
 
-        private void DelitFromModel(Id id)
-        {
-            DelitFromActive(id);
-            cub.RemovebyId(id);
-        }
-        private void DelitFromActive(Id id)
-        {
-            cub.DeliteActive(id);
-        }
-
-
         private void button13_Click(object sender, EventArgs e)
         {
-            f1 = new ActiveElementsForm(new Action(DelitFromModel), new Action(DelitFromActive), new NewP(cub.AddPointToLine),new CallBack(ShowActiveElemButton));
-
-            foreach (Id i in cub.ActiveComponentsId)
-                f1.AddActive(i);
             f1.Show();
             button13.Visible = false;
         }
@@ -342,7 +191,7 @@ namespace cours_m2G
 
         private void button5_Click(object sender, EventArgs e)
         {
-            cub = new Cub(new PointComponent(0, 0, 0), 20);
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -363,8 +212,8 @@ namespace cours_m2G
 
         private void button9_Click(object sender, EventArgs e)
         {
-            Mstack.Push(ObjectCopier.Clone(cub));
-            cub.action(f.transformvisitor);
+           // Mstack.Push(ObjectCopier.Clone(cub));
+            scene.ModelAction(f.transformvisitor);
         }
 
 
@@ -442,25 +291,7 @@ namespace cours_m2G
 
             if (MousePressed)
             {
-                EasyTransformVisitor tr;
-                MatrixTransformation3D trans = new MatrixTransformationTransfer3D(0, 0, 0);
-                switch (direction)
-                {
-                    case "south":
-                        trans = new MatrixTransformationTransfer3D(-curcam.Up.X, -curcam.Up.Y, -curcam.Up.Z);
-                        break;
-                    case "north":
-                        trans = new MatrixTransformationTransfer3D(curcam.Up.X, curcam.Up.Y, curcam.Up.Z);
-                        break;
-                    case "east":
-                        trans = new MatrixTransformationTransfer3D(curcam.Right.X, curcam.Right.Y, curcam.Right.Z);
-                        break;
-                    case "west":
-                        trans = new MatrixTransformationTransfer3D(-curcam.Right.X, -curcam.Right.Y, -curcam.Right.Z);
-                        break;
-                }
-                tr = new EasyTransformVisitor(trans);
-                cub.action(tr);
+                scene.ActiveMovement(direction);
             }
             else
              if (ModifierKeys == Keys.Control)
@@ -468,10 +299,10 @@ namespace cours_m2G
                 switch (direction)
                 {
                     case "east":
-                        curcam.Move(CameraDirection.ROTATIONY, -2);
+                        scene.Move('X');
                         break;
                     case "west":
-                        curcam.Move(CameraDirection.ROTATIONY, 2);
+                        scene.Move('Z');
                         break;
                 }
             }
@@ -482,6 +313,11 @@ namespace cours_m2G
         private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
         {
             MousePressed = false;
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

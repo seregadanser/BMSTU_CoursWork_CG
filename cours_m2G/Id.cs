@@ -23,6 +23,12 @@ namespace cours_m2G
 
         public static bool operator ==(Id id1, Id id2)
         {
+            if ((Object)id1 == null && (Object)id2 == null)
+                return true;
+            if ((Object)id1 == null && (Object)id2 != null)
+                return false;
+            if ((Object)id1 != null && (Object)id2 == null)
+                return false;
             if (id1.description == id2.description && id1.name == id2.name)
                 return true;
             return false;

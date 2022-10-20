@@ -12,22 +12,27 @@ using System.Windows.Forms;
 
 namespace cours_m2G
 {
+    delegate void Action(Id id);
+    delegate void ActionEmpty();
     delegate void calback(Id id);
+
+    struct CallBackDelegates
+    {
+       public Action remove_active, remove_object;
+        public ActionEmpty close;
+    }
+
     partial class ActiveElementsForm : Form
     {
         List<Elem> elements;
-        Action CallBack_Remove, CalBack_Delit;
-        NewP nep;
-        CallBack call;
-        public ActiveElementsForm(Action remove, Action delite,NewP newp , CallBack call)
+        List<Id> elem_id;
+        CallBackDelegates delegates;
+          public ActiveElementsForm(CallBackDelegates delegates)
         {
             InitializeComponent();
-            CallBack_Remove = remove;
-            CalBack_Delit = delite;
-            this.call = call;
-            nep = newp;
             elements = new List<Elem>();
-
+            elem_id = new List<Id>();
+            this.delegates = delegates;
         }
 
         private void ActiveElementsForm_Load(object sender, EventArgs e)
@@ -42,48 +47,61 @@ namespace cours_m2G
                 {
                     TableLayoutHelper.RemoveArbitraryRow(tableLayoutPanel1, i);
                     elements.RemoveAt(i);
+                    elem_id.RemoveAt(i);
                     return;
                 }
         }
 
-        public void Del()
+        public void Update()
         {
             while (tableLayoutPanel1.Controls.Count > 0)
             {
                 tableLayoutPanel1.Controls[0].Dispose();
             }
+            elements.Clear();
+            foreach(Id i in elem_id)
+            elements.Add(new Elem(i, elements.Count, tableLayoutPanel1, delegates, new calback(Update1)));
         }
 
         private void ActiveElementsForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            call.Invoke();
+      
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
 
         public bool AddActive(Id id)
         {
             tableLayoutPanel1.RowCount++;
-            elements.Add(new Elem(id, elements.Count, tableLayoutPanel1, CallBack_Remove, CalBack_Delit, nep,new calback(Update1)));
+            elem_id.Add(id);
+            elements.Add(new Elem(id, elements.Count, tableLayoutPanel1,delegates,new calback(Update1)));
             return true;
         }
 
-   
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            delegates.close.Invoke();
+        }
     }
     class Elem
     {
-        calback calback;
+        CallBackDelegates delegates;
+        calback dele;
         Label name;
         Button rem;
         Button del;
         Button add;
         public Id id;
-        Action delDeleg, remDeleg;
-        NewP np;
-        public Elem(Id id, int num, TableLayoutPanel main, Action remove, Action delit, NewP np, calback calback)
+
+        public Elem(Id id, int num, TableLayoutPanel main, CallBackDelegates dell, calback dell1)
         {
             this.id = id;
-            delDeleg = delit;
-            remDeleg = remove;
-            this.np = np;
+            dele = dell1;
+            delegates = dell;
             name = new Label();
             name.AutoSize = true;
             name.Text = id.ToString();
@@ -98,7 +116,6 @@ namespace cours_m2G
             main.Controls.Add(name, 0, num);
             main.Controls.Add(rem, 1, num);
             main.Controls.Add(del, 2, num);
-            this.calback = calback;
             if (id.Name == "Line")
             {
                 add = new Button();
@@ -111,22 +128,18 @@ namespace cours_m2G
 
         private void RemClic(object sender, EventArgs e)
         {
-            calback.Invoke(id);
-            remDeleg.Invoke(id);
+            delegates.remove_object.Invoke(id);
+            dele.Invoke(id);
         }
         private void DelClic(object sender, EventArgs e)
         {
-            delDeleg.Invoke(id);
-            calback.Invoke(id);
+            delegates.remove_active.Invoke(id);
+            dele.Invoke(id);
         }
         private void NewPointClick(object sender, EventArgs e)
         {
-            np.Invoke(this.id, new PointComponent(Convert.ToDouble(5), Convert.ToDouble(-10), Convert.ToDouble(20)));
-            calback.Invoke(id);
-        }
-        public void Update(int pos, TableLayoutPanel p)
-        {
-          
+           // np.Invoke(this.id, new PointComponent(Convert.ToDouble(5), Convert.ToDouble(-10), Convert.ToDouble(20)));
+            dele.Invoke(id);
         }
     }
 

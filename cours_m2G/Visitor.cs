@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Linq;
 using System.Drawing.Imaging;
-
-
+using System.Diagnostics;
 namespace cours_m2G
 {
    
@@ -92,10 +91,13 @@ namespace cours_m2G
             PictureBuff.Filled = false;
             PictureBuff.Creator = raster.Type;
             PictureBuff.Clear();
+
             foreach (PolygonComponent l in model.Polygons)
             {
                 l.action(this);
             }
+     
+          
             PictureBuff.Filled = true;
         }
     }
@@ -109,7 +111,8 @@ namespace cours_m2G
             set
             {
                 if (value == 0)
-                    raster = new RasterizatorNoCutter(cam, scale, screen);
+                    raster = new RasterizatorCutterB(cam, scale, screen);
+                // raster = new RasterizatorNoCutter(cam, scale, screen);
                 if (value == 1)
                     raster = new RasterizatorNoText(cam,scale, screen);
                 if (value == 2)
@@ -121,7 +124,7 @@ namespace cours_m2G
         public DrawVisitorCamera(Size screen, int scale, Camera cam) : base(screen, scale)
         {
             this.cam = cam;
-            raster = new RasterizatorNoCutter(cam, scale, screen);
+            raster = new RasterizatorCutterB(cam, scale, screen);
         }
         int k = 0;
         public override void visit(Model model)
@@ -150,19 +153,6 @@ namespace cours_m2G
         {
             this.cam = cam;
             rayt = new RayTraiser(screen, cam, scale);
-        }
-        public override void visit(PointComponent point)
-        {
-   
-        }
-        public override void visit(LineComponent line)
-        {
-             
-        }
-
-        public override void visit(PolygonComponent polygon)
-        {
-
         }
         
     public override void visit(Model model)

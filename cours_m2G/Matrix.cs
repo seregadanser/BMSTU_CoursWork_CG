@@ -92,6 +92,19 @@ namespace cours_m2G
             return result;
         }
 
+        public static bool operator ==(MatrixCoord3D first, double second)
+        {
+            if(double.IsNaN(first.X) || double.IsNaN(first.Y) || double.IsNaN(first.Z))
+                return true;
+            return false;
+        }
+        public static bool operator !=(MatrixCoord3D first, double second)
+        {
+            if (first == second)
+                return false;
+            return true;
+        }
+
         public static double scalar(MatrixCoord3D first, MatrixCoord3D second)
         {
             return first.X * second.X + first.Y * second.Y + first.Z * second.Z;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,16 +33,44 @@ namespace cours_m2G
             renderThread.IsBackground = true;
             renderThread.Start(cancelTokenSource.Token);
         }
+        public Scene(PictureBox picture, ObjReader re) : this(picture)  
+        {
+              model = re.ReadModel();    
+        }
 
         #region Render
+        Stopwatch strender = new Stopwatch();
+        Stopwatch strefresh = new Stopwatch();
         public void RenderLoop(object boxedToken)
         {
             var cancellationToken = (CancellationToken)boxedToken;
             while (!cancellationToken.IsCancellationRequested)
             {
+                strender.Start();
                 model.action(Drawer);
+                strender.Stop();
+           
+                TimeSpan ts = strender.Elapsed;
+           
+                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                    ts.Hours, ts.Minutes, ts.Seconds,
+                    ts.Milliseconds / 10);
+                Console.WriteLine("RenderTime " + elapsedTime);
+                strender.Reset();
+
+                strefresh.Start();
                 Refresh();
+                strefresh.Stop();
+                ts = strefresh.Elapsed;
+
+                 elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                    ts.Hours, ts.Minutes, ts.Seconds,
+                    ts.Milliseconds / 10);
+                //Console.WriteLine("RefreshTime " + elapsedTime);
+                strefresh.Reset();
+      
             }
+           
 
         }
         public void Refresh()
@@ -58,6 +87,31 @@ namespace cours_m2G
             }
             Thread.Sleep(10);
         }
+
+        public void ChangeRender(int rt)
+        {
+            switch (rt) {
+                case 0:
+                Drawer.SetRaster = 0;
+                    break;
+                case 1:
+                Drawer.SetRaster = 1;
+                    break;
+                case 2:
+                Drawer.SetRaster = 2;
+                    break;
+                case 3:
+                Drawer.SetRaster = 3;
+                    break;
+                case 4:
+                Drawer = new DrawVisitorR(picture.Size, 1, camera);
+                    break;
+                case 5:
+                Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
+                    break;
+            }
+        }
+
         public void StartThread()
         {
             cancelTokenSource = new CancellationTokenSource();
@@ -69,6 +123,19 @@ namespace cours_m2G
         public void StopThread()
         {
             cancelTokenSource.Cancel();
+        }
+       public Tuple<List<Id>, Id, PointComponent> Read(Point point)
+        {
+            Reader.InPoint = point;
+            model.action(Reader);
+            ModelComponent io = Reader.Find;
+            PointComponent p = Reader.Findpoint;
+            Tuple<List<Id>, Id, PointComponent> r;
+            if (io != null)
+                r = new Tuple<List<Id>, Id, PointComponent>(model.GetConnectedElements(io.Id), io.Id, p);
+            else
+                r = new Tuple<List<Id>, Id, PointComponent>(null, null, null);
+            return r;
         }
         #endregion
 
@@ -84,6 +151,7 @@ namespace cours_m2G
         public void RemoveComponent(Id id)
         {
             StopThread();
+            RemoveActiveComponent(id);
             model.RemovebyId(id);
             StartThread();
         }
@@ -105,6 +173,29 @@ namespace cours_m2G
         public void ModelAction(IVisitor action)
         {
             model.action(action);
+        }
+
+        public void ActiveMovement(string direction)
+        {
+            EasyTransformVisitor tr;
+            MatrixTransformation3D trans = new MatrixTransformationTransfer3D(0, 0, 0);
+            switch (direction)
+            {
+                case "south":
+                    trans = new MatrixTransformationTransfer3D(-camera.Up.X, -camera.Up.Y, -camera.Up.Z);
+                    break;
+                case "north":
+                    trans = new MatrixTransformationTransfer3D(camera.Up.X, camera.Up.Y, camera.Up.Z);
+                    break;
+                case "east":
+                    trans = new MatrixTransformationTransfer3D(camera.Right.X, camera.Right.Y, camera.Right.Z);
+                    break;
+                case "west":
+                    trans = new MatrixTransformationTransfer3D(-camera.Right.X, -camera.Right.Y, -camera.Right.Z);
+                    break;
+            }
+            tr = new EasyTransformVisitor(trans);
+            ModelAction(tr);
         }
         #endregion
         #region camera
