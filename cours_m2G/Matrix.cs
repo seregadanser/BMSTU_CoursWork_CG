@@ -125,8 +125,8 @@ namespace cours_m2G
         }
     }
 
-  
 
+    [Serializable]
     class MatrixTransformation3D : Matrix
     {
         protected double[,] coeff;
@@ -298,7 +298,7 @@ namespace cours_m2G
 
 
     }
-
+    [Serializable]
     class MatrixTransformationTransfer3D : MatrixTransformation3D
     {
         public MatrixTransformationTransfer3D(double dx, double dy, double dz)
@@ -314,6 +314,7 @@ namespace cours_m2G
             coeff[3, 2] = dz;
         }
     }
+    [Serializable]
     class MatrixTransformationScale3D : MatrixTransformation3D
     {
         public MatrixTransformationScale3D(double kx, double ky, double kz)
@@ -326,6 +327,7 @@ namespace cours_m2G
             coeff[3, 3] = 1;
         }
     }
+    [Serializable]
     class MatrixTransformationRotateX3D : MatrixTransformation3D
     {
         public MatrixTransformationRotateX3D(int angle)
@@ -340,6 +342,7 @@ namespace cours_m2G
             coeff[2, 1] = -Math.Sin(angle * Math.PI / 180);
         }
     }
+    [Serializable]
     class MatrixTransformationRotateY3D : MatrixTransformation3D
     {
         public MatrixTransformationRotateY3D(int angle)
@@ -354,6 +357,7 @@ namespace cours_m2G
             coeff[0, 2] = -Math.Sin(angle * Math.PI / 180);
         }
     }
+    [Serializable]
     class MatrixTransformationRotateZ3D : MatrixTransformation3D
     {
         public MatrixTransformationRotateZ3D(int angle)
@@ -368,7 +372,7 @@ namespace cours_m2G
             coeff[1, 0] = -Math.Sin(angle * Math.PI / 180);
         }
     }
-
+    [Serializable]
     class MatrixTransformationRotateVec3D : MatrixTransformation3D
     {
         public MatrixTransformationRotateVec3D(MatrixCoord3D vec,int angle)
@@ -391,7 +395,7 @@ namespace cours_m2G
       
         }
     }
-
+    [Serializable]
     class MatrixAuxiliary : MatrixTransformation3D
     {
         public MatrixAuxiliary(MatrixCoord3D c1, MatrixCoord3D c2, MatrixCoord3D c3)
@@ -434,7 +438,7 @@ namespace cours_m2G
             coeff[3, 2] = -c0.Z;
         }
     }
-
+    [Serializable]
     abstract class MatrixProjection : MatrixTransformation3D
     {
         protected double fovy, aspect, n, f;
@@ -456,8 +460,8 @@ namespace cours_m2G
     }
 
 
-   
 
+    [Serializable]
     class MatrixPerspectiveProjection : MatrixProjection
     {
         public MatrixPerspectiveProjection(double fovy, double aspect, double n, double f)
@@ -484,7 +488,7 @@ namespace cours_m2G
         }
 
     }
-
+    [Serializable]
     class MatrixOrtoProjection : MatrixProjection
     {
         public MatrixOrtoProjection(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)

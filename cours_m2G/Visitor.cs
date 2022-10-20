@@ -91,7 +91,7 @@ namespace cours_m2G
             PictureBuff.Filled = false;
             PictureBuff.Creator = raster.Type;
             PictureBuff.Clear();
-
+    
             foreach (PolygonComponent l in model.Polygons)
             {
                 l.action(this);
@@ -132,6 +132,7 @@ namespace cours_m2G
             PictureBuff.Creator = raster.Type;
             PictureBuff.Clear();
             PictureBuff.Filled = false;
+            raster.up = cam;
             foreach (PolygonComponent l in model.Polygons)
             {
               // if(MatrixCoord3D.scalar(l.Normal,cam.Direction)>0)
@@ -159,6 +160,7 @@ namespace cours_m2G
         {
             PictureBuff.Filled = false;
             PictureBuff.Creator = RenderType.RAY;
+            
             rayt.RayTrasing(model);
             PictureBuff.Filled = true;
         }

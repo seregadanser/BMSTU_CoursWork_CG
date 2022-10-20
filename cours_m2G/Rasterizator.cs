@@ -14,66 +14,13 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace cours_m2G
 {
-   static class Rasterizator1
-    {
-        public static List<double> Interpolate(double i0, double d0, double i1, double d1)
-        {
-            if (i0 == i1)
-            {
-                return new List<double> { d0 };
-            }
-            List<double> values = new List<double>();
-            double a = (d1 - d0) / (i1 - i0);
-            double d = d0;
-            for (double i = i0; i <= i1; i++) {
-                values.Add(d);
-                d = d + a;
-            }
-            return values;
-        }
-
-        public static void DrawLine(PointComponent P0, PointComponent P1, Graphics g)
-        {
-            if (Math.Abs(P1.X - P0.X) > Math.Abs(P1.Y - P0.Y))
-            {
-                // Прямая ближе к горизонтальной
-                // Проверяем, что x0 < x1
-                if (P0.X > P1.X)
-                {
-                    PointComponent P = P0;
-                    P0 = P1;
-                    P1 = P;
-                }
-                List<double> ys = Interpolate(P0.X, P0.Y, P1.X, P1.Y);
-                for (double x = P0.X; x < P1.X; x++)
-                {
-                    g.DrawRectangle(new Pen(Color.Black,2), (int)x, (int)ys[Convert.ToInt32(x - P0.X)], 1, 1);
-                }
-            }
-            else
-            {
-                //Прямая ближе к вертикальной
-                //Проверяем, что y0 < y1
-                if (P0.Y > P1.Y) {
-                    PointComponent P = P0;
-                    P0 = P1;
-                    P1 = P;
-                }
-                List<double> xs = Interpolate(P0.Y, P0.X, P1.Y, P1.X);
-                for (double y = P0.Y; y < P1.Y; y++)
-                {
-                    g.DrawRectangle(new Pen(Color.Black,2), (int)xs[Convert.ToInt32(y - P0.Y)], (int)y, 1, 1);
-
-                }
-            }
-        }
-    }
-
+  
     class VertexShader
     {
-      protected  Size screen;
-      protected  double scale;
+        protected Size screen;
+        protected double scale;
         public double Scale { get { return scale; } set { if (value > 0) scale = value; } }
+        public virtual Camera up { get; set; }
         public VertexShader(Size screen, double scale)
         {
             this.screen = screen;
@@ -94,11 +41,12 @@ namespace cours_m2G
     class VertexShaderProjection : VertexShader
     {
         Camera cam;
+        public override Camera up { set { cam = ObjectCopier.Clone(value); } }
         public VertexShaderProjection(Size screen, double scale, Camera cam) : base(screen, scale)
         {
             this.screen = screen;
             this.scale = scale;
-            this.cam = cam;
+            this.cam =ObjectCopier.Clone(cam);
         }
 
         public override MatrixCoord3D VertexTransform(PointComponent point)
@@ -130,7 +78,8 @@ namespace cours_m2G
 
     abstract class Rasterizator
     {
-        protected Camera cam;
+    //    protected Camera cam;
+        public Camera up { set { shader.up = value; } }
         protected double scale;
         public double Scale { get { return scale; } set { if (value > 0) { scale = value; shader.Scale = value; } } }
         protected Size screen;
@@ -151,7 +100,7 @@ namespace cours_m2G
             //this.cam = cam;
             this.scale = scale;
             this.screen = screen;
-          //  g = Graphics.FromImage(bmp);
+            //  g = Graphics.FromImage(bmp);
             shader = new VertexShader(screen, scale);
             type = RenderType.NOCUTTER;
         }
@@ -164,7 +113,7 @@ namespace cours_m2G
         public override void DrawPoint(PointComponent point)
         {
             Pen pen = new Pen(point.Color);
-            MatrixCoord3D p1 =shader.VertexTransform(point);
+            MatrixCoord3D p1 = shader.VertexTransform(point);
             if (p1 != null)
             {
                 // string s = "{" + Convert.ToString(point.X) + " " + Convert.ToString(point.Y) + " " + Convert.ToString(point.Z) + "}";
@@ -173,18 +122,18 @@ namespace cours_m2G
                 PictureBuff.SetText(p1, s, s1);
                 PictureBuff.SetPoint(p1, (int)point.HitRadius, point.Color);
             }
-           
+
         }
 
         public override void DrawLine(LineComponent line)
         {
-           
+
             MatrixCoord3D p1 = shader.VertexTransform(line.Point1);
             MatrixCoord3D p2 = shader.VertexTransform(line.Point2);
             if (p1 != null && p2 != null)
 
-              PictureBuff.SetLine((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y,line.Color);
- 
+                PictureBuff.SetLine((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, line.Color);
+
         }
         public override void DrawPolygon(PolygonComponent polygon)
         {
@@ -207,10 +156,10 @@ namespace cours_m2G
 
         public override void DrawPoint(PointComponent point)
         {
-           
+
             MatrixCoord3D p1 = shader.VertexTransform(point);
             if (p1 != null)
-                    PictureBuff.SetPoint(p1, (int)point.HitRadius, point.Color);
+                PictureBuff.SetPoint(p1, (int)point.HitRadius, point.Color);
 
         }
     }
@@ -255,8 +204,8 @@ namespace cours_m2G
             MatrixCoord3D p2 = shader.VertexTransform(line.Point2);
 
             if (p1 != null && p2 != null)
-                if(p1 != Double.NaN && p2 != Double.NaN)
-                 drawLine(new List<PointComponent> {new PointComponent(p1),new PointComponent(p2) }, line.Color);
+                if (p1 != Double.NaN && p2 != Double.NaN)
+                    drawLine(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2) }, line.Color);
         }
 
         public override void DrawPolygon(PolygonComponent polygon)
@@ -266,15 +215,15 @@ namespace cours_m2G
             MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
 
             if (p1 != null && p2 != null && p3 != null)
-                if (p1 != Double.NaN && p2 != Double.NaN && p3!=Double.NaN)
+                if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
                     drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.ColorF);
         }
 
         private void drawTriangleFill(List<PointComponent> vertices, Color color)
         {
             var points = new List<PointComponent> { vertices[0], vertices[1], vertices[2] };
-            
-           Parallel.ForEach<PointComponent>(Fill.FillTriangle(points), p => drawPoint(p, color));
+
+            Parallel.ForEach<PointComponent>(Fill.FillTriangle(points), p => drawPoint(p, color));
 
             //foreach (var p in Fill.FillTriangle(points))
             //    drawPoint(p, color);
@@ -289,14 +238,14 @@ namespace cours_m2G
         void drawPoint(PointComponent point, Color color)
         {
             var p2D = point;
-         
+
             if (zBuffer[point.X, point.Y] <= point.Z)
                 return;
-            
+
             zBuffer[point.X, point.Y] = point.Z;
             if (color != Color.White)
-                    //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
-            PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
+                //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
+                PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
         }
     }
 
@@ -330,15 +279,15 @@ namespace cours_m2G
         public void drawLine(List<PointComponent> vertices, Color color)
         {
             //List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
-           // foreach (var p in pp)
-          //      drawPoint(p, color);
+            // foreach (var p in pp)
+            //      drawPoint(p, color);
         }
 
         void drawPoint(PointComponent point, Color color)
         {
             var p2D = (PointComponent)point;
 
-            if (zBuffer[point.X, point.Y] <= point.Z )
+            if (zBuffer[point.X, point.Y] <= point.Z)
                 return;
 
             zBuffer[point.X, point.Y] = point.Z;
@@ -355,7 +304,7 @@ namespace cours_m2G
 
             zBuffer[point.X, point.Y] = point.Z;
             //  e.Graphics.DrawRectangle(new Pen(color, 2), (int)p2D.X, (int)p2D.Y, 1, 1);
-                bmp.SetPixelFast((int)p2D.X, (int)p2D.Y,tex.GetPixel(Ut.F(p2D.U*tex.Size.Width), Ut.F(p2D.V * tex.Size.Height)));
+            bmp.SetPixelFast((int)p2D.X, (int)p2D.Y, tex.GetPixel(Ut.F(p2D.U * tex.Size.Width), Ut.F(p2D.V * tex.Size.Height)));
         }
     }
 
@@ -374,9 +323,9 @@ namespace cours_m2G
         }
         public void Down()
         {
-                   for (int i = 0; i < w.Width * w.Height; i++)
+            for (int i = 0; i < w.Width * w.Height; i++)
                 zBufferMap[i % w.Width, Ut.F(i / w.Width)] = double.MaxValue;
-        
+
         }
         // get: boolean if z is higher or equal to point (=> true = can draw)
         // set: z at point
@@ -384,14 +333,14 @@ namespace cours_m2G
         {
             get
             {
-                x = Ut.F(x) ;
+                x = Ut.F(x);
                 y = Ut.F(y);
                 if (x > w.Width - 1 || x < 0 || y < 0 || y > w.Height - 1) return double.MinValue;
                 return zBufferMap[Ut.F(x), Ut.F(y)];
             }
             set
             {
-                zBufferMap[Ut.F(x), Ut.F(y) ] = (double)value;
+                zBufferMap[Ut.F(x), Ut.F(y)] = (double)value;
             }
         }
 
@@ -415,7 +364,7 @@ namespace cours_m2G
         //    return sb.ToString();
         //}
     }
-    
+
     static class Line
     {
         // Bresenham's Line in 3D
@@ -660,7 +609,7 @@ namespace cours_m2G
             return points;
         }
     }
-    
+
     static class Fill
     // Source https://www.davrous.com/2013/06/21/tutorial-part-4-learning-how-to-write-a-3d-software-engine-in-c-ts-or-js-rasterization-z-buffering/
     {
@@ -748,7 +697,7 @@ namespace cours_m2G
             }
         }
     }
-    
+
     static class FillTexture
     // Source https://www.davrous.com/2013/06/21/tutorial-part-4-learning-how-to-write-a-3d-software-engine-in-c-ts-or-js-rasterization-z-buffering/
     {
@@ -822,7 +771,7 @@ namespace cours_m2G
             double u1 = Interpolate(pa.U, pb.U, gradient1);
             double u2 = Interpolate(pc.U, pd.U, gradient2);
 
-            double v1 = Interpolate(pa.V, pb.V, gradient1); 
+            double v1 = Interpolate(pa.V, pb.V, gradient1);
             double v2 = Interpolate(pc.V, pd.V, gradient2);
 
             for (var x = sx; x < ex; x++)
@@ -842,11 +791,11 @@ namespace cours_m2G
                 var z = Interpolate(z1, z2, gradient);
                 var u = Interpolate(u1, u2, gradient);
                 var v = Interpolate(v1, v2, gradient);
-                yield return new Point3DTexture( new PointComponent(x, y, z),new PointComponent(u,v,0));
+                yield return new Point3DTexture(new PointComponent(x, y, z), new PointComponent(u, v, 0));
             }
         }
     }
-    
+
     class Point3DTexture
     {
         public double X { get { return coords.X; } }
@@ -862,7 +811,7 @@ namespace cours_m2G
             coordsTexture = texture.Coords;
         }
     }
-    
+
     static class Ut
     {
         public static int F(double a)
@@ -907,100 +856,103 @@ namespace cours_m2G
         }
     }
 
-}
 
 
 
-class RasterizatorCutterB : Rasterizator
-{
-    ZBuffer zBuffer;
-    public override Bitmap Bmp { get { zBuffer.Down(); return PictureBuff.GetBitmap(); } }
-    public RasterizatorCutterB(double scale, Size screen)
+
+
+    class RasterizatorCutterB : Rasterizator
     {
-        this.scale = scale;
-        zBuffer = new ZBuffer(screen);
-        this.screen = screen;
-        type = RenderType.ZBUFF;
-    }
-    public RasterizatorCutterB(Camera cam, double scale, Size screen) : this(scale, screen)
-    {
-        shader = new VertexShaderProjection(screen, scale, cam);
-    }
-    public override void DrawPoint(PointComponent point)
-    {
-    }
+        ZBuffer zBuffer;
+        public override Bitmap Bmp { get { zBuffer.Down(); return PictureBuff.GetBitmap(); } }
+        public RasterizatorCutterB(double scale, Size screen)
+        {
+            this.scale = scale;
+            zBuffer = new ZBuffer(screen);
+            this.screen = screen;
+            type = RenderType.ZBUFF;
+        }
+        public RasterizatorCutterB(Camera cam, double scale, Size screen) : this(scale, screen)
+        {
+            shader = new VertexShaderProjection(screen, scale, cam);
+        }
+        public override void DrawPoint(PointComponent point)
+        {
+        }
 
-    public override void DrawLine(LineComponent line)
-    {
-       
-    }
+        public override void DrawLine(LineComponent line)
+        {
 
-    public override void DrawPolygon(PolygonComponent polygon)
-    {
-        MatrixCoord3D p1 = shader.VertexTransform(polygon.Points[0]);
-        MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
-        MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
+        }
 
-        if (p1 != null && p2 != null && p3 != null)
-            if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
-                drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.ColorF);
-    }
+        public override void DrawPolygon(PolygonComponent polygon)
+        {
+            MatrixCoord3D p1 = shader.VertexTransform(polygon.Points[0]);
+            MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
+            MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
 
-    private void drawTriangleFill(List<PointComponent> vertices, Color color)
-    {
-        foreach (var p in ShadeBackgroundPixel(vertices[0], vertices[1], vertices[2]))
-            drawPoint(p, color);
-    }
+            if (p1 != null && p2 != null && p3 != null)
+                if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
+                    drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, polygon.ColorF);
+        }
 
-    private void drawLine(List<PointComponent> vertices, Color color)
-    {
-        List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
-        Parallel.ForEach<PointComponent>(pp, p => drawPoint(p, color));
-    }
+        private void drawTriangleFill(List<PointComponent> vertices, Color color)
+        {
+            foreach (var p in ShadeBackgroundPixel(vertices[0], vertices[1], vertices[2]))
+                drawPoint(p, color);
+        }
 
-    void drawPoint(PointComponent point, Color color)
-    {
-        var p2D = point;
+        private void drawLine(List<PointComponent> vertices, Color color)
+        {
+            List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+            Parallel.ForEach<PointComponent>(pp, p => drawPoint(p, color));
+        }
 
-        if (zBuffer[point.X, point.Y] <= point.Z)
-            return;
+        void drawPoint(PointComponent point, Color color)
+        {
+            var p2D = point;
 
-        zBuffer[point.X, point.Y] = point.Z;
-        if (color != Color.White)
-            //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
-            PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
-    }
+            if (zBuffer[point.X, point.Y] <= point.Z)
+                return;
+
+            zBuffer[point.X, point.Y] = point.Z;
+            if (color != Color.White)
+                //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
+                PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
+        }
 
 
 
-     public List<PointComponent> ShadeBackgroundPixel(PointComponent p1, PointComponent p2, PointComponent p3 )
-    {
+        public IEnumerable<PointComponent> ShadeBackgroundPixel(PointComponent p1, PointComponent p2, PointComponent p3)
+        {
 
-        List<PointComponent> points = new List<PointComponent>();
+          //  List<PointComponent> points = new List<PointComponent>();
 
-        double x_min, x_max, y_min, y_max;
-        x_min = Math.Min(p1.X, Math.Min(p2.X, p3.X));
-        y_min = Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
-        x_max = Math.Max(p1.X, Math.Max(p2.X, p3.X));
-        y_max = Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
+            double x_min, x_max, y_min, y_max;
+            x_min = Math.Min(p1.X, Math.Min(p2.X, p3.X));
+            y_min = Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
+            x_max = Math.Max(p1.X, Math.Max(p2.X, p3.X));
+            y_max = Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
 
-        double det = ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
+            double det = ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
 
-        double l1, l2, l3;
-        double dy23 = (p2.Y - p3.Y), dy31 = (p3.Y - p1.Y), dx32 = (p3.X - p2.X), dx13 = (p1.X - p3.X);
-        for (double sx = x_min; sx <= x_max; sx++)
-            for(double sy = y_min; sy <= y_max; sy++)
-            {
-                l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det ;
-                l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
-                l3 = 1 - l1 - l2;
-                if (l1 >= 0 && l1 <= 1 && l2 >= 0 && l2 <= 1 && l3 >= 0 && l3 <= 1)
+            double l1, l2, l3;
+            double dy23 = (p2.Y - p3.Y), dy31 = (p3.Y - p1.Y), dx32 = (p3.X - p2.X), dx13 = (p1.X - p3.X);
+
+            for (double sx = x_min; sx <= x_max; sx++)
+                for (double sy = y_min; sy <= y_max; sy++)
                 {
-                    double z = l1* p1.Z + l2* p2.Z + l3* p3.Z;
-                    points.Add(new PointComponent(sx, sy, z)) ;
+                    l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det;
+                    l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
+                    l3 = 1 - l1 - l2;
+                    if (l1 >= 0 && l1 <= 1 && l2 >= 0 && l2 <= 1 && l3 >= 0 && l3 <= 1)
+                    {
+                        double z = l1 * p1.Z + l2 * p2.Z + l3 * p3.Z;
+                        yield return new PointComponent(sx, sy, z);
+                        //points.Add(new PointComponent(sx, sy, z));
+                    }
                 }
-            }
-
-        return points;
+            //return points;
+        }
     }
 }
