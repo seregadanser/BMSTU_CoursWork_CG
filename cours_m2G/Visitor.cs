@@ -352,7 +352,7 @@ namespace cours_m2G
 
         private MatrixCoord3D CanvasToVieport(int x, int y)
         {
-            double aspectRatio = screen.Width / screen.Height;
+            double aspectRatio = screen.Width / (double)screen.Height;
             double fieldOfView = Math.Tan(cam.Fovy / 2 * Math.PI / 180.0f);
 
             double fx = aspectRatio * fieldOfView * (2 * ((x + 0.5f) / screen.Width) - 1);

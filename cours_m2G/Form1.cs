@@ -27,7 +27,7 @@ namespace cours_m2G
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
             PictureBuff.Init(pictureBox2.Size);
-          //  scene = new Scene(pictureBox2, er);
+           // scene = new Scene(pictureBox2, er);
             scene = new Scene(pictureBox2);
 
 

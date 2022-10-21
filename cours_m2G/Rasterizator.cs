@@ -56,7 +56,7 @@ namespace cours_m2G
             MatrixTransformation3D sc = new MatrixTransformationScale3D(scale, scale, scale);
             p1 = p1 * cam.LookAt;
             p1 = p1 * cam.Projection;
-            if (p1.X < p1.W && p1.Y < p1.W && p1.Z < p1.W)
+            if (Math.Abs( p1.X) < p1.W && Math.Abs(p1.Y) < p1.W && p1.Z < p1.W)
             {
                 p1.X = p1.X / p1.W;
                 p1.Y = p1.Y / p1.W;
@@ -222,7 +222,7 @@ namespace cours_m2G
             double cos = Math.Abs(MatrixCoord3D.scalar(polygon.Normal, shader.up.Direction));
             Color c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
             if (p1 != null && p2 != null && p3 != null)
-                if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
+         //       if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
                     drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, c);
         }
 
@@ -957,15 +957,15 @@ namespace cours_m2G
             MatrixCoord3D p1 = shader.VertexTransform(polygon.Points[0]);
             MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
             MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
-            double cos =Math.Abs( MatrixCoord3D.scalar(polygon.Normal, shader.up.Direction));
-            Color c= Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G*cos), Convert.ToInt32(polygon.ColorF.B*cos));
+            double cos = Math.Abs(MatrixCoord3D.scalar(polygon.Normal, shader.up.Direction));
+            Color c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
 
             if (p1 != null && p2 != null && p3 != null)
-                if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
-                {
-                    foreach (var p in ShadeBackgroundPixel(new PointComponent(p1), new PointComponent(p2), new PointComponent(p3)))
-                        drawPoint(p, c);
-                }
+            //    if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
+            {
+                foreach (var p in ShadeBackgroundPixel(new PointComponent(p1), new PointComponent(p2), new PointComponent(p3)))
+                    drawPoint(p, c);
+            }
         }
 
         private void drawTriangleFill(List<PointComponent> vertices, Color color)
@@ -979,9 +979,9 @@ namespace cours_m2G
 
         private void drawLine(List<PointComponent> vertices, Color color)
         {
-            List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
-            foreach(var p in pp)
-            drawPoint1(p, color);
+            //List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+            //foreach (var p in pp)
+            //    drawPoint1(p, color);
         }
 
         void drawPoint(PointComponent point, Color color)
@@ -1000,7 +1000,7 @@ namespace cours_m2G
         {
             var p2D = point;
 
-            if (zBuffer[point.X, point.Y] <= point.Z-1)
+            if (zBuffer[point.X, point.Y] <= point.Z - 1)
                 return;
 
             zBuffer[point.X, point.Y] = point.Z;
@@ -1010,44 +1010,80 @@ namespace cours_m2G
 
 
 
-        public IEnumerable<PointComponent> ShadeBackgroundPixel(PointComponent p1, PointComponent p2, PointComponent p3)
+        //public IEnumerable<PointComponent> ShadeBackgroundPixel(PointComponent p1, PointComponent p2, PointComponent p3)
+        //{
+
+        //  //  List<PointComponent> points = new List<PointComponent>();
+
+        //    double x_min, x_max, y_min, y_max;
+        //    x_min = Math.Min(p1.X, Math.Min(p2.X, p3.X));
+        //    y_min = Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
+        //    x_max = Math.Max(p1.X, Math.Max(p2.X, p3.X));
+        //    y_max = Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
+
+
+        //    double det = ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
+
+        //    double l1, l2, l3;
+        //    double dy23 = (p2.Y - p3.Y), dy31 = (p3.Y - p1.Y), dx32 = (p3.X - p2.X), dx13 = (p1.X - p3.X);
+        //    int k = 0;
+        //    for (double sx = x_min-k; sx <= x_max+k; sx+=0.5)
+        //        for (double sy = y_min-k; sy <= y_max+k; sy+=0.5)
+        //        {
+        //            l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det;
+        //            l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
+        //            l3 = 1 - l1 - l2;
+        //            if ((l1 >= 0 && l1 <= 1) && (l2 >= 0 && l2 <= 1) && ( l3 >= 0 && l3 <= 1))
+        //            {
+        //                double z = l1 * p1.Z + l2 * p2.Z + l3 * p3.Z;
+        //                yield return new PointComponent(sx, sy, z);
+        //                //points.Add(new PointComponent(sx, sy, z));
+        //            }
+        //        }
+        //    //return points;
+        //}
+        public IEnumerable<PointComponent> ShadeBackgroundPixel(PointComponent p0, PointComponent p1, PointComponent p2)
         {
-
-          //  List<PointComponent> points = new List<PointComponent>();
-
             double x_min, x_max, y_min, y_max;
-            x_min = Math.Min(p1.X, Math.Min(p2.X, p3.X));
-            y_min = Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
-            x_max = Math.Max(p1.X, Math.Max(p2.X, p3.X));
-            y_max = Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
-            if (x_min < 0)
-                x_min = 0;
-            if (x_max > screen.Width)
-                x_max = screen.Width;
-            if (y_min < 0)
-                y_min = 0;
-            if (y_max > screen.Height)
-                y_max = screen.Height;
-            double det = ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
+            x_min = Math.Min(p0.X, Math.Min(p1.X, p2.X));
+            y_min = Math.Min(p0.Y, Math.Min(p1.Y, p2.Y));
+            x_max = Math.Max(p0.X, Math.Max(p1.X, p2.X));
+            y_max = Math.Max(p0.Y, Math.Max(p1.Y, p2.Y));
 
-            double l1, l2, l3;
-            double dy23 = (p2.Y - p3.Y), dy31 = (p3.Y - p1.Y), dx32 = (p3.X - p2.X), dx13 = (p1.X - p3.X);
-            int k = 0;
-            for (double sx = x_min-k; sx <= x_max+k; sx+=0.5)
-                for (double sy = y_min-k; sy <= y_max+k; sy+=0.5)
+            Point2D p;
+            for (p.y = y_min; p.y <= y_max; p.y+=0.5)
+            {
+                for (p.x = x_min; p.x <= x_max; p.x+=0.5)
                 {
-                    l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det;
-                    l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
-                    l3 = 1 - l1 - l2;
-                    if (l1 >= 0 && l1 <= 1 && l2 >= 0 && l2 <= 1 && l3 >= 0 && l3 <= 1)
+                    // Determine barycentric coordinates
+                    double w0 = orient2d(new Point2D(p1.X, p1.Y), new Point2D(p2.X, p2.Y), p);
+                    double w1 = orient2d(new Point2D(p2.X, p2.Y), new Point2D(p0.X, p0.Y), p);
+                    double w2 = orient2d(new Point2D(p0.X, p0.Y), new Point2D(p1.X, p1.Y), p);
+
+                    // If p is on or inside all edges, render pixel.
+                  
+                     if (w0 >= 0 && w1 >= 0 && w2 >= 0)
                     {
-                        double z = l1 * p1.Z + l2 * p2.Z + l3 * p3.Z;
-                        yield return new PointComponent(sx, sy, z);
-                        //points.Add(new PointComponent(sx, sy, z));
+                        double z = w0 * p0.Z +w1 * p1.Z + w2* p2.Z;
+                        yield return new PointComponent(p.x, p.y, z);
                     }
                 }
-            //return points;
+            }
+
         }
+        private double orient2d(Point2D b, Point2D a, Point2D c)
+        {
+            return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+        }
+        struct Point2D
+        {
+           public Point2D(double x, double y)
+            {
+                this.x = x;
+                this.y = y;
+            }
+            public double x, y;
+        };
     }
    
 }
