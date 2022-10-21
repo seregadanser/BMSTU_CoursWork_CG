@@ -33,9 +33,20 @@ namespace cours_m2G
             renderThread.IsBackground = true;
             renderThread.Start(cancelTokenSource.Token);
         }
-        public Scene(PictureBox picture, ObjReader re) : this(picture)  
+        public Scene(PictureBox picture, ObjReader re)  
         {
-              model = re.ReadModel();    
+            camera = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, picture.Size.Width / (double)picture.Size.Height, 1, 1000));
+            Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
+            Reader = new ReadVisitorCamera(camera, picture.Size, 1);
+            model = re.ReadModel();
+
+            this.picture = picture;
+            cancelTokenSource = new CancellationTokenSource();
+            renderThread = new Thread(new ParameterizedThreadStart(RenderLoop));
+            renderThread.Name = "drawing";
+            renderThread.IsBackground = true;
+            renderThread.Start(cancelTokenSource.Token);
+      
         }
 
         #region Render

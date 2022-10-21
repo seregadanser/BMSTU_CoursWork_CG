@@ -114,8 +114,8 @@ namespace cours_m2G
                 tex[1] = textureObj[pt[3] - 1];
                 tex[2] = textureObj[pt[0] - 1];
 
-             //   pp.Text = tex;
-              //  pp1.Text = tex1;
+                //pp.Text = tex;
+                //pp1.Text = tex1;
 
                 polygonsObj.Add(pp);
                 polygonsObj.Add(pp1);

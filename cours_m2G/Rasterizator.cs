@@ -11,6 +11,7 @@ using System.Linq;
 using System.Diagnostics;
 using cours_m2G;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Reflection;
 
 namespace cours_m2G
 {
@@ -189,6 +190,7 @@ namespace cours_m2G
             zBuffer = new ZBuffer(screen);
             this.screen = screen;
             type = RenderType.ZBUFF;
+            Console.WriteLine("Inter");
         }
         public RasterizatorCutter(Camera cam, double scale, Size screen) : this(scale, screen)
         {
@@ -205,7 +207,11 @@ namespace cours_m2G
 
             if (p1 != null && p2 != null)
                 if (p1 != Double.NaN && p2 != Double.NaN)
+                {
+                    if (zBuffer[p1.X, p1.Y] <= p1.Z - 1 && zBuffer[p2.X, p2.Y] <= p2.Z - 1)
+                        return;
                     drawLine(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2) }, line.Color);
+                }
         }
 
         public override void DrawPolygon(PolygonComponent polygon)
@@ -224,16 +230,17 @@ namespace cours_m2G
         {
             var points = new List<PointComponent> { vertices[0], vertices[1], vertices[2] };
 
-            Parallel.ForEach<PointComponent>(Fill.FillTriangle(points), p => drawPoint(p, color));
+    
 
-            //foreach (var p in Fill.FillTriangle(points))
-            //    drawPoint(p, color);
+            foreach (var p in Fill.FillTriangle(points))
+                drawPoint(p, color);
         }
 
         private void drawLine(List<PointComponent> vertices, Color color)
         {
-            //List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
-            //Parallel.ForEach<PointComponent>(pp, p => drawPoint1(p, color));
+            List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+            foreach (var p in pp)
+                drawPoint1(p, color);
         }
 
         void drawPoint(PointComponent point, Color color)
@@ -245,7 +252,6 @@ namespace cours_m2G
 
             zBuffer[point.X, point.Y] = point.Z;
             if (color != Color.White)
-                //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
                 PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
         }
         void drawPoint1(PointComponent point, Color color)
@@ -257,35 +263,41 @@ namespace cours_m2G
 
             zBuffer[point.X, point.Y] = point.Z;
             if (color != Color.White)
-                //bmp.SetPixel((int)p2D.X, (int)p2D.Y, color);
                 PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
         }
     }
 
-    class R2
+    class R1
     {
         ZBuffer zBuffer;
-        public PaintEventArgs e;
-        Bitmap bmp;
+        public  Bitmap Bmp { get { zBuffer.Down(); return PictureBuff.GetBitmap(); } }
         Bitmap tex;
-        Size s;
-        bool drawFill;
-        public Bitmap GetResult() { this.zBuffer.Down(); Bitmap b = bmp; bmp = new Bitmap(s.Width, s.Height); return b; }
-        public R2(Bitmap bmp, Size windowSize, bool drawFill, PaintEventArgs e)
+        public Camera up { set { shader.up = value; } }
+        protected double scale;
+        public double Scale { get { return scale; } set { if (value > 0) { scale = value; shader.Scale = value; } } }
+        protected Size screen;
+        protected VertexShader shader;
+        protected RenderType type;
+        public RenderType Type { get { return type; } }
+
+        public R1(Camera cam, double scale, Size screen)
         {
-            s = windowSize;
-            this.bmp = bmp;
-            zBuffer = new ZBuffer(windowSize);
-            this.drawFill = drawFill;
-            this.e = e;
+            this.scale = scale;
+            zBuffer = new ZBuffer(screen);
+            this.screen = screen;
+            type = RenderType.ZBUFF;
             tex = new Bitmap(Image.FromFile(@"D:\2.png"));
+            shader = new VertexShaderProjection(screen, scale, cam);
         }
 
-        public void drawTriangleFill(List<PointComponent> vertices, List<PointComponent> texture)
+        public void drawTriangleFill(PointComponent[] vertices, PointComponent[] texture)
         {
-            var points = new List<Point3DTexture> { new Point3DTexture(vertices[0], texture[0]), new Point3DTexture(vertices[1], texture[1]), new Point3DTexture(vertices[2], texture[2]) };
+            MatrixCoord3D p1 = shader.VertexTransform(vertices[0]);
+            MatrixCoord3D p2 = shader.VertexTransform(vertices[1]);
+            MatrixCoord3D p3 = shader.VertexTransform(vertices[2]);
 
-            foreach (var p in FillTexture.FillTriangle(points))
+         //   FillTexture.FillTriangle(new List<Point3DTexture> { new Point3DTexture(new PointComponent(p1), texture[0]), new Point3DTexture(new PointComponent(p2), texture[1]), new Point3DTexture(new PointComponent(p3), texture[2]) })
+            foreach (var p in ShadeBackgroundPixel(new Point3DTexture(new PointComponent(p1), texture[0]), new Point3DTexture(new PointComponent(p2), texture[1]), new Point3DTexture(new PointComponent(p3), texture[2])))
                 drawPoint(p);
         }
 
@@ -296,18 +308,7 @@ namespace cours_m2G
             //      drawPoint(p, color);
         }
 
-        void drawPoint(PointComponent point, Color color)
-        {
-            var p2D = (PointComponent)point;
 
-            if (zBuffer[point.X, point.Y] <= point.Z)
-                return;
-
-            zBuffer[point.X, point.Y] = point.Z;
-            //  e.Graphics.DrawRectangle(new Pen(color, 2), (int)p2D.X, (int)p2D.Y, 1, 1);
-            if (color != Color.White)
-                bmp.SetPixelFast((int)p2D.X, (int)p2D.Y, color);
-        }
         void drawPoint(Point3DTexture point)
         {
             var p2D = point;
@@ -316,8 +317,50 @@ namespace cours_m2G
                 return;
 
             zBuffer[point.X, point.Y] = point.Z;
-            //  e.Graphics.DrawRectangle(new Pen(color, 2), (int)p2D.X, (int)p2D.Y, 1, 1);
-            bmp.SetPixelFast((int)p2D.X, (int)p2D.Y, tex.GetPixel(Ut.F(p2D.U * tex.Size.Width), Ut.F(p2D.V * tex.Size.Height)));
+            PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, tex.GetPixel(Ut.F(p2D.U * tex.Size.Width), Ut.F(p2D.V * tex.Size.Height)).ToArgb());
+        
+        }
+        public IEnumerable<Point3DTexture> ShadeBackgroundPixel(Point3DTexture p1, Point3DTexture p2, Point3DTexture p3)
+        {
+
+            //  List<PointComponent> points = new List<PointComponent>();
+
+            double x_min, x_max, y_min, y_max;
+            x_min = Math.Min(p1.X, Math.Min(p2.X, p3.X));
+            y_min = Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
+            x_max = Math.Max(p1.X, Math.Max(p2.X, p3.X));
+            y_max = Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
+            //if (x_min < 0)
+            //    x_min = 0;
+            //if (x_max > screen.Width)
+            //    x_max = screen.Width;
+            //if (y_min < 0)
+            //    y_min = 0;
+            //if(y_max > screen.Height)
+            //    y_max = screen.Height;
+            double det = ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
+
+            double l1, l2, l3;
+            double dy23 = (p2.Y - p3.Y), dy31 = (p3.Y - p1.Y), dx32 = (p3.X - p2.X), dx13 = (p1.X - p3.X);
+            int k = 0;
+            for (double sx = x_min - k; sx <= x_max + k; sx += 0.5)
+                for (double sy = y_min - k; sy <= y_max + k; sy += 0.5)
+                {
+                    l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det;
+                    l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
+                    l3 = 1 - l1 - l2;
+                    if (l1 >= 0 && l1 <= 1 && l2 >= 0 && l2 <= 1 && l3 >= 0 && l3 <= 1)
+                    {
+                        double z = l1 * p1.Z + l2 * p2.Z + l3 * p3.Z;
+                        double vz = l1 * p1.V/z + l2 * p2.V/z + l3 * p3.V/z ;
+                        double uz =l1* p1.U / z + l2 * p2.U / z + l3 * p3.U / z; 
+                        double zz = l1 * 1/p1.Z + l2 * 1/p2.Z + l3 * 1/p3.Z;
+
+                        yield return new Point3DTexture(new PointComponent(sx, sy, z), new PointComponent(uz/zz, vz/zz, 0));
+                        //points.Add(new PointComponent(sx, sy, z));
+                    }
+                }
+            //return points;
         }
     }
 
@@ -884,6 +927,7 @@ namespace cours_m2G
             zBuffer = new ZBuffer(screen);
             this.screen = screen;
             type = RenderType.ZBUFF;
+            Console.WriteLine("Barri");
         }
         public RasterizatorCutterB(Camera cam, double scale, Size screen) : this(scale, screen)
         {
@@ -901,7 +945,11 @@ namespace cours_m2G
 
             if (p1 != null && p2 != null)
                 if (p1 != Double.NaN && p2 != Double.NaN)
+                {
+                    if (zBuffer[p1.X, p1.Y] <= p1.Z - 1 && zBuffer[p2.X, p2.Y] <= p2.Z - 1)
+                        return;
                     drawLine(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2) }, line.Color);
+                }
         }
 
         public override void DrawPolygon(PolygonComponent polygon)
@@ -912,21 +960,28 @@ namespace cours_m2G
             double cos =Math.Abs( MatrixCoord3D.scalar(polygon.Normal, shader.up.Direction));
             Color c= Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G*cos), Convert.ToInt32(polygon.ColorF.B*cos));
 
-                if (p1 != null && p2 != null && p3 != null)
+            if (p1 != null && p2 != null && p3 != null)
                 if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
-                    drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) },c);
+                {
+                    foreach (var p in ShadeBackgroundPixel(new PointComponent(p1), new PointComponent(p2), new PointComponent(p3)))
+                        drawPoint(p, c);
+                }
         }
 
         private void drawTriangleFill(List<PointComponent> vertices, Color color)
         {
-            foreach (var p in ShadeBackgroundPixel(vertices[0], vertices[1], vertices[2]))
-                drawPoint(p, color);
+
+            Parallel.ForEach<PointComponent>(ShadeBackgroundPixel(vertices[0], vertices[1], vertices[2]), p => drawPoint(p, color));
+
+            //foreach (var p in ShadeBackgroundPixel(vertices[0], vertices[1], vertices[2]))
+            //    drawPoint(p, color);
         }
 
         private void drawLine(List<PointComponent> vertices, Color color)
         {
             List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
-            Parallel.ForEach<PointComponent>(pp, p => drawPoint1(p, color));
+            foreach(var p in pp)
+            drawPoint1(p, color);
         }
 
         void drawPoint(PointComponent point, Color color)
@@ -971,7 +1026,7 @@ namespace cours_m2G
                 x_max = screen.Width;
             if (y_min < 0)
                 y_min = 0;
-            if(y_max > screen.Height)
+            if (y_max > screen.Height)
                 y_max = screen.Height;
             double det = ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
 
@@ -994,7 +1049,5 @@ namespace cours_m2G
             //return points;
         }
     }
-
-
    
 }

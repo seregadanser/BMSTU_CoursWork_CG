@@ -24,7 +24,7 @@ namespace cours_m2G
             Tuple<MatrixCoord3D, double> sphere = FoundCenter(model.Points);
             MatrixCoord3D CamPosition = cam.Position.Coords;
             MatrixTransformation3D RotateMatrix = cam.RotateMatrix.InversedMatrix();
-            double aspect = screen.Width / screen.Height;
+            double aspect = screen.Width / (double)screen.Height;
             double field = Math.Tan(cam.Fovy / 2 * Math.PI / 180.0f);
 
             Parallel.For(0, screen.Width, x =>

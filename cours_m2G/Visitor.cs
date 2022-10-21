@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Linq;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
 namespace cours_m2G
 {
    
@@ -43,7 +45,7 @@ namespace cours_m2G
         public override int Scale { get { return scale; } set { if (value > 0) { scale = value; raster.Scale = value; } } }
         public bool PrintText { get; set; } = true;
         protected Rasterizator raster;
-
+       // protected R2 raster1;
         public virtual int SetRaster
         {
             set
@@ -80,6 +82,8 @@ namespace cours_m2G
         int k = 0;
         public override void visit(PolygonComponent polygon)
         {
+           
+            //raster1.drawTriangleFill(polygon.Points, polygon.ColorF);
             raster.DrawPolygon(polygon);
             foreach (LineComponent l in polygon.Lines)
             { l.action(this);
@@ -125,14 +129,27 @@ namespace cours_m2G
         {
             this.cam = cam;
             raster = new RasterizatorCutterB(cam, scale, screen);
+            //raster1 = new R2(cam, scale, screen);
         }
         int k = 0;
+        //public override void visit(PolygonComponent polygon)
+        //{
+        //    double cos = Math.Abs(MatrixCoord3D.scalar(polygon.Normal, cam.Direction));
+        //    Color c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
+        //    raster1.drawTriangleFill(polygon.Points, c);
+        //    //raster.DrawPolygon(polygon);
+        //    foreach (LineComponent l in polygon.Lines)
+        //    {
+        //        l.action(this);
+        //    }
+        //}
         public override void visit(Model model)
         {
             PictureBuff.Creator = raster.Type;
             PictureBuff.Clear();
             PictureBuff.Filled = false;
             raster.up = cam;
+            //raster1.up = cam;
             foreach (PolygonComponent l in model.Polygons)
             {
               // if(MatrixCoord3D.scalar(l.Normal,cam.Direction)>0)
