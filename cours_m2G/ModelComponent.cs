@@ -85,6 +85,11 @@ namespace cours_m2G
             return p;
         }
 
+        public double Desctination(PointComponent p)
+        {
+            return Math.Sqrt(Math.Pow(this.X - p.X, 2) + Math.Pow(this.Y - p.Y, 2));
+        }
+
         public override string ToString()
         {
             return Convert.ToString(X) + "\n" + Convert.ToString(Y) + "\n" + Convert.ToString(Z);
@@ -172,6 +177,13 @@ namespace cours_m2G
                 return true;
             return false;
         }
+
+        public double Desctination(PointComponent p)
+        {
+            return Math.Abs((point2.X - point1.X)*(point1.Y - p.Y)-(point1.X - p.X)*(point2.Y - point1.Y))
+                  /Math.Sqrt(Math.Pow(point1.X - point2.X, 2) + Math.Pow(point1.Y - point2.Y, 2));
+        }
+
         public override LineComponent Clone()
         {
             LineComponent p = new LineComponent(point1.Clone(), point2.Clone(), Id.Clone());
@@ -317,9 +329,9 @@ namespace cours_m2G
 
         public static bool operator !=(PolygonComponent p1, PolygonComponent p2)
         {
-            if (p1.id != p2.id)
-                return true;
-            return false;
+            if (p1 == p2)
+                return false;
+            return true;
         }
 
         public override bool Equals(object obj)

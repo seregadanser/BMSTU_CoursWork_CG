@@ -63,10 +63,10 @@ namespace cours_m2G
            
                 TimeSpan ts = strender.Elapsed;
            
-                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:0000}",
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
-                Console.WriteLine("RenderTime " + elapsedTime);
+               Console.WriteLine("RenderTime " + elapsedTime + " " + "Percent: ");
                 strender.Reset();
 
                 strefresh.Start();
@@ -74,7 +74,7 @@ namespace cours_m2G
                 strefresh.Stop();
                 ts = strefresh.Elapsed;
 
-                 elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                 elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:0000}",
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
                 //Console.WriteLine("RefreshTime " + elapsedTime);
@@ -89,13 +89,26 @@ namespace cours_m2G
             Bitmap LocalBMP = new Bitmap(picture.Size.Width,picture.Size.Height);
             if (PictureBuff.Filled)
                 LocalBMP = Drawer.Bmp;
+            //int coloredp = 0;
             if (picture.InvokeRequired)
             {
                 picture.Invoke(new MethodInvoker(delegate
                 {
-                            picture.Image = LocalBMP;
+                    picture.Image = LocalBMP;
+                    Bitmap p = (Bitmap)picture.Image;
+       
+                    //for (int i = 0; i < p.Size.Width; i++)
+                    //    for (int j = 0; j < p.Size.Height; j++)
+                    //    {
+                    //        Color r =p.GetPixel(i, j);
+
+                    //        if (r != Color.FromArgb(255, 255, 255, 255) && r != Color.FromArgb(0, 0, 0, 0))
+                    //            coloredp++;
+                    //    }
                 }));
             }
+            //double perc = coloredp / (double)(LocalBMP.Width * LocalBMP.Height) * 100;
+            //Console.WriteLine(perc);
             Thread.Sleep(10);
         }
 
@@ -118,6 +131,9 @@ namespace cours_m2G
                 Drawer = new DrawVisitorR(picture.Size, 1, camera);
                     break;
                 case 5:
+                    Drawer = new DrawVisitorR1(picture.Size, 1, camera);
+                    break;
+                case 6:
                 Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
                     break;
             }
@@ -135,17 +151,42 @@ namespace cours_m2G
         {
             cancelTokenSource.Cancel();
         }
-       public Tuple<List<Id>, Id, PointComponent> Read(Point point)
+       public Tuple<List<Id>, Id, PointComponent> Read(Point point, int what)
         {
             Reader.InPoint = point;
             model.action(Reader);
-            ModelComponent io = Reader.Find;
+            PolygonComponent io = Reader.Find;
             PointComponent p = Reader.Findpoint;
-            Tuple<List<Id>, Id, PointComponent> r;
+            Tuple<List<Id>, Id, PointComponent> r = new Tuple<List<Id>, Id, PointComponent>(null, null, null);
+            ModelComponent m = io;
+            double dest = double.MaxValue;
             if (io != null)
-                r = new Tuple<List<Id>, Id, PointComponent>(model.GetConnectedElements(io.Id), io.Id, p);
-            else
-                r = new Tuple<List<Id>, Id, PointComponent>(null, null, null);
+            {
+                switch (what)
+                {
+                    case 1:
+                        foreach (PointComponent po in io.Points)
+                            if (po.Desctination(p) < dest)
+                            {
+                                dest = po.Desctination(p);
+                                m = po;
+                            }
+                        r = new Tuple<List<Id>, Id, PointComponent>(model.GetConnectedElements(m.Id), m.Id, p);
+                        break;
+                    case 2:
+                        foreach (LineComponent po in io.Lines)
+                            if (po.Desctination(p) < dest)
+                            {
+                                dest = po.Desctination(p);
+                                m = po;
+                            }
+                        r = new Tuple<List<Id>, Id, PointComponent>(model.GetConnectedElements(m.Id), m.Id, p);
+                        break;
+                    case 3:
+                        r = new Tuple<List<Id>, Id, PointComponent>(model.GetConnectedElements(io.Id), io.Id, p);
+                        break;
+                }   
+            }
             return r;
         }
         #endregion

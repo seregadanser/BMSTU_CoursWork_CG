@@ -101,18 +101,18 @@ namespace cours_m2G
             }
             if(p.Count == 4)
             {
-                PolygonComponent pp = new PolygonComponent(pointsObj[p[0] - 1], pointsObj[p[1] - 1], pointsObj[p[2] - 1], textureObj[pt[0] - 1], textureObj[pt[1] - 1], textureObj[pt[2] - 1]);
-                PolygonComponent pp1 = new PolygonComponent(pointsObj[p[2] - 1], pointsObj[p[3] - 1], pointsObj[p[0] - 1], textureObj[pt[2] - 1], textureObj[pt[3] - 1], textureObj[pt[0] - 1]);
+                PolygonComponent pp = new PolygonComponent(pointsObj[p[0] - 1], pointsObj[p[1] - 1], pointsObj[p[2] - 1]);// textureObj[pt[0] - 1], textureObj[pt[1] - 1], textureObj[pt[2] - 1]);
+                PolygonComponent pp1 = new PolygonComponent(pointsObj[p[2] - 1], pointsObj[p[3] - 1], pointsObj[p[0] - 1]);//, textureObj[pt[2] - 1], textureObj[pt[3] - 1], textureObj[pt[0] - 1]);
 
-                PointComponent[] tex = new PointComponent[3];
-                tex[0] = textureObj[pt[0] - 1];
-                tex[1] = textureObj[pt[1] - 1];
-                tex[2] = textureObj[pt[2] - 1];
+                //PointComponent[] tex = new PointComponent[3];
+                //tex[0] = textureObj[pt[0] - 1];
+                //tex[1] = textureObj[pt[1] - 1];
+                //tex[2] = textureObj[pt[2] - 1];
 
-                PointComponent[] tex1 = new PointComponent[3];
-                tex[0] = textureObj[pt[2] - 1];
-                tex[1] = textureObj[pt[3] - 1];
-                tex[2] = textureObj[pt[0] - 1];
+                //PointComponent[] tex1 = new PointComponent[3];
+                //tex[0] = textureObj[pt[2] - 1];
+                //tex[1] = textureObj[pt[3] - 1];
+                //tex[2] = textureObj[pt[0] - 1];
 
                 //pp.Text = tex;
                 //pp1.Text = tex1;

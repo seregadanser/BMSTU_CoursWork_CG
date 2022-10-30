@@ -170,7 +170,7 @@ namespace cours_m2G
         public DrawVisitorR(Size screen, int scale, Camera cam) : base(screen, scale)
         {
             this.cam = cam;
-            rayt = new RayTraiser(screen, cam, scale);
+            rayt = new RayTraiserPool(screen, cam, scale);
         }
         
     public override void visit(Model model)
@@ -184,13 +184,38 @@ namespace cours_m2G
 
 
     }
+    class DrawVisitorR1 : DrawVisitor
+    {
+        Camera cam;
+        RayTraiser rayt;
+
+
+        public override Bitmap Bmp { get { return PictureBuff.GetBitmap(); } }
+
+        public DrawVisitorR1(Size screen, int scale, Camera cam) : base(screen, scale)
+        {
+            this.cam = cam;
+            rayt = new RayTraiserPool(screen, cam, scale);
+        }
+
+        public override void visit(Model model)
+        {
+            PictureBuff.Filled = false;
+            PictureBuff.Creator = RenderType.RAY;
+
+            rayt.RayTrasing(model);
+            PictureBuff.Filled = true;
+        }
+
+
+    }
 
     class ReadVisitor : ScreenVisitor
     {
         public override TypeVisitor type { get; } = TypeVisitor.Reader;
         public Point InPoint { get; set; } = new Point(0, 0);
-        protected ModelComponent find;
-        public ModelComponent Find { get { return find; } }
+        protected PolygonComponent find;
+        public PolygonComponent Find { get { return find; } }
 
         protected PointComponent findpoint;
         public PointComponent Findpoint { get { return findpoint; } }
@@ -244,9 +269,9 @@ namespace cours_m2G
             find = RayT(model, D, CamPosition);
         }
 
-        private ModelComponent RayT(Model model, MatrixCoord3D D, MatrixCoord3D position)
+        private PolygonComponent RayT(Model model, MatrixCoord3D D, MatrixCoord3D position)
         {
-            ModelComponent closest = null;
+            PolygonComponent closest = null;
             double closest_t = double.MaxValue-1;
             //  Parallel.ForEach<PolygonComponent>(model.Polygons, p=> { 
             foreach (PolygonComponent p in model.Polygons)

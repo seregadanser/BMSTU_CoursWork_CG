@@ -23,7 +23,7 @@ namespace cours_m2G
         {
             InitializeComponent();
             KeyPreview = true;
-           ObjReader er = new ObjReader(@"D:\1.obj");
+           //ObjReader er = new ObjReader(@"D:\2.obj");
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
             PictureBuff.Init(pictureBox2.Size);
@@ -100,8 +100,22 @@ namespace cours_m2G
         private void pictureBox2_Click(object sender, EventArgs e)
         {
             MouseEventArgs ee = (MouseEventArgs)e;
-            Tuple<List< Id >, Id, PointComponent > r = scene.Read(ee.Location);
-            if(r.Item2!=null)
+            Tuple<List<Id>, Id, PointComponent> r = new Tuple<List<Id>, Id, PointComponent>(null, null, null);
+            if (ModifierKeys == Keys.Control)
+            {
+                r = scene.Read(ee.Location, 1);
+            }
+            if (ModifierKeys == Keys.Alt)
+            {
+                r = scene.Read(ee.Location, 2);
+            }
+            if (ModifierKeys == Keys.Shift)
+            {
+                r = scene.Read(ee.Location, 3);
+
+            }
+
+            if (r.Item2 != null)
                 SetActiveWindow(r.Item1, r.Item2);
             else
                 DelActiveWindow();
