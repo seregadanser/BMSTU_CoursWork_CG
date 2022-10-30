@@ -100,6 +100,11 @@ namespace cours_m2G
         private void pictureBox2_Click(object sender, EventArgs e)
         {
             MouseEventArgs ee = (MouseEventArgs)e;
+            if(ee.Button == MouseButtons.Right)
+            {
+                scene.NewP(ee.Location);
+                return;
+            }
             Tuple<List<Id>, Id, PointComponent> r = new Tuple<List<Id>, Id, PointComponent>(null, null, null);
             if (ModifierKeys == Keys.Control)
             {
@@ -114,6 +119,7 @@ namespace cours_m2G
                 r = scene.Read(ee.Location, 3);
 
             }
+           
 
             if (r.Item2 != null)
                 SetActiveWindow(r.Item1, r.Item2);
@@ -307,19 +313,19 @@ namespace cours_m2G
             {
                 scene.ActiveMovement(direction);
             }
-            else
-             if (ModifierKeys == Keys.Control)
-            {
-                switch (direction)
-                {
-                    case "east":
-                        scene.Move('X');
-                        break;
-                    case "west":
-                        scene.Move('Z');
-                        break;
-                }
-            }
+            //else
+            // if (ModifierKeys == Keys.Control)
+            //{
+            //    switch (direction)
+            //    {
+            //        case "east":
+            //            scene.Move('X');
+            //            break;
+            //        case "west":
+            //            scene.Move('Z');
+            //            break;
+            //    }
+            //}
             lastPoint = e.Location;
         }
    

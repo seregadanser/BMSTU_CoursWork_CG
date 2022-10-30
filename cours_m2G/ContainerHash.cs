@@ -40,6 +40,8 @@ namespace cours_m2G
             for (int i = 0; i < s.Length; i++)
                 hash_result = ((size - 1) * hash_result + s[i]) % size;
             hash_result = (hash_result * 2 + 1) % size;
+            if (hash_result < 0)
+                hash_result *= -1;
             return hash_result;
         }
 
@@ -60,7 +62,12 @@ namespace cours_m2G
                     if (d.Key == key)
                     {
                         table[position].Remove(d);
-                        buisy.Remove(new Dict<int>(key, position));
+                        foreach (Dict<int> di in buisy)
+                            if (di.Key == key)
+                            {
+                                buisy.Remove(di);
+                                return;
+                            }
                         return;
                     }
         }
@@ -73,6 +80,11 @@ namespace cours_m2G
                     if (d.Key == key)
                         return true;
             return false;
+        }
+
+        public List<Dict<int>> UsingObj()
+        {
+            return buisy;
         }
 
         public T this[Id key]
@@ -231,69 +243,56 @@ namespace cours_m2G
         //    children.RemoveAt(index);
         //    return r;
         //}
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <returns></returns>
-        //public Tuple<List<Id>, List<Id>> Remove(Id id)
-        //{
-        //    Tuple<List<Id>, List<Id>> r = null;
-        //    for (int i = 0; i < components.Count; i++)
-        //    {
-        //        if (this.id[i] == id)
-        //        {
-        //            components.RemoveAt(i);
-        //            this.id.RemoveAt(i);
-        //            r = new Tuple<List<Id>, List<Id>>(parent[i], children[i]);
-        //            parent.RemoveAt(i);
-        //            children.RemoveAt(i);
-        //            return r;
-        //        }
-        //    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public void Remove(Id id)
+        {
+            components.Remove(id);
+            parent.Remove(id);
+            children.Remove(id);
+        }
 
-        //    return r;
-        //}
-
-        ///// <summary>
-        ///// Удаление детей оюъекта
-        ///// </summary>
-        ///// <param name="child">Id ребенка</param>
-        ///// <returns>список id контейнера рекомендованых к удалению</returns>
-        //public List<Id> RemoveChildren(Id child)
-        //{
-        //    List<Id> r = new List<Id>();
-        //    for (int i = children.Count - 1; i >= 0; i--)
-        //    {
-        //        for (int j = children[i].Count - 1; j >= 0; j--)
-        //            if (children[i][j] == child)
-        //            {
-        //                children[i].RemoveAt(j);
-        //                r.Add(id[i]);
-        //            }
-        //    }
-        //    return r;
-        //}
-        ///// <summary>
-        ///// Удаление родителей объекта
-        ///// </summary>
-        ///// <param name="parent">Id родителя</param>
-        ///// <returns>список id контейнера рекомендованых к удалению</returns>
-        //public List<Id> RemoveParent(Id parent)
-        //{
-        //    List<Id> r = new List<Id>();
-        //    for (int i = this.parent.Count - 1; i >= 0; i--)
-        //    {
-        //        for (int j = this.parent[i].Count - 1; j >= 0; j--)
-        //            if (this.parent[i][j] == parent)
-        //            {
-        //                this.parent[i].RemoveAt(j);
-        //            }
-        //        if (this.parent[i].Count == 0 && children[i].Count == 0)
-        //            r.Add(id[i]);
-        //    }
-        //    return r;
-        //}
+        /// <summary>
+        /// Удаление детей оюъекта
+        /// </summary>
+        /// <param name="child">Id ребенка</param>
+        /// <returns>список id контейнера рекомендованых к удалению</returns>
+        public List<Id> RemoveChildren(Id child)
+        {
+            List<Id> r = new List<Id>();
+            List<Dict<int>> us = components.UsingObj();
+            foreach (Dict<int> d in us)
+            {
+             
+                    for(int i = children[d.Key].Count-1; i>=0 ; i--)
+                    if (children[d.Key][i] == child)
+                    {
+                        children[d.Key].Remove(child);
+                        r.Add(d.Key);
+                    }
+            }   
+            return r;
+        }
+        /// <summary>
+        /// Удаление родителей объекта
+        /// </summary>
+        /// <param name="parent">Id родителя</param>
+        /// <returns>список id контейнера рекомендованых к удалению</returns>
+        public List<Id> RemoveParent(Id parent)
+        {
+            List<Id> r = new List<Id>();
+            List<Dict<int>> us = components.UsingObj();
+            foreach(Dict<int> d in us)
+            {
+                this.parent[d.Key].Remove(parent);
+                if (this.parent[d.Key].Count == 0 && children[d.Key].Count == 0)
+                    r.Add(d.Key);
+            }  
+            return r;
+        }
 
         public List<Id> GetConnectionObjects(Id id)
         {

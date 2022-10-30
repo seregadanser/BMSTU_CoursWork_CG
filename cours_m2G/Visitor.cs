@@ -302,6 +302,18 @@ namespace cours_m2G
             D.Normalise();
             find = RayT(model, D, CamPosition);
         }
+        public async override void visit(ModelHash model)
+        {
+            Console.WriteLine(Thread.CurrentThread.Name);
+
+            MatrixCoord3D CamPosition = cam.Position.Coords;
+            MatrixTransformation3D RotateMatrix = cam.RotateMatrix;
+
+
+            MatrixCoord3D D = CanvasToVieport(InPoint.X, InPoint.Y) * RotateMatrix.InversedMatrix();// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
+            D.Normalise();
+            find = RayT(model, D, CamPosition);
+        }
 
         private PolygonComponent RayT(Model model, MatrixCoord3D D, MatrixCoord3D position)
         {
@@ -338,6 +350,43 @@ namespace cours_m2G
             //}
             findpoint = new PointComponent(GetTrilinearCoordinateOfTheHit(closest_t, position, D));
             
+            return closest;
+        }
+        private PolygonComponent RayT(ModelHash model, MatrixCoord3D D, MatrixCoord3D position)
+        {
+            PolygonComponent closest = null;
+            double closest_t = double.MaxValue - 1;
+            //  Parallel.ForEach<PolygonComponent>(model.Polygons, p=> { 
+            foreach (PolygonComponent p in model.Polygons)
+            {
+
+                MatrixCoord3D tt = GetTimeAndUvCoord(position, D, p.Points[0].Coords, p.Points[1].Coords, p.Points[2].Coords);
+                if (tt != null)
+                {
+                    if (tt.X < closest_t && tt.X > 1)
+                    {
+                        closest_t = tt.X;
+                        closest = p;
+                    }
+                }
+            }
+            //if(closest == null)
+
+            //    //MatrixCoord3D f =  GetTrilinearCoordinateOfTheHit(closest_t, position, D);
+            //foreach(PointComponent p in model.Points)
+            //{
+            //    double tt = RaySphereIntersection(position, D, p.Coords,1); 
+            //    if(tt!=null)
+            //    {
+            //        if(tt<=closest_t && tt>1)
+            //        {
+            //            closest_t = tt;
+            //            closest = p;
+            //        }
+            //    } 
+            //}
+            findpoint = new PointComponent(GetTrilinearCoordinateOfTheHit(closest_t, position, D));
+
             return closest;
         }
 

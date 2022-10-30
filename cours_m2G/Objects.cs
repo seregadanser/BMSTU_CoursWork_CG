@@ -145,7 +145,7 @@ namespace cours_m2G
         protected Container<PointComponent> points;
         protected Container<LineComponent> lines;
         protected Container<PolygonComponent> polygons;
-
+        private int numpoints;
         public Container<PointComponent> Points { get { return points; } }
         public Container<LineComponent> Lines { get { return lines; } }
         public Container<PolygonComponent> Polygons { get { return polygons; } }
@@ -158,6 +158,7 @@ namespace cours_m2G
 
         public Model()
         {
+            numpoints = 0;
             points = new Container<PointComponent>();
             lines = new Container<LineComponent>();
             polygons = new Container<PolygonComponent>();
@@ -237,6 +238,8 @@ namespace cours_m2G
         public void AddPointToLine(Id LineId, PointComponent point)
         {
             List<Id> pa =  lines.GetParents(LineId);
+            point.Id = new Id("Point", Convert.ToString(numpoints+1));
+            numpoints++;
             List<PolygonComponent> poly = new List<PolygonComponent>();
             poly.Add(polygons[pa[0]]);
             poly.Add(polygons[pa[1]]);
@@ -367,6 +370,7 @@ namespace cours_m2G
         protected void AddPoint(PointComponent point)
         {
             points.Add(point, point.Id);
+            numpoints++;
         }
 
         protected void AddLine(LineComponent line)
@@ -375,11 +379,13 @@ namespace cours_m2G
             if(k ==-1)
             {
                k= points.Add(line.Point1, line.Point1.Id, line.Id);
-                if(k!=-1)
+                numpoints++;
+                if (k!=-1)
                 {
                     line.ReplacePoint(line.Point1, points[k]);
                 }
                 k= points.Add(line.Point2, line.Point2.Id, line.Id);
+                numpoints++;
                 if (k != -1)
                 {
                     line.ReplacePoint(line.Point2, points[k]);
@@ -400,9 +406,11 @@ namespace cours_m2G
                         polygon.ReplaceLine(polygon.Lines[i], lines[k]);
                     }
                     k = points.Add(polygon.Lines[i].Point1, polygon.Lines[i].Point1.Id, polygon.Id, polygon.Lines[i].Id);
+                    numpoints++;
                     if (k != -1)
                         polygon.ReplacePoint(polygon.Lines[i].Point1, points[k]);
                     k= points.Add(polygon.Lines[i].Point2, polygon.Lines[i].Point2.Id, polygon.Id, polygon.Lines[i].Id);
+                    numpoints++;
                     if (k != -1)
                         polygon.ReplacePoint(polygon.Lines[i].Point2, points[k]);
                 }

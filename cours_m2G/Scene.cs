@@ -13,7 +13,7 @@ namespace cours_m2G
         DrawVisitor Drawer;
         ReadVisitor Reader;
         ModelHash model;
-        //Model model;
+      //  Model model;
         Camera camera;
 
         Thread renderThread;
@@ -193,6 +193,28 @@ namespace cours_m2G
         #endregion
 
         #region model
+        public void NewP(Point point)
+        {
+            Reader.InPoint = point;
+            model.action(Reader);
+            PolygonComponent io = Reader.Find;
+            PointComponent p = Reader.Findpoint;
+      
+            ModelComponent m = io;
+            double dest = double.MaxValue;
+            if (io != null)
+            {
+                foreach (LineComponent po in io.Lines)
+                    if (po.Desctination(p) < dest)
+                    {
+                        dest = po.Desctination(p);
+                        m = po;
+                    }
+                AddComponent(m.Id,p);
+            }
+        }
+
+        
         public void AddComponent(IObjects objects)
         {
             model.AddComponent(objects);
