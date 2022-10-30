@@ -19,6 +19,7 @@ namespace cours_m2G
         abstract public void visit(LineComponent line);
         abstract public void visit(PolygonComponent polygon);
         abstract public void visit(Model model);
+        abstract public void visit(ModelHash model);
     }
 
     abstract class ScreenVisitor : IVisitor
@@ -35,6 +36,7 @@ namespace cours_m2G
         public abstract void visit(LineComponent l);
         public abstract void visit(PolygonComponent polygon);
         abstract public void visit(Model model);
+        abstract public void visit(ModelHash model);
 
     }
 
@@ -104,6 +106,20 @@ namespace cours_m2G
           
             PictureBuff.Filled = true;
         }
+        public override void visit(ModelHash model)
+        {
+            PictureBuff.Filled = false;
+            PictureBuff.Creator = raster.Type;
+            PictureBuff.Clear();
+
+            foreach (PolygonComponent l in model.Polygons)
+            {
+                l.action(this);
+            }
+
+
+            PictureBuff.Filled = true;
+        }
     }
 
     class DrawVisitorCamera : DrawVisitor
@@ -157,6 +173,20 @@ namespace cours_m2G
             }
             PictureBuff.Filled = true;
         }
+        public override void visit(ModelHash model)
+        {
+            PictureBuff.Creator = raster.Type;
+            PictureBuff.Clear();
+            PictureBuff.Filled = false;
+            raster.up = cam;
+            //raster1.up = cam;
+            foreach (PolygonComponent l in model.Polygons)
+            {
+                // if(MatrixCoord3D.scalar(l.Normal,cam.Direction)>0)
+                l.action(this);
+            }
+            PictureBuff.Filled = true;
+        }
     }
 
     class DrawVisitorR : DrawVisitor
@@ -182,7 +212,7 @@ namespace cours_m2G
             PictureBuff.Filled = true;
         }
 
-
+      
     }
     class DrawVisitorR1 : DrawVisitor
     {
@@ -241,6 +271,10 @@ namespace cours_m2G
         }
 
         public override void visit(Model model)
+        {
+
+        }
+        public override void visit(ModelHash model)
         {
 
         }
@@ -421,6 +455,13 @@ namespace cours_m2G
                 p.action(this);
             }
         }
+        public void visit(ModelHash model)
+        {
+            foreach (PointComponent p in model.Points)
+            {
+                p.action(this);
+            }
+        }
     }
     class HardTransformVisitor : IVisitor
     {
@@ -456,6 +497,13 @@ namespace cours_m2G
         }
 
         public void visit(Model model)
+        {
+            foreach (PointComponent p in model.Points)
+            {
+                p.action(this);
+            }
+        }
+        public void visit(ModelHash model)
         {
             foreach (PointComponent p in model.Points)
             {

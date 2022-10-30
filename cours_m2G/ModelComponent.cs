@@ -60,6 +60,12 @@ namespace cours_m2G
 
         public static bool operator ==(PointComponent p1, PointComponent p2)
         {
+            if ((Object)p1 == null && (Object)p2 == null)
+                return true;
+            if ((Object)p1 == null && (Object)p2 != null)
+                return false;
+            if ((Object)p1 != null && (Object)p2 == null)
+                return false;
             if (p1.X == p2.X && p1.Y == p2.Y && p1.Z == p2.Z)
                 return true;
             return false;
@@ -159,6 +165,12 @@ namespace cours_m2G
 
         public static bool operator ==(LineComponent p1, LineComponent p2)
         {
+            if ((Object)p1 == null && (Object)p2 == null)
+                return true;
+            if ((Object)p1 == null && (Object)p2 != null)
+                return false;
+            if ((Object)p1 != null && (Object)p2 == null)
+                return false;
             if (p1.id == p2.id)
                 return true;
             return false;
@@ -166,9 +178,9 @@ namespace cours_m2G
 
         public static bool operator !=(LineComponent p1, LineComponent p2)
         {
-            if (p1.id != p2.id)
-                return true;
-            return false;
+            if (p1 == p2)
+                return false;
+            return true;
         }
         public override bool Equals(object obj)
         {
