@@ -11,7 +11,8 @@ namespace cours_m2G
         Size screen;
         Camera cam;
         double scale;
-        public int NumberofThreads { get; set; } = 2;
+        public double Scale { get { return scale; } set { if (value > 0) scale = value; } }
+        public int NumberofThreads { get; set; } = 8;
         public RayTraiser(Size screen, Camera cam, double scale)
         {
             this.screen = screen;
@@ -19,7 +20,7 @@ namespace cours_m2G
             this.scale = scale;
         }
 
-        public virtual void RayTrasing(Model model)
+        public virtual void RayTrasing(IModel model)
         {
             Tuple<MatrixCoord3D, double> sphere = FoundCenter(model.Points);
             MatrixCoord3D CamPosition = cam.Position.Coords;
@@ -56,7 +57,7 @@ namespace cours_m2G
             //});
         }
 
-        protected Color RayT(Model model, MatrixCoord3D D, MatrixCoord3D position)
+        protected Color RayT(IModel model, MatrixCoord3D D, MatrixCoord3D position)
         {
 
             PolygonComponent closest = null;
@@ -85,12 +86,13 @@ namespace cours_m2G
         protected Tuple<MatrixCoord3D, double> FoundCenter(Container<PointComponent> points)
         {
             double minX, maxX, minY, maxY, minZ, maxZ;
-            minX = points[0].X;
-            maxX = points[0].X;
-            minY = points[0].Y;
-            maxY = points[0].Y;
-            minZ = points[0].Z;
-            maxZ = points[0].Z;
+            PointComponent poi = points.GetFirstElem();
+            minX = poi.X;
+            maxX = poi.X;
+            minY = poi.Y;
+            maxY = poi.Y;
+            minZ = poi.Z;
+            maxZ = poi.Z;
 
             foreach (PointComponent p in points)
             {
@@ -209,7 +211,7 @@ namespace cours_m2G
             this.scale = scale;
         }
 
-        public override void RayTrasing(Model model)
+        public override void RayTrasing(IModel model)
         {
 
             Tuple<MatrixCoord3D, double> sphere = FoundCenter(model.Points);
@@ -255,11 +257,11 @@ namespace cours_m2G
         {
             public int begin;
             public int end;
-            readonly public Model model;
+            readonly public IModel model;
             readonly public MatrixCoord3D CamPosition;
             readonly public MatrixTransformation3D RotateMatrix;
             readonly public Tuple<MatrixCoord3D, double> sphere;
-            public Limit(int begin, int end, Model model, MatrixCoord3D CamPosition, MatrixTransformation3D RotateMatrix, Tuple<MatrixCoord3D, double> sphere)
+            public Limit(int begin, int end, IModel model, MatrixCoord3D CamPosition, MatrixTransformation3D RotateMatrix, Tuple<MatrixCoord3D, double> sphere)
             {
                 this.begin = begin; this.end = end; this.model = model; 
                 this.CamPosition = CamPosition; this.RotateMatrix = RotateMatrix.InversedMatrix();

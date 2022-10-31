@@ -17,7 +17,7 @@ namespace cours_m2G
         FormTransform f;
         ActiveElementsForm f1;
 
-        Stack<Model> Mstack;
+     
 
         public Form1()
         {
@@ -32,7 +32,7 @@ namespace cours_m2G
 
 
 
-            Mstack = new Stack<Model>(10);
+           
 
             CallBackDelegates del = new CallBackDelegates()
             {
@@ -72,21 +72,24 @@ namespace cours_m2G
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (ModifierKeys != Keys.Control)
-                scene.Move(e.KeyValue);     
+                scene.Move(e.KeyValue);
+            else
+            {
+                if (e.KeyCode == Keys.Z)
+                    scene.FromStack();
+            }
         }
 
         private void pictureBox2_MouseWheel(object sender, MouseEventArgs e)
         {
             if (ModifierKeys == Keys.Control)
                 scene.Scale(e.Delta);
+            else
+            {
+             
+            }
         }
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            try
-            { scene.ChangeRender(Convert.ToInt32(textBox1.Text)); }
-            catch
-            { }
-        }
+       
         private void button11_Click(object sender, EventArgs e)
         {
             scene.StopThread();
@@ -106,19 +109,13 @@ namespace cours_m2G
                 return;
             }
             Tuple<List<Id>, Id, PointComponent> r = new Tuple<List<Id>, Id, PointComponent>(null, null, null);
-            if (ModifierKeys == Keys.Control)
-            {
+            if (Points.Checked)
                 r = scene.Read(ee.Location, 1);
-            }
-            if (ModifierKeys == Keys.Alt)
-            {
+            if (Lines.Checked)
                 r = scene.Read(ee.Location, 2);
-            }
-            if (ModifierKeys == Keys.Shift)
-            {
+            if (Polys.Checked)
                 r = scene.Read(ee.Location, 3);
 
-            }
            
 
             if (r.Item2 != null)
@@ -211,7 +208,7 @@ namespace cours_m2G
 
         private void button5_Click(object sender, EventArgs e)
         {
-
+            scene.RebildFigure();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -309,10 +306,10 @@ namespace cours_m2G
                 direction = "west";
 
 
-            if (MousePressed)
-            {
-                scene.ActiveMovement(direction);
-            }
+            //if (MousePressed)
+            //{
+            //    scene.ActiveMovement(direction);
+            //}
             //else
             // if (ModifierKeys == Keys.Control)
             //{
@@ -338,6 +335,92 @@ namespace cours_m2G
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            scene.DropCam();
+        }
+
+        private void ‚˚·Ó›ÎÂÏÂÌÚÓ‚ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Polys_Click(object sender, EventArgs e)
+        {
+            Lines.Checked = false;
+            Points.Checked = false;
+            Polys.Checked = true;
+        }
+
+        private void Lines_Click(object sender, EventArgs e)
+        {
+            Lines.Checked = true;
+            Points.Checked = false;
+            Polys.Checked = false;
+        }
+
+        private void Points_Click(object sender, EventArgs e)
+        {
+            Lines.Checked = false;
+            Points.Checked = true;
+            Polys.Checked = false;
+        }
+
+        private void Interpolation_Click(object sender, EventArgs e)
+        {
+            Interpolation.Checked = true;
+            Bariscentric.Checked = false;
+            NoCutter.Checked = false;
+            Parallel.Checked = false;
+            StepbyStep.Checked = false;
+            scene.ChangeRender(5);
+            scene.ChangeRender(1);
+        }
+
+        private void Bariscentric_Click(object sender, EventArgs e)
+        {
+            Interpolation.Checked = false;
+            Bariscentric.Checked = true;
+            NoCutter.Checked = false;
+            Parallel.Checked = false;
+            StepbyStep.Checked = false;
+            scene.ChangeRender(5);
+            scene.ChangeRender(2);
+        }
+
+        private void NoCutter_Click(object sender, EventArgs e)
+        {
+            Interpolation.Checked = false;
+            Bariscentric.Checked = false;
+            NoCutter.Checked = true;
+            Parallel.Checked = false;
+            StepbyStep.Checked = false;
+            scene.ChangeRender(5);
+            scene.ChangeRender(0);
+        }
+
+        private void Parallel_Click(object sender, EventArgs e)
+        {
+            Interpolation.Checked = false;
+            Bariscentric.Checked = false;
+            NoCutter.Checked = false;
+            Parallel.Checked = true;
+            StepbyStep.Checked = false;
+            scene.ChangeRender(4);
+            scene.ChangeRender(0);
+        }
+
+        private void StepbyStep_Click(object sender, EventArgs e)
+        {
+            Interpolation.Checked = false;
+            Bariscentric.Checked = false;
+            NoCutter.Checked = false;
+            Parallel.Checked = false;
+            StepbyStep.Checked = true;
+            scene.ChangeRender(4);
+            scene.ChangeRender(1);
         }
     }
 }

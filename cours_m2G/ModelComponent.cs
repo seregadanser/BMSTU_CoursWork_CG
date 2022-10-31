@@ -93,7 +93,7 @@ namespace cours_m2G
 
         public double Desctination(PointComponent p)
         {
-            return Math.Sqrt(Math.Pow(this.X - p.X, 2) + Math.Pow(this.Y - p.Y, 2));
+            return Math.Sqrt(Math.Pow(this.X - p.X, 2) + Math.Pow(this.Y - p.Y, 2) + Math.Pow(this.Z - p.Z, 2));
         }
 
         public override string ToString()
@@ -192,8 +192,12 @@ namespace cours_m2G
 
         public double Desctination(PointComponent p)
         {
-            return Math.Abs((point2.X - point1.X)*(point1.Y - p.Y)-(point1.X - p.X)*(point2.Y - point1.Y))
-                  /Math.Sqrt(Math.Pow(point1.X - point2.X, 2) + Math.Pow(point1.Y - point2.Y, 2));
+            MatrixCoord3D ab = new MatrixCoord3D(point1.X - point2.X, point1.Y - point2.Y, point1.Z - point2.Z );
+            MatrixCoord3D pa = new MatrixCoord3D(p.X - point1.X, p.Y - point1.Y, p.Z - point1.Z);
+            MatrixCoord3D pab = ab * pa;
+            return Math.Sqrt(MatrixCoord3D.scalar(pab, pab)/ MatrixCoord3D.scalar(ab,ab));
+            // return Math.Abs((point2.X - point1.X)*(point1.Y - p.Y)-(point1.X - p.X)*(point2.Y - point1.Y)- (point1.Z - p.Z) * (point2.Z - point1.Z))
+            //        /Math.Sqrt(Math.Pow(point1.X - point2.X, 2) + Math.Pow(point1.Y - point2.Y, 2) + Math.Pow(point1.Z - point2.Z, 2));
         }
 
         public override LineComponent Clone()

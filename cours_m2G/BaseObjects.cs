@@ -291,10 +291,10 @@ namespace cours_m2G
         /// <returns>A deep copy of the object.</returns>
         public static T Clone<T>(T source)
         {
-            if (!typeof(T).IsSerializable)
-            {
-                throw new ArgumentException("The type must be serializable.", nameof(source));
-            }
+            //if (!typeof(T).IsSerializable)
+            //{
+            //    throw new ArgumentException("The type must be serializable.", nameof(source));
+            //}
 
             // Don't serialize a null object, simply return the default for that object
             if (ReferenceEquals(source, null)) return default;

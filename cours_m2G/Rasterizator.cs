@@ -93,10 +93,10 @@ namespace cours_m2G
         public abstract void DrawPolygon(PolygonComponent polygon);
 
     }
-    class RasterizatorNoCutter : Rasterizator
+    class RasterizatorNoCutterG : Rasterizator
     {
         protected Graphics g;
-        public RasterizatorNoCutter(double scale, Size screen)
+        public RasterizatorNoCutterG(double scale, Size screen)
         {
             //this.cam = cam;
             this.scale = scale;
@@ -106,7 +106,7 @@ namespace cours_m2G
             type = RenderType.NOCUTTER;
         }
 
-        public RasterizatorNoCutter(Camera cam, double scale, Size screen) : this(scale, screen)
+        public RasterizatorNoCutterG(Camera cam, double scale, Size screen) : this(scale, screen)
         {
             shader = new VertexShaderProjection(screen, scale, cam);
         }
@@ -144,7 +144,7 @@ namespace cours_m2G
         }
     }
 
-    class RasterizatorNoText : RasterizatorNoCutter
+    class RasterizatorNoText : RasterizatorNoCutterG
     {
         public RasterizatorNoText(Camera cam, double scale, Size screen) : base(cam, scale, screen)
         {
@@ -164,7 +164,7 @@ namespace cours_m2G
 
         }
     }
-    class RasterizatorNoPoints : RasterizatorNoCutter
+    class RasterizatorNoPoints : RasterizatorNoCutterG
     {
         public RasterizatorNoPoints(Camera cam, double scale, Size screen) : base(cam, scale, screen)
         {
@@ -178,6 +178,58 @@ namespace cours_m2G
         public override void DrawPoint(PointComponent point)
         {
 
+        }
+    }
+    class RasterizatorNoCutter : Rasterizator
+    {
+        public override Bitmap Bmp { get {return PictureBuff.GetBitmap(); } }
+        public RasterizatorNoCutter(double scale, Size screen)
+        {
+           
+            this.scale = scale;
+            this.screen = screen;
+            shader = new VertexShader(screen, scale);
+            type = RenderType.ZBUFF;
+        }
+
+        public RasterizatorNoCutter(Camera cam, double scale, Size screen) : this(scale, screen)
+        {
+            shader = new VertexShaderProjection(screen, scale, cam);
+        }
+
+        public override void DrawPoint(PointComponent point)
+        {
+          
+        }
+
+        public override void DrawLine(LineComponent line)
+        {
+            MatrixCoord3D p1 = shader.VertexTransform(line.Point1);
+            MatrixCoord3D p2 = shader.VertexTransform(line.Point2);
+
+            if (p1 != null && p2 != null)
+                if (p1 != Double.NaN && p2 != Double.NaN)
+                {
+                   drawLine(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2) }, line.Color);
+                }
+
+        }
+        private void drawLine(List<PointComponent> vertices, Color color)
+        {
+            List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+            foreach (var p in pp)
+                drawPoint1(p, color);
+        }
+        void drawPoint1(PointComponent point, Color color)
+        {
+            var p2D = point;
+
+            if (color != Color.White)
+                PictureBuff.SetPixel((int)p2D.X, (int)p2D.Y, color.ToArgb());
+        }
+        public override void DrawPolygon(PolygonComponent polygon)
+        {
+            
         }
     }
     class RasterizatorCutter : Rasterizator
@@ -914,14 +966,11 @@ namespace cours_m2G
 
 
 
-
-
-
-    class RasterizatorCutterB : Rasterizator
+    class RasterizatorCutterBarri : Rasterizator
     {
         ZBuffer zBuffer;
         public override Bitmap Bmp { get { zBuffer.Down(); return PictureBuff.GetBitmap(); } }
-        public RasterizatorCutterB(double scale, Size screen)
+        public RasterizatorCutterBarri(double scale, Size screen)
         {
             this.scale = scale;
             zBuffer = new ZBuffer(screen);
@@ -929,7 +978,7 @@ namespace cours_m2G
             type = RenderType.ZBUFF;
             Console.WriteLine("Barri");
         }
-        public RasterizatorCutterB(Camera cam, double scale, Size screen) : this(scale, screen)
+        public RasterizatorCutterBarri(Camera cam, double scale, Size screen) : this(scale, screen)
         {
             shader = new VertexShaderProjection(screen, scale, cam);
         }
@@ -968,20 +1017,13 @@ namespace cours_m2G
             }
         }
 
-        private void drawTriangleFill(List<PointComponent> vertices, Color color)
-        {
-
-            Parallel.ForEach<PointComponent>(ShadeBackgroundPixel(vertices[0], vertices[1], vertices[2]), p => drawPoint(p, color));
-
-            //foreach (var p in ShadeBackgroundPixel(vertices[0], vertices[1], vertices[2]))
-            //    drawPoint(p, color);
-        }
+    
 
         private void drawLine(List<PointComponent> vertices, Color color)
         {
-            //List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
-            //foreach (var p in pp)
-            //    drawPoint1(p, color);
+            List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+            foreach (var p in pp)
+                drawPoint1(p, color);
         }
 
         void drawPoint(PointComponent point, Color color)

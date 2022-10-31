@@ -9,7 +9,7 @@ namespace cours_m2G
    
    
     [Serializable]
-    class ModelHash : IObjects
+    class ModelHash : IModel
     {
         Color color = Color.Black;
         public Id Id { get; set; }
@@ -25,13 +25,13 @@ namespace cours_m2G
                 }
             }
         }
-        protected ContainerHash<PointComponent> points;
-        protected ContainerHash<LineComponent> lines;
-        protected ContainerHash<PolygonComponent> polygons;
+        protected Container<PointComponent> points;
+        protected Container<LineComponent> lines;
+        protected Container<PolygonComponent> polygons;
         private int numpoints;
-        public ContainerHash<PointComponent> Points { get { return points; } }
-        public ContainerHash<LineComponent> Lines { get { return lines; } }
-        public ContainerHash<PolygonComponent> Polygons { get { return polygons; } }
+        public Container<PointComponent> Points { get { return points; } }
+        public Container<LineComponent> Lines { get { return lines; } }
+        public Container<PolygonComponent> Polygons { get { return polygons; } }
         public int NumberPoints { get { return points.Count; } }
         public int NumberLines { get { return lines.Count; } }
         public int NumberPolygons { get { return polygons.Count; } }
@@ -124,10 +124,12 @@ namespace cours_m2G
             point.Id = new Id("Point", Convert.ToString(numpoints + 1));
             numpoints++;
             List<PolygonComponent> poly = new List<PolygonComponent>();
-            poly.Add(polygons[pa[0]]);
-            poly.Add(polygons[pa[1]]);
-            LineComponent oldline = lines[LineId];
             List<PolygonComponent> new_polygons = new List<PolygonComponent>();
+            poly.Add(polygons[pa[0]]);
+            if (pa.Count == 2)
+                poly.Add(polygons[pa[1]]);
+
+            LineComponent oldline = lines[LineId];
             for (int i = 0; i < poly.Count; i++)
             {
                 PointComponent thirdpoint = new PointComponent(0, 0, 0);
@@ -137,7 +139,6 @@ namespace cours_m2G
                 new_polygons.Add(new PolygonComponent(thirdpoint, oldline.Point1, point));
                 new_polygons.Add(new PolygonComponent(thirdpoint, oldline.Point2, point));
             }
-
             foreach (PolygonComponent p in new_polygons)
                 AddPolygons(p);
             DeliteActive(LineId);
@@ -160,7 +161,7 @@ namespace cours_m2G
             }
         }
 
-        protected void RemovePoint(Id id)
+        public void RemovePoint(Id id)
         {
                 points.Remove(id);
                 List<Id> rrl = lines.RemoveChildren(id);
@@ -176,7 +177,7 @@ namespace cours_m2G
             
         }
 
-        protected void RemoveLine(Id id)
+        public void RemoveLine(Id id)
         {
                 lines[id].Color = Color.Black;
                 lines.Remove(id);
@@ -192,7 +193,7 @@ namespace cours_m2G
                 }
         }
 
-        protected void RemovePolygon(Id id)
+        public void RemovePolygon(Id id)
         {
             polygons[id].Color = Color.Black;
             polygons.Remove(id);
@@ -224,33 +225,32 @@ namespace cours_m2G
             }
         }
 
-        protected void AddPoint(PointComponent point)
+        public void AddPoint(PointComponent point)
         {
             points.Add(new Dict<PointComponent>(point.Id, point));
             numpoints++;
         }
 
-        protected void AddLine(LineComponent line)
+        public void AddLine(LineComponent line)
         {
            LineComponent k = lines.Add(new Dict<LineComponent>(line.Id ,line), 0 ,line.Point1.Id, line.Point2.Id);
             if(k == null)
             {
                PointComponent  k1= points.Add(new Dict<PointComponent>(line.Point1.Id,line.Point1), line.Id);
-                numpoints++;
                 if (k1!=null)
-                {
                     line.ReplacePoint(line.Point1, k1);
-                }
+               else
+                    numpoints++;
                 PointComponent k3 = points.Add(new Dict<PointComponent>(line.Point2.Id, line.Point2), line.Id);
-                numpoints++;
+               
                 if (k3 != null)
-                {
                     line.ReplacePoint(line.Point2, k3);
-                }
+                else
+                    numpoints++;
             }
         }
 
-        protected void AddPolygons(PolygonComponent polygon)
+        public void AddPolygons(PolygonComponent polygon)
         {
             PolygonComponent k = polygons.Add(new Dict<PolygonComponent>(polygon.Id, polygon) ,0, polygon.Points[0].Id, polygon.Points[1].Id, polygon.Points[2].Id, polygon.Lines[0].Id, polygon.Lines[1].Id, polygon.Lines[2].Id);
             if(k == null)
@@ -263,13 +263,16 @@ namespace cours_m2G
                         polygon.ReplaceLine(polygon.Lines[i], k1);
                     }
                     PointComponent k3 = points.Add(new Dict<PointComponent>(polygon.Lines[i].Point1.Id, polygon.Lines[i].Point1), polygon.Id, polygon.Lines[i].Id);
-                    numpoints++;
+                    
                     if (k3 != null)
                         polygon.ReplacePoint(polygon.Lines[i].Point1, k3);
+                    else
+                        numpoints++;
                     PointComponent k4 = points.Add(new Dict<PointComponent>(polygon.Lines[i].Point2.Id, polygon.Lines[i].Point2), polygon.Id, polygon.Lines[i].Id);
-                    numpoints++;
                     if (k4 != null)
                         polygon.ReplacePoint(polygon.Lines[i].Point2, k4);
+                    else
+                        numpoints++;
                 }
             }
         }
@@ -303,7 +306,7 @@ namespace cours_m2G
             PolygonComponent po4 = new PolygonComponent(p8, p7, p4);
             PolygonComponent po5 = new PolygonComponent(p4, p1, p8);
             PolygonComponent po6 = new PolygonComponent(p1, p5, p8);
-                PolygonComponent po7 = new PolygonComponent(p1, p3, p2);
+            PolygonComponent po7 = new PolygonComponent(p1, p3, p2);
             PolygonComponent po8 = new PolygonComponent(p1, p4, p3);
             PolygonComponent po9 = new PolygonComponent(p5, p7, p8);
             PolygonComponent po10 = new PolygonComponent(p5, p6, p7);

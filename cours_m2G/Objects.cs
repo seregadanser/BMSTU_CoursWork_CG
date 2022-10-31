@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.LinkLabel;
 
 namespace cours_m2G
 {
@@ -39,7 +40,7 @@ namespace cours_m2G
         public ActiveElements()
         {
             activeComponents = new List<IObjects>();
-            activepoints = new Container<PointComponent>();
+            activepoints = new ContainerList<PointComponent>();
             activeComponentsId = new List<Id>();
             parents = new List<List<Id>>();
             childeren = new List<List<Id>>();
@@ -125,8 +126,26 @@ namespace cours_m2G
             return activeElements;
         }
     }
+    interface IModel : IObjects
+    {
+        public Container<PointComponent> Points { get; }
+        public Container<LineComponent> Lines { get;  }
+        public Container<PolygonComponent> Polygons { get; }
+        public bool AddActiveComponent(Id id);
+        public void DeliteActive(); public void DeliteActive(Id id); public List<Id> GetConnectedElements(Id id);
+        public void AddPointToLine(Id LineId, PointComponent point);
+        public void RemovebyId(Id id);
+        public void RemovePoint(Id id);
+        public void RemoveLine(Id id);
+        public void RemovePolygon(Id id);
+        public void AddComponent(IObjects component);
+        public void AddPoint(PointComponent point);
+        public void AddLine(LineComponent line);
+        public void AddPolygons(PolygonComponent polygon);
+
+    }
     [Serializable]
-    class Model : IObjects
+    class Model : IModel
     {
         Color color = Color.Black;
         public Id Id { get; set; }
@@ -159,9 +178,9 @@ namespace cours_m2G
         public Model()
         {
             numpoints = 0;
-            points = new Container<PointComponent>();
-            lines = new Container<LineComponent>();
-            polygons = new Container<PolygonComponent>();
+            points = new ContainerList<PointComponent>();
+            lines = new ContainerList<LineComponent>();
+            polygons = new ContainerList<PolygonComponent>();
             active = new ActiveElements();
         }
 
@@ -242,7 +261,8 @@ namespace cours_m2G
             numpoints++;
             List<PolygonComponent> poly = new List<PolygonComponent>();
             poly.Add(polygons[pa[0]]);
-            poly.Add(polygons[pa[1]]);
+            if (pa.Count == 2)
+                poly.Add(polygons[pa[1]]);
             LineComponent oldline = lines[LineId];
             List<PolygonComponent> new_polygons = new List<PolygonComponent>();
             for(int i =0; i<poly.Count;i++)
@@ -277,7 +297,7 @@ namespace cours_m2G
             }
         }
 
-        protected void RemovePoint(Id id)
+        public void RemovePoint(Id id)
         {
             int delindex = -1;
             for (int i = 0; i < points.Count; i++)
@@ -301,7 +321,7 @@ namespace cours_m2G
             }
         }
 
-        protected void RemoveLine(Id id)
+        public void RemoveLine(Id id)
         {
             int delindex = -1;
             for (int i = 0; i < lines.Count; i++)
@@ -326,7 +346,7 @@ namespace cours_m2G
             }
         }
 
-        protected void RemovePolygon(Id id)
+        public void RemovePolygon(Id id)
         {
             int delindex = -1;
             for(int i= 0; i < polygons.Count; i++)
@@ -367,13 +387,13 @@ namespace cours_m2G
             }
         }
 
-        protected void AddPoint(PointComponent point)
+        public void AddPoint(PointComponent point)
         {
             points.Add(point, point.Id);
             numpoints++;
         }
 
-        protected void AddLine(LineComponent line)
+        public void AddLine(LineComponent line)
         {
            int k = lines.Add(line, line.Id,0 ,line.Point1.Id, line.Point2.Id);
             if(k ==-1)
@@ -393,7 +413,7 @@ namespace cours_m2G
             }
         }
 
-        protected void AddPolygons(PolygonComponent polygon)
+        public void AddPolygons(PolygonComponent polygon)
         {
             int k = polygons.Add(polygon,polygon.Id ,0, polygon.Points[0].Id, polygon.Points[1].Id, polygon.Points[2].Id, polygon.Lines[0].Id, polygon.Lines[1].Id, polygon.Lines[2].Id);
             if(k == -1)

@@ -101,39 +101,20 @@ namespace cours_m2G
 
             set { }
         }
-        private Id this[int i]
+        public Id this[int i]
         {
             get { return buisy[i].Key; }
             set { }
         }
 
-        public Enumerator GetEnumerator()
+        public Enumerator<T> GetEnumerator()
         {
-            return new Enumerator(this);
+            return new Enumerator<T>(this);
         }
-        [Serializable]
-        public class Enumerator
-        {
-            int nIndex;
-            HashTable<T> collection;
-            public Enumerator(HashTable<T> coll)
-            {
-                collection = coll;
-                nIndex = -1;
-            }
-
-            public bool MoveNext()
-            {
-                nIndex++;
-                return (nIndex < collection.Count);
-            }
-
-            public T Current => collection[collection[nIndex]];
-        }
-
+      
     }
-
-    class ContainerHash<T>
+    [Serializable]
+    class ContainerHash<T> : Container<T>
     {
 
         HashTable<T> components;
@@ -141,6 +122,9 @@ namespace cours_m2G
         HashTable<List<Id>> children;
 
         public int Count { get { return components.Count; } }
+
+       
+ 
 
         public ContainerHash()
         {
@@ -210,6 +194,7 @@ namespace cours_m2G
                     return 1;
             return 0;
         }
+
         public T Add(Dict<T> dict, int k = 0, params Id[] children)
         {
             bool f = true;
@@ -248,11 +233,13 @@ namespace cours_m2G
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public void Remove(Id id)
+        
+        public Tuple<List<Id>, List<Id>> Remove(Id id)
         {
             components.Remove(id);
             parent.Remove(id);
             children.Remove(id);
+            return null;
         }
 
         /// <summary>
@@ -260,6 +247,7 @@ namespace cours_m2G
         /// </summary>
         /// <param name="child">Id ребенка</param>
         /// <returns>список id контейнера рекомендованых к удалению</returns>
+        
         public List<Id> RemoveChildren(Id child)
         {
             List<Id> r = new List<Id>();
@@ -270,7 +258,7 @@ namespace cours_m2G
                     for(int i = children[d.Key].Count-1; i>=0 ; i--)
                     if (children[d.Key][i] == child)
                     {
-                        children[d.Key].Remove(child);
+                        children[d.Key].RemoveAt(i);
                         r.Add(d.Key);
                     }
             }   
@@ -287,11 +275,15 @@ namespace cours_m2G
             List<Dict<int>> us = components.UsingObj();
             foreach(Dict<int> d in us)
             {
-                this.parent[d.Key].Remove(parent);
-                if (this.parent[d.Key].Count == 0 && children[d.Key].Count == 0)
-                    r.Add(d.Key);
+                for (int i = this.parent[d.Key].Count-1; i >= 0; i--)
+                {
+                    if(this.parent[d.Key][i] == parent)
+                         this.parent[d.Key].RemoveAt(i);
+                    if (this.parent[d.Key].Count == 0 && children[d.Key].Count == 0)
+                        r.Add(d.Key);
+                }
             }  
-            return r;
+             return r;
         }
 
         public List<Id> GetConnectionObjects(Id id)
@@ -324,11 +316,11 @@ namespace cours_m2G
         //    components.Clear();
         //}
 
-        //public T this[int i]
-        //{
-        //    get { return components[i]; }
-        //    set { components[i] = value; }
-        //}
+        public T this[int i]
+        {
+            get { return default; }
+            set {  }
+        }
 
         public T this[Id j]
         {
@@ -336,22 +328,44 @@ namespace cours_m2G
             {
                 return components[j];
             }
-            //set
-            //{
-            //    for (int i = 0; i < id.Count; i++)
-            //        if (id[i] == j)
-            //        {
-            //            components[i] = value;
-            //        };
-            //    ;
-            //}
+            set
+            {
+               
+            }
         }
 
+        public T GetFirstElem()
+        {
+            return components[components[0]];
+        }
 
-
-        public cours_m2G.HashTable<T>.Enumerator GetEnumerator()
+        public Enumerator<T> GetEnumerator()
         {
             return components.GetEnumerator();
         }
+
+        public int Add(T value, Id objec, Id parent, int k = 0, params Id[] children)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Add(T value, Id objec, Id parent, Id parent2, int k = 0, params Id[] children)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Add(T value, Id objec, int k = 0, params Id[] children)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Tuple<List<Id>, List<Id>> Remove(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+     
+
+      
     }
 }

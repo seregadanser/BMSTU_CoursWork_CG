@@ -12,9 +12,11 @@ namespace cours_m2G
     {
         DrawVisitor Drawer;
         ReadVisitor Reader;
-        ModelHash model;
-      //  Model model;
+        IModel model;
         Camera camera;
+
+        Stack<IModel> MStack;
+        Stack<Camera> CStack;
 
         Thread renderThread;
         CancellationTokenSource cancelTokenSource;
@@ -33,6 +35,9 @@ namespace cours_m2G
             renderThread.Name = "drawing";
             renderThread.IsBackground = true;
             renderThread.Start(cancelTokenSource.Token);
+
+            MStack = new Stack<IModel>();
+            CStack = new Stack<Camera>();
         }
         public Scene(PictureBox picture, ObjReader re)  
         {
@@ -47,7 +52,9 @@ namespace cours_m2G
             renderThread.Name = "drawing";
             renderThread.IsBackground = true;
             renderThread.Start(cancelTokenSource.Token);
-      
+
+            MStack = new Stack<IModel>();
+            CStack = new Stack<Camera>();
         }
 
         #region Render
@@ -112,9 +119,13 @@ namespace cours_m2G
             //Console.WriteLine(perc);
             Thread.Sleep(10);
         }
-
+        /// <summary>
+        /// Принимает значение от 0 до 5
+        /// </summary>
+        /// <param name="rt"></param>
         public void ChangeRender(int rt)
         {
+            StopThread();
             switch (rt) {
                 case 0:
                 Drawer.SetRaster = 0;
@@ -125,19 +136,14 @@ namespace cours_m2G
                 case 2:
                 Drawer.SetRaster = 2;
                     break;
-                case 3:
-                Drawer.SetRaster = 3;
-                    break;
                 case 4:
                 Drawer = new DrawVisitorR(picture.Size, 1, camera);
                     break;
                 case 5:
-                    Drawer = new DrawVisitorR1(picture.Size, 1, camera);
-                    break;
-                case 6:
                 Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
                     break;
             }
+            StartThread();
         }
 
         public void StartThread()
@@ -150,7 +156,7 @@ namespace cours_m2G
         }
         public void StopThread()
         {
-            cancelTokenSource.Cancel();
+         cancelTokenSource.Cancel();
         }
        public Tuple<List<Id>, Id, PointComponent> Read(Point point, int what)
         {
@@ -195,11 +201,12 @@ namespace cours_m2G
         #region model
         public void NewP(Point point)
         {
+            MStack.Push(ObjectCopier.Clone(model));
             Reader.InPoint = point;
             model.action(Reader);
             PolygonComponent io = Reader.Find;
             PointComponent p = Reader.Findpoint;
-      
+            
             ModelComponent m = io;
             double dest = double.MaxValue;
             if (io != null)
@@ -214,18 +221,35 @@ namespace cours_m2G
             }
         }
 
-        
+        public void NewPolygon(Point point)
+        {
+
+        }
+
+        public void RebildFigure()
+        {
+            MStack.Push(ObjectCopier.Clone(model));
+            model = new CubHash(new PointComponent(0, 0, 0), 20);
+        }
+        public void RebildFigure(ObjReader re)
+        {
+            model = re.ReadModel();
+        }
+
         public void AddComponent(IObjects objects)
         {
+            MStack.Push(ObjectCopier.Clone(model));
             model.AddComponent(objects);
         }
         public void AddComponent(Id LineId, PointComponent point)
         {
+            MStack.Push(ObjectCopier.Clone(model));
             model.AddPointToLine(LineId, point);
         }
         public void RemoveComponent(Id id)
         {
             StopThread();
+            MStack.Push(ObjectCopier.Clone(model));
             RemoveActiveComponent(id);
             model.RemovebyId(id);
             StartThread();
@@ -247,6 +271,7 @@ namespace cours_m2G
 
         public void ModelAction(IVisitor action)
         {
+            MStack.Push(ObjectCopier.Clone(model));
             model.action(action);
         }
 
@@ -272,14 +297,27 @@ namespace cours_m2G
             tr = new EasyTransformVisitor(trans);
             ModelAction(tr);
         }
+
+        public void FromStack()
+        {
+            model = MStack.Pop();
+        }
         #endregion
         #region camera
         public void Scale(int delta)
         {
             if (delta > 0)
-                Drawer.Scale++;
+            { Drawer.Scale++; Reader.Scale++; }
             else
-                Drawer.Scale--;
+            { Drawer.Scale--; Reader.Scale--; }
+        }
+
+
+        public void DropCam()
+        {
+            camera = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, picture.Size.Width / (double)picture.Size.Height, 1, 1000));
+            Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
+            Reader = new ReadVisitorCamera(camera, picture.Size, 1);
         }
 
         public void Move(int dir)

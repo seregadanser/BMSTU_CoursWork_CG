@@ -6,12 +6,65 @@ using System.Threading.Tasks;
 
 namespace cours_m2G
 {
+    [Serializable]
+    class Enumerator<T>
+    {
+        int nIndex;
+        Container<T> collection;
+        HashTable<T> collectionT;
+        int a;
+        public Enumerator(Container<T> coll, int a = 2)
+        {
+            collection = coll;
+            nIndex = -1;
+            this.a = a;
+        }
+        public Enumerator(HashTable<T> coll, int a = 1)
+        {
+            collectionT = coll;
+            nIndex = -1;
+            this.a = a;
+        }
+
+        public bool MoveNext()
+        {
+            nIndex++;
+            if(a == 2)
+                return (nIndex < collection.Count);
+            return (nIndex < collectionT.Count);
+        }
+
+        public T Current { get {if(a==2) return collection[nIndex]; return collectionT[collectionT[nIndex]]; } } 
+    }
+
+    interface Container<T>
+    {
+        public int Count { get; }
+        public int Add(T value, Id objec, Id parent, int k = 0, params Id[] children);
+        public int Add(T value, Id objec, Id parent, Id parent2, int k = 0, params Id[] children);
+        public int Add(T value, Id objec, int k = 0, params Id[] children);
+        public Tuple<List<Id>, List<Id>> Remove(int index);
+        public Tuple<List<Id>, List<Id>> Remove(Id id);
+        public List<Id> RemoveParent(Id parent);
+        public List<Id> RemoveChildren(Id child);
+        public List<Id> GetConnectionObjects(Id id);
+        public List<Id> GetParents(Id id);
+        public List<Id> GetChildren(Id id);
+        public T Add(Dict<T> dict, Id parent, int k = 0, params Id[] children);
+        public T Add(Dict<T> dict, Id parent, Id parent2, int k = 0, params Id[] children);
+        public T Add(Dict<T> dict, int k = 0, params Id[] children);
+        public T this[int i] { get;set; }
+        public T this[Id i] { get; set; }
+        public Enumerator<T> GetEnumerator();
+        public T GetFirstElem();
+    
+    }
     /// <summary>
     /// Контейнер состоящий из объекотв, их детей и их родителей
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
-    class Container<T>
+    class ContainerList<T> : Container<T>
     {
         List<T> components;
         List<List<Id>> parent;
@@ -23,7 +76,7 @@ namespace cours_m2G
         public int Count { get { return components.Count; } }
         public List<Id> Id { get { return id; } }
 
-        public Container()
+        public ContainerList()
         {
             components = new List<T>();
             children = new List<List<Id>>();
@@ -219,6 +272,7 @@ namespace cours_m2G
             ff.AddRange(children[ii]);
             return  ff;
         }
+
         public List<Id> GetParents(Id id)
         {
             int ii = 0;
@@ -278,28 +332,29 @@ namespace cours_m2G
 
 
 
-        public Enumerator GetEnumerator()
+        public Enumerator<T> GetEnumerator()
         {
-            return new Enumerator(this);
+            return new Enumerator<T>(this);
         }
-        [Serializable]
-        public class Enumerator
+
+        public T Add(Dict<T> dict, Id parent, int k = 0, params Id[] children)
         {
-            int nIndex;
-            Container<T> collection;
-            public Enumerator(Container<T> coll)
-            {
-                collection = coll;
-                nIndex = -1;
-            }
+            throw new NotImplementedException();
+        }
 
-            public bool MoveNext()
-            {
-                nIndex++;
-                return (nIndex < collection.Count);
-            }
+        public T Add(Dict<T> dict, Id parent, Id parent2, int k = 0, params Id[] children)
+        {
+            throw new NotImplementedException();
+        }
 
-            public T Current => collection[nIndex];
+        public T Add(Dict<T> dict, int k = 0, params Id[] children)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T GetFirstElem()
+        {
+            return components[0];
         }
     }
 

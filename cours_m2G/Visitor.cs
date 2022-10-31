@@ -18,8 +18,8 @@ namespace cours_m2G
         abstract public void visit(PointComponent point);
         abstract public void visit(LineComponent line);
         abstract public void visit(PolygonComponent polygon);
-        abstract public void visit(Model model);
-        abstract public void visit(ModelHash model);
+        abstract public void visit(IModel model);
+    
     }
 
     abstract class ScreenVisitor : IVisitor
@@ -35,8 +35,8 @@ namespace cours_m2G
         public abstract void visit(PointComponent p);
         public abstract void visit(LineComponent l);
         public abstract void visit(PolygonComponent polygon);
-        abstract public void visit(Model model);
-        abstract public void visit(ModelHash model);
+        abstract public void visit(IModel model);
+
 
     }
 
@@ -48,6 +48,9 @@ namespace cours_m2G
         public bool PrintText { get; set; } = true;
         protected Rasterizator raster;
        // protected R2 raster1;
+       /// <summary>
+       /// 0-2
+       /// </summary>
         public virtual int SetRaster
         {
             set
@@ -92,7 +95,7 @@ namespace cours_m2G
          }
         }
 
-        public override void visit(Model model)
+        public override void visit(IModel model)
         {
             PictureBuff.Filled = false;
             PictureBuff.Creator = raster.Type;
@@ -106,66 +109,43 @@ namespace cours_m2G
           
             PictureBuff.Filled = true;
         }
-        public override void visit(ModelHash model)
-        {
-            PictureBuff.Filled = false;
-            PictureBuff.Creator = raster.Type;
-            PictureBuff.Clear();
-
-            foreach (PolygonComponent l in model.Polygons)
-            {
-                l.action(this);
-            }
-
-
-            PictureBuff.Filled = true;
-        }
+     
     }
 
     class DrawVisitorCamera : DrawVisitor
     {
         Camera cam;
         public Camera Cam { get { return cam; } set { cam = value; } }
+        /// <summary>
+        /// 0-2
+        /// </summary>
         public override int SetRaster
         {
             set
             {
                 if (value == 0)
-                    raster = new RasterizatorCutterB(cam, scale, screen);
-                // raster = new RasterizatorNoCutter(cam, scale, screen);
+                    raster = new RasterizatorNoCutter(cam, scale, screen);
                 if (value == 1)
-                    raster = new RasterizatorNoText(cam,scale, screen);
+                    raster = new RasterizatorCutter(cam,scale, screen);
                 if (value == 2)
-                    raster = new RasterizatorNoPoints(cam,scale, screen);
-                if (value == 3)
-                    raster = new RasterizatorCutter(cam, scale, screen);
+                    raster = new RasterizatorCutterBarri(cam,scale, screen);
+                //if (value == 3)
+                //    raster = new RasterizatorCutter(cam, scale, screen);
             }
         }
         public DrawVisitorCamera(Size screen, int scale, Camera cam) : base(screen, scale)
         {
             this.cam = cam;
-            raster = new RasterizatorCutterB(cam, scale, screen);
-            //raster1 = new R2(cam, scale, screen);
+            raster = new RasterizatorCutter(cam, scale, screen);
         }
         int k = 0;
-        //public override void visit(PolygonComponent polygon)
-        //{
-        //    double cos = Math.Abs(MatrixCoord3D.scalar(polygon.Normal, cam.Direction));
-        //    Color c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
-        //    raster1.drawTriangleFill(polygon.Points, c);
-        //    //raster.DrawPolygon(polygon);
-        //    foreach (LineComponent l in polygon.Lines)
-        //    {
-        //        l.action(this);
-        //    }
-        //}
-        public override void visit(Model model)
+       
+        public override void visit(IModel model)
         {
             PictureBuff.Creator = raster.Type;
             PictureBuff.Clear();
             PictureBuff.Filled = false;
             raster.up = cam;
-            //raster1.up = cam;
             foreach (PolygonComponent l in model.Polygons)
             {
               // if(MatrixCoord3D.scalar(l.Normal,cam.Direction)>0)
@@ -173,27 +153,24 @@ namespace cours_m2G
             }
             PictureBuff.Filled = true;
         }
-        public override void visit(ModelHash model)
-        {
-            PictureBuff.Creator = raster.Type;
-            PictureBuff.Clear();
-            PictureBuff.Filled = false;
-            raster.up = cam;
-            //raster1.up = cam;
-            foreach (PolygonComponent l in model.Polygons)
-            {
-                // if(MatrixCoord3D.scalar(l.Normal,cam.Direction)>0)
-                l.action(this);
-            }
-            PictureBuff.Filled = true;
-        }
+       
     }
 
     class DrawVisitorR : DrawVisitor
     {
         Camera cam;
         RayTraiser rayt;
-       
+        public override int Scale { get { return scale; } set { if (value > 0) { scale = value; rayt.Scale = value; } } }
+        public override int SetRaster
+        {
+            set
+            {
+                if (value == 0)
+                    rayt = new RayTraiserPool(screen, cam, scale);
+                if (value == 1)
+                  rayt =  new RayTraiser(screen, cam, scale);
+            }
+        }
 
         public override Bitmap Bmp { get { return PictureBuff.GetBitmap(); } }
         
@@ -203,7 +180,7 @@ namespace cours_m2G
             rayt = new RayTraiserPool(screen, cam, scale);
         }
         
-    public override void visit(Model model)
+    public override void visit(IModel model)
         {
             PictureBuff.Filled = false;
             PictureBuff.Creator = RenderType.RAY;
@@ -228,7 +205,7 @@ namespace cours_m2G
             rayt = new RayTraiserPool(screen, cam, scale);
         }
 
-        public override void visit(Model model)
+        public override void visit(IModel model)
         {
             PictureBuff.Filled = false;
             PictureBuff.Creator = RenderType.RAY;
@@ -249,7 +226,7 @@ namespace cours_m2G
 
         protected PointComponent findpoint;
         public PointComponent Findpoint { get { return findpoint; } }
-
+        public override int Scale { get { return scale; } set { if (value > 0) { scale = value; } } }
         public ReadVisitor(Size screen, int scale)
         {
             this.screen = screen;
@@ -270,15 +247,11 @@ namespace cours_m2G
 
         }
 
-        public override void visit(Model model)
+        public override void visit(IModel model)
         {
 
         }
-        public override void visit(ModelHash model)
-        {
-
-        }
-
+   
     }
 
     class ReadVisitorCamera : ReadVisitor
@@ -290,7 +263,7 @@ namespace cours_m2G
             this.cam = cam;
         }
 
-        public async override void visit(Model model)
+        public async override void visit(IModel model)
         {
             Console.WriteLine(Thread.CurrentThread.Name);
       
@@ -302,20 +275,9 @@ namespace cours_m2G
             D.Normalise();
             find = RayT(model, D, CamPosition);
         }
-        public async override void visit(ModelHash model)
-        {
-            Console.WriteLine(Thread.CurrentThread.Name);
+    
 
-            MatrixCoord3D CamPosition = cam.Position.Coords;
-            MatrixTransformation3D RotateMatrix = cam.RotateMatrix;
-
-
-            MatrixCoord3D D = CanvasToVieport(InPoint.X, InPoint.Y) * RotateMatrix.InversedMatrix();// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
-            D.Normalise();
-            find = RayT(model, D, CamPosition);
-        }
-
-        private PolygonComponent RayT(Model model, MatrixCoord3D D, MatrixCoord3D position)
+        private PolygonComponent RayT(IModel model, MatrixCoord3D D, MatrixCoord3D position)
         {
             PolygonComponent closest = null;
             double closest_t = double.MaxValue-1;
@@ -333,21 +295,7 @@ namespace cours_m2G
                     }
                 }
             }
-            //if(closest == null)
-
-            //    //MatrixCoord3D f =  GetTrilinearCoordinateOfTheHit(closest_t, position, D);
-            //foreach(PointComponent p in model.Points)
-            //{
-            //    double tt = RaySphereIntersection(position, D, p.Coords,1); 
-            //    if(tt!=null)
-            //    {
-            //        if(tt<=closest_t && tt>1)
-            //        {
-            //            closest_t = tt;
-            //            closest = p;
-            //        }
-            //    } 
-            //}
+        
             findpoint = new PointComponent(GetTrilinearCoordinateOfTheHit(closest_t, position, D));
             
             return closest;
@@ -370,21 +318,7 @@ namespace cours_m2G
                     }
                 }
             }
-            //if(closest == null)
-
-            //    //MatrixCoord3D f =  GetTrilinearCoordinateOfTheHit(closest_t, position, D);
-            //foreach(PointComponent p in model.Points)
-            //{
-            //    double tt = RaySphereIntersection(position, D, p.Coords,1); 
-            //    if(tt!=null)
-            //    {
-            //        if(tt<=closest_t && tt>1)
-            //        {
-            //            closest_t = tt;
-            //            closest = p;
-            //        }
-            //    } 
-            //}
+           
             findpoint = new PointComponent(GetTrilinearCoordinateOfTheHit(closest_t, position, D));
 
             return closest;
@@ -395,7 +329,7 @@ namespace cours_m2G
         double RaySphereIntersection(MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection, MatrixCoord3D spos, double r)
         {
             double t = Double.MaxValue;
-            //a == 1; // because rdir must be normalized
+            
             MatrixCoord3D k = rayOrigin - spos;
             double b = MatrixCoord3D.scalar(k, rayDirection);
             double c = MatrixCoord3D.scalar(k, k) - r * r;
@@ -497,20 +431,14 @@ namespace cours_m2G
             }
         }
 
-        public void visit(Model model)
+        public void visit(IModel model)
         {
             foreach (PointComponent p in model.Points)
             {
                 p.action(this);
             }
         }
-        public void visit(ModelHash model)
-        {
-            foreach (PointComponent p in model.Points)
-            {
-                p.action(this);
-            }
-        }
+
     }
     class HardTransformVisitor : IVisitor
     {
@@ -545,20 +473,14 @@ namespace cours_m2G
             }
         }
 
-        public void visit(Model model)
+        public void visit(IModel model)
         {
             foreach (PointComponent p in model.Points)
             {
                 p.action(this);
             }
         }
-        public void visit(ModelHash model)
-        {
-            foreach (PointComponent p in model.Points)
-            {
-                p.action(this);
-            }
-        }
+      
     }
 
   
