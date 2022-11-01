@@ -1012,6 +1012,7 @@ namespace cours_m2G
             if (p1 != null && p2 != null && p3 != null)
             //    if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
             {
+
                 foreach (var p in ShadeBackgroundPixel(new PointComponent(p1), new PointComponent(p2), new PointComponent(p3)))
                     drawPoint(p, c);
             }
@@ -1069,6 +1070,7 @@ namespace cours_m2G
             double l1, l2, l3;
             double dy23 = (p2.Y - p3.Y), dy31 = (p3.Y - p1.Y), dx32 = (p3.X - p2.X), dx13 = (p1.X - p3.X);
             int k = 0;
+
             for (double sx = x_min - k; sx <= x_max + k; sx += 0.5)
                 for (double sy = y_min - k; sy <= y_max + k; sy += 0.5)
                 {
@@ -1084,39 +1086,13 @@ namespace cours_m2G
                 }
             //return points;
         }
-        //public IEnumerable<PointComponent> ShadeBackgroundPixel1(PointComponent p0, PointComponent p1, PointComponent p2)
+
+        //public IEnumerable<PointComponent> ShadeBackgroundPixel()
         //{
-        //    double x_min, x_max, y_min, y_max;
-        //    x_min = Math.Min(p0.X, Math.Min(p1.X, p2.X));
-        //    y_min = Math.Min(p0.Y, Math.Min(p1.Y, p2.Y));
-        //    x_max = Math.Max(p0.X, Math.Max(p1.X, p2.X));
-        //    y_max = Math.Max(p0.Y, Math.Max(p1.Y, p2.Y));
-
-        //    Point2D p;
-        //    for (p.y = y_min; p.y <= y_max; p.y+=0.5)
-        //    {
-        //        for (p.x = x_min; p.x <= x_max; p.x+=0.5)
-        //        {
-        //            // Determine barycentric coordinates
-        //            double w0 = orient2d(new Point2D(p1.X, p1.Y), new Point2D(p2.X, p2.Y), p);
-        //            double w1 = orient2d(new Point2D(p2.X, p2.Y), new Point2D(p0.X, p0.Y), p);
-        //            double w2 = orient2d(new Point2D(p0.X, p0.Y), new Point2D(p1.X, p1.Y), p);
-
-        //            // If p is on or inside all edges, render pixel.
-                  
-        //             if (w0 >= 0 && w1 >= 0 && w2 >= 0)
-        //            {
-        //                double z = w0 * p0.Z +w1 * p1.Z + w2* p2.Z;
-        //                yield return new PointComponent(p.x, p.y, z);
-        //            }
-        //        }
-        //    }
 
         //}
-        //private double orient2d(Point2D b, Point2D a, Point2D c)
-        //{
-        //    return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
-        //}
+
+
         struct Point2D
         {
            public Point2D(double x, double y)

@@ -12,8 +12,7 @@ namespace cours_m2G
     {
 
         Scene scene;
-        ReadVisitor reader;
-
+ 
         FormTransform f;
         ActiveElementsForm f1;
 
@@ -23,7 +22,7 @@ namespace cours_m2G
         {
             InitializeComponent();
             KeyPreview = true;
-           //ObjReader er = new ObjReader(@"D:\2.obj");
+            ObjReader er = new ObjReader(@"D:\1.obj");
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
             PictureBuff.Init(pictureBox2.Size);
@@ -421,6 +420,11 @@ namespace cours_m2G
             StepbyStep.Checked = true;
             scene.ChangeRender(4);
             scene.ChangeRender(1);
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
