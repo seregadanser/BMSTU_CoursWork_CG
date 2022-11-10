@@ -44,7 +44,7 @@ namespace cours_m2G
             camera = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, picture.Size.Width / (double)picture.Size.Height, 1, 1000));
             Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
             Reader = new ReadVisitorCamera(camera, picture.Size, 1);
-         //   model = re.ReadModel();
+            model = re.ReadModel();
 
             this.picture = picture;
             cancelTokenSource = new CancellationTokenSource();
