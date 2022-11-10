@@ -56,6 +56,8 @@
             this.Lines = new System.Windows.Forms.ToolStripMenuItem();
             this.Points = new System.Windows.Forms.ToolStripMenuItem();
             this.button1 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -63,10 +65,9 @@
             // pictureBox2
             // 
             this.pictureBox2.BackColor = System.Drawing.Color.White;
-            this.pictureBox2.Location = new System.Drawing.Point(8, 119);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox2.Location = new System.Drawing.Point(11, 198);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(831, 339);
+            this.pictureBox2.Size = new System.Drawing.Size(1187, 565);
             this.pictureBox2.TabIndex = 10;
             this.pictureBox2.TabStop = false;
             this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
@@ -78,10 +79,9 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(858, 49);
-            this.button6.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button6.Location = new System.Drawing.Point(1226, 82);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(71, 48);
+            this.button6.Size = new System.Drawing.Size(101, 80);
             this.button6.TabIndex = 20;
             this.button6.Text = "Сделать активным";
             this.button6.UseVisualStyleBackColor = true;
@@ -91,18 +91,16 @@
             // 
             this.comboBox5.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Location = new System.Drawing.Point(857, 25);
-            this.comboBox5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboBox5.Location = new System.Drawing.Point(1224, 42);
             this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(129, 23);
+            this.comboBox5.Size = new System.Drawing.Size(183, 33);
             this.comboBox5.TabIndex = 27;
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(843, 263);
-            this.button5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button5.Location = new System.Drawing.Point(1204, 438);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(125, 20);
+            this.button5.Size = new System.Drawing.Size(179, 33);
             this.button5.TabIndex = 20;
             this.button5.Text = "Возврат фигуры";
             this.button5.UseVisualStyleBackColor = true;
@@ -110,10 +108,9 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(843, 215);
-            this.button4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button4.Location = new System.Drawing.Point(1204, 358);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(235, 20);
+            this.button4.Size = new System.Drawing.Size(336, 33);
             this.button4.TabIndex = 21;
             this.button4.Text = "Выбрать трансформирование";
             this.button4.UseVisualStyleBackColor = true;
@@ -121,10 +118,9 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(843, 239);
-            this.button9.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button9.Location = new System.Drawing.Point(1204, 398);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(235, 20);
+            this.button9.Size = new System.Drawing.Size(336, 33);
             this.button9.TabIndex = 22;
             this.button9.Text = "Применить трансформирование";
             this.button9.UseVisualStyleBackColor = true;
@@ -136,10 +132,9 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(865, 379);
-            this.button10.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button10.Location = new System.Drawing.Point(1236, 632);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(127, 20);
+            this.button10.Size = new System.Drawing.Size(181, 33);
             this.button10.TabIndex = 23;
             this.button10.Text = "загрузить модель";
             this.button10.UseVisualStyleBackColor = true;
@@ -149,18 +144,17 @@
             // 
             this.panel1.AutoSize = true;
             this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panel1.Location = new System.Drawing.Point(8, 155);
-            this.panel1.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+            this.panel1.Location = new System.Drawing.Point(11, 258);
+            this.panel1.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(0, 0);
             this.panel1.TabIndex = 29;
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(813, 543);
-            this.button11.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button11.Location = new System.Drawing.Point(1161, 905);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(115, 43);
+            this.button11.Size = new System.Drawing.Size(164, 72);
             this.button11.TabIndex = 31;
             this.button11.Text = "Остановить отрисовку";
             this.button11.UseVisualStyleBackColor = true;
@@ -168,10 +162,9 @@
             // 
             // button12
             // 
-            this.button12.Location = new System.Drawing.Point(933, 543);
-            this.button12.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button12.Location = new System.Drawing.Point(1333, 905);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(94, 43);
+            this.button12.Size = new System.Drawing.Size(134, 72);
             this.button12.TabIndex = 32;
             this.button12.Text = "Возобновить отрисовку";
             this.button12.UseVisualStyleBackColor = true;
@@ -179,10 +172,9 @@
             // 
             // button13
             // 
-            this.button13.Location = new System.Drawing.Point(843, 474);
-            this.button13.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button13.Location = new System.Drawing.Point(1204, 790);
             this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(190, 23);
+            this.button13.Size = new System.Drawing.Size(271, 38);
             this.button13.TabIndex = 33;
             this.button13.Text = "Список активных элементов";
             this.button13.UseVisualStyleBackColor = true;
@@ -196,8 +188,7 @@
             this.выборЭлементовToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
-            this.menuStrip1.Size = new System.Drawing.Size(1166, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1666, 33);
             this.menuStrip1.TabIndex = 34;
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
@@ -208,7 +199,7 @@
             this.растеризацияToolStripMenuItem,
             this.трассировкаЛучейToolStripMenuItem});
             this.методРендераToolStripMenuItem.Name = "методРендераToolStripMenuItem";
-            this.методРендераToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
+            this.методРендераToolStripMenuItem.Size = new System.Drawing.Size(155, 29);
             this.методРендераToolStripMenuItem.Text = "Метод рендера";
             // 
             // растеризацияToolStripMenuItem
@@ -218,7 +209,7 @@
             this.Bariscentric,
             this.NoCutter});
             this.растеризацияToolStripMenuItem.Name = "растеризацияToolStripMenuItem";
-            this.растеризацияToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.растеризацияToolStripMenuItem.Size = new System.Drawing.Size(271, 34);
             this.растеризацияToolStripMenuItem.Text = "Растеризация";
             // 
             // Interpolation
@@ -226,21 +217,21 @@
             this.Interpolation.Checked = true;
             this.Interpolation.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Interpolation.Name = "Interpolation";
-            this.Interpolation.Size = new System.Drawing.Size(248, 22);
+            this.Interpolation.Size = new System.Drawing.Size(373, 34);
             this.Interpolation.Text = "Интерполяция";
             this.Interpolation.Click += new System.EventHandler(this.Interpolation_Click);
             // 
             // Bariscentric
             // 
             this.Bariscentric.Name = "Bariscentric";
-            this.Bariscentric.Size = new System.Drawing.Size(248, 22);
+            this.Bariscentric.Size = new System.Drawing.Size(373, 34);
             this.Bariscentric.Text = "Барицентрические координаты";
             this.Bariscentric.Click += new System.EventHandler(this.Bariscentric_Click);
             // 
             // NoCutter
             // 
             this.NoCutter.Name = "NoCutter";
-            this.NoCutter.Size = new System.Drawing.Size(248, 22);
+            this.NoCutter.Size = new System.Drawing.Size(373, 34);
             this.NoCutter.Text = "Без отсечения";
             this.NoCutter.Click += new System.EventHandler(this.NoCutter_Click);
             // 
@@ -250,20 +241,20 @@
             this.Parallel,
             this.StepbyStep});
             this.трассировкаЛучейToolStripMenuItem.Name = "трассировкаЛучейToolStripMenuItem";
-            this.трассировкаЛучейToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.трассировкаЛучейToolStripMenuItem.Size = new System.Drawing.Size(271, 34);
             this.трассировкаЛучейToolStripMenuItem.Text = "Трассировка лучей";
             // 
             // Parallel
             // 
             this.Parallel.Name = "Parallel";
-            this.Parallel.Size = new System.Drawing.Size(177, 22);
+            this.Parallel.Size = new System.Drawing.Size(266, 34);
             this.Parallel.Text = "Параллельная";
             this.Parallel.Click += new System.EventHandler(this.Parallel_Click);
             // 
             // StepbyStep
             // 
             this.StepbyStep.Name = "StepbyStep";
-            this.StepbyStep.Size = new System.Drawing.Size(177, 22);
+            this.StepbyStep.Size = new System.Drawing.Size(266, 34);
             this.StepbyStep.Text = "Последовательная";
             this.StepbyStep.Click += new System.EventHandler(this.StepbyStep_Click);
             // 
@@ -274,7 +265,7 @@
             this.Lines,
             this.Points});
             this.выборЭлементовToolStripMenuItem.Name = "выборЭлементовToolStripMenuItem";
-            this.выборЭлементовToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.выборЭлементовToolStripMenuItem.Size = new System.Drawing.Size(174, 29);
             this.выборЭлементовToolStripMenuItem.Text = "Выбор элементов";
             this.выборЭлементовToolStripMenuItem.Click += new System.EventHandler(this.выборЭлементовToolStripMenuItem_Click);
             // 
@@ -283,40 +274,60 @@
             this.Polys.Checked = true;
             this.Polys.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Polys.Name = "Polys";
-            this.Polys.Size = new System.Drawing.Size(132, 22);
+            this.Polys.Size = new System.Drawing.Size(198, 34);
             this.Polys.Text = "Полигоны";
             this.Polys.Click += new System.EventHandler(this.Polys_Click);
             // 
             // Lines
             // 
             this.Lines.Name = "Lines";
-            this.Lines.Size = new System.Drawing.Size(132, 22);
+            this.Lines.Size = new System.Drawing.Size(198, 34);
             this.Lines.Text = "Ребра";
             this.Lines.Click += new System.EventHandler(this.Lines_Click);
             // 
             // Points
             // 
             this.Points.Name = "Points";
-            this.Points.Size = new System.Drawing.Size(132, 22);
+            this.Points.Size = new System.Drawing.Size(198, 34);
             this.Points.Text = "Вершины";
             this.Points.Click += new System.EventHandler(this.Points_Click);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(843, 287);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Location = new System.Drawing.Point(1204, 478);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(125, 20);
+            this.button1.Size = new System.Drawing.Size(179, 33);
             this.button1.TabIndex = 35;
             this.button1.Text = "Возврат камеры";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(11, 797);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(327, 25);
+            this.label1.TabIndex = 36;
+            this.label1.Text = "Время отрисовки предыдущей сцены:";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(344, 797);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(59, 25);
+            this.label2.TabIndex = 37;
+            this.label2.Text = "label2";
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1166, 606);
+            this.ClientSize = new System.Drawing.Size(1666, 1010);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.comboBox5);
             this.Controls.Add(this.button13);
@@ -331,7 +342,6 @@
             this.Controls.Add(this.button5);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -377,5 +387,7 @@
         private ToolStripMenuItem трассировкаЛучейToolStripMenuItem;
         private ToolStripMenuItem Parallel;
         private ToolStripMenuItem StepbyStep;
+        private Label label1;
+        public Label label2;
     }
 }

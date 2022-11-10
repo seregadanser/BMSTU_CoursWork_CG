@@ -28,7 +28,7 @@ namespace cours_m2G
             PictureBuff.Init(pictureBox2.Size);
            // scene = new Scene(pictureBox2, er);
             scene = new Scene(pictureBox2);
-
+            scene.l2 = label2;
 
 
            
@@ -426,6 +426,11 @@ namespace cours_m2G
         }
 
         private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }

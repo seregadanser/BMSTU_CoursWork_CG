@@ -15,12 +15,11 @@ namespace cours_m2G
         IModel model;
         Camera camera;
 
-        Stack<IModel> MStack;
-        Stack<Camera> CStack;
-
         Thread renderThread;
         CancellationTokenSource cancelTokenSource;
         PictureBox picture;
+
+        public Label l2;
 
         public Scene(PictureBox picture)
         {
@@ -36,8 +35,7 @@ namespace cours_m2G
             renderThread.IsBackground = true;
             renderThread.Start(cancelTokenSource.Token);
 
-            MStack = new Stack<IModel>();
-            CStack = new Stack<Camera>();
+        
         }
         public Scene(PictureBox picture, ObjReader re)  
         {
@@ -53,9 +51,29 @@ namespace cours_m2G
             renderThread.IsBackground = true;
             renderThread.Start(cancelTokenSource.Token);
 
-            MStack = new Stack<IModel>();
-            CStack = new Stack<Camera>();
+      
         }
+        int tickindex = 0;
+        int ticksum = 0;
+        int[] ticklist = new int[100];
+
+        /* need to zero out the ticklist array before starting */
+        /* average will ramp up until the buffer is full */
+        /* returns average ticks per frame over the MAXSAMPLES last frames */
+
+        double CalcAverageTick(int newtick)
+        {
+            ticksum -= ticklist[tickindex];  /* subtract value falling off */
+            ticksum += newtick;              /* add new value */
+            ticklist[tickindex] = newtick;   /* save new value so it can be subtracted later */
+            if (++tickindex == 100)    /* inc buffer index */
+                tickindex = 0;
+
+            /* return average */
+            return ((double)ticksum / 100);
+        }
+
+
 
         #region Render
         Stopwatch strender = new Stopwatch();
@@ -70,11 +88,22 @@ namespace cours_m2G
                 strender.Stop();
            
                 TimeSpan ts = strender.Elapsed;
-           
-                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:0000}",
+                   
+                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
-               Console.WriteLine("RenderTime " + elapsedTime + " " + "Percent: ");
+                if (l2 == null)
+                    Console.WriteLine("RenderTime " + elapsedTime + " " + "Percent: ");
+                else
+                     if (l2.InvokeRequired)
+                {
+                    l2.Invoke(new MethodInvoker(delegate
+                    {
+                        l2.Text = Convert.ToString(CalcAverageTick((int)ts.Ticks)); 
+                        // l2.Text = elapsedTime;
+                    }));
+                }
+             
                 strender.Reset();
 
                 strefresh.Start();
@@ -201,7 +230,6 @@ namespace cours_m2G
         #region model
         public void NewP(Point point)
         {
-            MStack.Push(ObjectCopier.Clone(model));
             Reader.InPoint = point;
             model.action(Reader);
             PolygonComponent io = Reader.Find;
@@ -254,7 +282,7 @@ namespace cours_m2G
 
         public void RebildFigure()
         {
-            MStack.Push(ObjectCopier.Clone(model));
+    
             model = new CubHash(new PointComponent(0, 0, 0), 20);
         }
         public void RebildFigure(ObjReader re)
@@ -264,18 +292,18 @@ namespace cours_m2G
 
         public void AddComponent(IObjects objects)
         {
-            MStack.Push(ObjectCopier.Clone(model));
+        
             model.AddComponent(objects);
         }
         public void AddComponent(Id LineId, PointComponent point)
         {
-            MStack.Push(ObjectCopier.Clone(model));
+         
             model.AddPointToLine(LineId, point);
         }
         public void RemoveComponent(Id id)
         {
             StopThread();
-            MStack.Push(ObjectCopier.Clone(model));
+           
             RemoveActiveComponent(id);
             model.RemovebyId(id);
             StartThread();
@@ -297,7 +325,7 @@ namespace cours_m2G
 
         public void ModelAction(IVisitor action)
         {
-            MStack.Push(ObjectCopier.Clone(model));
+          
             model.action(action);
         }
 
@@ -326,9 +354,10 @@ namespace cours_m2G
 
         public void FromStack()
         {
-            model = MStack.Pop();
+         
         }
         #endregion
+
         #region camera
         public void Scale(int delta)
         {
