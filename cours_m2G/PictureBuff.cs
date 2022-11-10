@@ -38,7 +38,11 @@ namespace cours_m2G
 
         public static void SetPixel(int x, int y, int color)
         {
-            rgb[x + y * screen.Width] = color;
+            try
+            {
+                rgb[x + y * screen.Width] = color;
+            }
+            catch { }
         }
         public static void SetLine(int x1, int y1, int x2, int y2,Color color)
         {

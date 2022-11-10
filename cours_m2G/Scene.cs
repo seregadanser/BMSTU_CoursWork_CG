@@ -221,8 +221,34 @@ namespace cours_m2G
             }
         }
 
+
+        List<PointComponent> pp = new List<PointComponent>();
         public void NewPolygon(Point point)
         {
+            Reader.InPoint = point;
+            model.action(Reader);
+            PolygonComponent io = Reader.Find;
+            PointComponent p = Reader.Findpoint;
+
+            ModelComponent m = io;
+            double dest = double.MaxValue;
+            if (io != null)
+            {
+                foreach (PointComponent po in io.Points)
+                    if (po.Desctination(p) < dest)
+                    {
+                        dest = po.Desctination(p);
+                        m = po;
+                    }
+                pp.Add((PointComponent)m);
+
+                if(pp.Count == 3)
+                {
+                    PolygonComponent pol = new PolygonComponent(pp[0], pp[1], pp[2]);
+                    pp.Clear();
+                    model.AddComponent(pol);
+                }
+            }
 
         }
 

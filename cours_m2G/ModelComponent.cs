@@ -324,6 +324,13 @@ namespace cours_m2G
             }
         }
 
+        public void ReCalcNormal()
+        {
+            normal = (points[2].Coords - points[1].Coords) * (points[0].Coords - points[1].Coords);
+            normal.Normalise();
+            norm = new PointComponent(normal);
+        }
+
         public override void action(IVisitor visitor)
         {
             visitor.visit(this);

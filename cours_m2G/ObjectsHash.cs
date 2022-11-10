@@ -62,6 +62,8 @@ namespace cours_m2G
             {
                 visitor.visit(this);
             }
+            foreach (IObjects i2 in polygons)
+                    ((PolygonComponent)i2).ReCalcNormal();
         }
 
         public bool AddActiveComponent(Id id)

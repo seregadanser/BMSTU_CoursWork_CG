@@ -105,7 +105,10 @@ namespace cours_m2G
             MouseEventArgs ee = (MouseEventArgs)e;
             if(ee.Button == MouseButtons.Right)
             {
-                scene.NewP(ee.Location);
+                if (ModifierKeys == Keys.Control)
+                    scene.NewPolygon(ee.Location);
+                else
+                    scene.NewP(ee.Location);
                 return;
             }
             Tuple<List<Id>, Id, PointComponent> r = new Tuple<List<Id>, Id, PointComponent>(null, null, null);
@@ -306,10 +309,10 @@ namespace cours_m2G
                 direction = "west";
 
 
-            //if (MousePressed)
-            //{
-            //    scene.ActiveMovement(direction);
-            //}
+            if (MousePressed)
+            {
+                scene.ActiveMovement(direction);
+            }
             //else
             // if (ModifierKeys == Keys.Control)
             //{

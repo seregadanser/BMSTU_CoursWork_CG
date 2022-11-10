@@ -49,7 +49,10 @@ namespace cours_m2G
         public void action(IVisitor visitor)
         {
             foreach (IObjects i in activepoints)
+            {
                 i.action(visitor);
+            }
+                
         }
 
         public bool AddElement(IObjects element, List<Id> parent, List<Id> child, params PointComponent[] points)
