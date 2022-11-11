@@ -93,9 +93,9 @@ namespace cours_m2G
             {
                 int position = HashFunc(key.Description, N);
                 if (table[position] != null)
-                    foreach (Dict<T> d in table[position])
-                        if (d.Key == key)
-                            return d.Value;
+                    for(int i = 0; i<table[position].Count; i++)                
+                        if (table[position][i].Key == key)
+                            return table[position][i].Value;
                 return default(T);
             }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace cours_m2G
 {
@@ -65,6 +66,7 @@ namespace cours_m2G
             //  Parallel.ForEach<PolygonComponent>(model.Polygons, p=> { 
             foreach (PolygonComponent p in model.Polygons)
             {
+                if(p!=null)
                 //   if (MatrixCoord3D.scalar(p.Normal, cam.Direction) > 0)
                 {
                     MatrixCoord3D tt = GetTimeAndUvCoord(position, D, p.Points[0].Coords, p.Points[1].Coords, p.Points[2].Coords);
@@ -81,7 +83,9 @@ namespace cours_m2G
 
             if (closest == null)
                 return Color.White;
-            return closest.ColorF;
+            double cos = Math.Abs(MatrixCoord3D.scalar(closest.Normal, cam.Direction));
+            Color c = Color.FromArgb(255, Convert.ToInt32(closest.ColorF.R * cos), Convert.ToInt32(closest.ColorF.G * cos), Convert.ToInt32(closest.ColorF.B * cos));
+            return c;
         }
         protected Tuple<MatrixCoord3D, double> FoundCenter(Container<PointComponent> points)
         {

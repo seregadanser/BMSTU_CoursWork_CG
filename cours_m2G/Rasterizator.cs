@@ -1006,6 +1006,8 @@ namespace cours_m2G
             MatrixCoord3D p1 = shader.VertexTransform(polygon.Points[0]);
             MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
             MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
+            if (polygon.Id.Description == "148")
+                Console.WriteLine();
             double cos = Math.Abs(MatrixCoord3D.scalar(polygon.Normal, shader.up.Direction));
             Color c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
 
@@ -1056,13 +1058,13 @@ namespace cours_m2G
         public IEnumerable<PointComponent> ShadeBackgroundPixel(PointComponent p1, PointComponent p2, PointComponent p3)
         {
 
-            //  List<PointComponent> points = new List<PointComponent>();
+              List<PointComponent> points = new List<PointComponent>();
 
-            double x_min, x_max, y_min, y_max;
-            x_min = Math.Min(p1.X, Math.Min(p2.X, p3.X));
-            y_min = Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
-            x_max = Math.Max(p1.X, Math.Max(p2.X, p3.X));
-            y_max = Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
+            int x_min, x_max, y_min, y_max;
+            x_min = (int)Math.Min(p1.X, Math.Min(p2.X, p3.X));
+            y_min = (int)Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
+            x_max = (int)Math.Max(p1.X, Math.Max(p2.X, p3.X));
+            y_max = (int)Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
 
 
             double det = ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
@@ -1070,27 +1072,75 @@ namespace cours_m2G
             double l1, l2, l3;
             double dy23 = (p2.Y - p3.Y), dy31 = (p3.Y - p1.Y), dx32 = (p3.X - p2.X), dx13 = (p1.X - p3.X);
             int k = 0;
-
-            for (double sx = x_min - k; sx <= x_max + k; sx += 0.5)
-                for (double sy = y_min - k; sy <= y_max + k; sy += 0.5)
-                {
-                    l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det;
-                    l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
-                    l3 = 1 - l1 - l2;
-                    if ((l1 >= 0 && l1 <= 1) && (l2 >= 0 && l2 <= 1) && (l3 >= 0 && l3 <= 1))
+            bool flag_in = false, flag_out = false;
+            int direction = 1;
+            int start = x_min-1, stop = x_max+1;
+            for (int sy = y_min - k; sy <= y_max + k; sy += 1)
+            {
+                flag_out = false;
+                int speed = 1;
+                if (direction == 1)
+                    for (int sx = start; sx <= stop; sx += speed)
                     {
-                        double z = l1 * p1.Z + l2 * p2.Z + l3 * p3.Z;
-                        yield return new PointComponent(sx, sy, z);
-                        //points.Add(new PointComponent(sx, sy, z));
+                   
+                        l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det;
+                        l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
+                        l3 = 1 - l1 - l2;
+                        if ((l1 >= 0 && l1 <= 1) && (l2 >= 0 && l2 <= 1) && (l3 >= 0 && l3 <= 1))
+                        {
+                            flag_in = true;
+                            double z = l1 * p1.Z + l2 * p2.Z + l3 * p3.Z;
+                           // yield return new PointComponent(sx, sy, z);
+                            points.Add(new PointComponent(sx, sy, z));
+                        }
+                        else
+                        {
+                            if (flag_in)
+                            {
+                                start = sx;
+                                stop = x_min;
+                                flag_in = false;
+                                flag_out = true;
+                                direction = -1;
+                            }
+                        }
+                        if (flag_out)
+                            break;
                     }
-                }
-            //return points;
+                else
+                    for (int sx = start; sx >= stop; sx -= speed)
+                    {
+               
+                        l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det;
+                        l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
+                        l3 = 1 - l1 - l2;
+                        if ((l1 >= 0 && l1 <= 1) && (l2 >= 0 && l2 <= 1) && (l3 >= 0 && l3 <= 1))
+                        {
+                            flag_in = true;
+                            double z = l1 * p1.Z + l2 * p2.Z + l3 * p3.Z;
+                            //yield return new PointComponent(sx, sy, z);
+                            points.Add(new PointComponent(sx, sy, z));
+                        }
+                        else
+                        {
+                            if (flag_in)
+                            {
+                                start = sx;
+                                stop = x_max;
+                                flag_in = false;
+                                flag_out = true;
+                                direction = 1;
+                            }
+                        }
+                        if (flag_out)
+                            break;
+                    }
+            }
+            
+            return points;
         }
 
-        //public IEnumerable<PointComponent> ShadeBackgroundPixel()
-        //{
 
-        //}
 
 
         struct Point2D

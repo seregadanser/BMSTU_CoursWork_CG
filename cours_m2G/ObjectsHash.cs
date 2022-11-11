@@ -345,4 +345,46 @@ namespace cours_m2G
         }
     }
 
+    class PyramideHash : ModelHash
+    {
+        public PyramideHash(PointComponent center, int side) : base()
+        {
+            PointComponent p1 = new PointComponent(center.X - side / 2, center.Y, center.Z + side / 2, new Id("Point", "1"));
+            PointComponent p2 = new PointComponent(center.X - side / 2, center.Y, center.Z - side / 2, new Id("Point", "2"));
+            PointComponent p3 = new PointComponent(center.X + side / 2, center.Y, center.Z - side / 2, new Id("Point", "3"));
+            PointComponent p4 = new PointComponent(center.X + side / 2, center.Y, center.Z + side / 2, new Id("Point", "4"));
+            PointComponent p5 = new PointComponent(center.X , center.Y + side, center.Z , new Id("Point", "5"));
+
+
+            PolygonComponent po1 = new PolygonComponent(p1, p2, p5);
+            PolygonComponent po2 = new PolygonComponent(p1, p4, p5);
+            PolygonComponent po3 = new PolygonComponent(p2, p3, p5);
+            PolygonComponent po4 = new PolygonComponent(p3, p4, p5);
+            
+            PolygonComponent po5 = new PolygonComponent(p1, p3, p4);
+            PolygonComponent po6 = new PolygonComponent(p1, p2, p3);
+            AddPolygons(po1);
+            AddPolygons(po2);
+            AddPolygons(po3);
+            AddPolygons(po4);
+            AddPolygons(po5);
+            AddPolygons(po6);
+
+            //polygons[po1.Id].ColorF = Color.Green;
+            //polygons[po2.Id].ColorF = Color.Aqua;
+            //polygons[po3.Id].ColorF = Color.Beige;
+            //polygons[po4.Id].ColorF = Color.Crimson;
+            //polygons[po5.Id].ColorF = Color.DarkOrange;
+            //polygons[po6.Id].ColorF = Color.Indigo;
+            //polygons[po7.Id].ColorF = Color.Ivory;
+            //polygons[po8.Id].ColorF = Color.Lime;
+            //polygons[po9.Id].ColorF = Color.Navy;
+            //polygons[po10.Id].ColorF = Color.Snow;
+            //polygons[po11.Id].ColorF = Color.Olive;
+            //polygons[po12.Id].ColorF = Color.Orange;
+
+
+        }
+    }
+
 }

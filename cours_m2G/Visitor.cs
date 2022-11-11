@@ -91,7 +91,8 @@ namespace cours_m2G
             //raster1.drawTriangleFill(polygon.Points, polygon.ColorF);
             raster.DrawPolygon(polygon);
             foreach (LineComponent l in polygon.Lines)
-            { l.action(this);
+            { if(l!=null)
+                l.action(this);
          }
         }
 
@@ -149,6 +150,7 @@ namespace cours_m2G
             foreach (PolygonComponent l in model.Polygons)
             {
               // if(MatrixCoord3D.scalar(l.Normal,cam.Direction)>0)
+              if(l!=null)
                 l.action(this);
             }
             PictureBuff.Filled = true;
