@@ -221,7 +221,7 @@ namespace cours_m2G
                 {
                     l.Color = value;
                 }
-                color = value;
+           //     color = value;
             }
         }
 
@@ -235,6 +235,8 @@ namespace cours_m2G
             }
         }
 
+        public bool Inversed { get; set; } = false;
+
         private PointComponent[] points;
         private LineComponent[] lines;
         private PointComponent[] texture;
@@ -244,7 +246,7 @@ namespace cours_m2G
 
         public PointComponent norm;
         private MatrixCoord3D normal;
-        public MatrixCoord3D Normal { get { return normal; } }
+        public MatrixCoord3D Normal { get { if (Inversed) return MatrixCoord3D.Inverse(normal); return normal; } }
 
         public PolygonComponent(PointComponent p1, PointComponent p2, PointComponent p3)
         {

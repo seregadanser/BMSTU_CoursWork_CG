@@ -123,6 +123,16 @@ namespace cours_m2G
                 coords[i] /= L;
             }
         }
+
+        public static MatrixCoord3D Inverse(MatrixCoord3D coord)
+        {
+            return new MatrixCoord3D(-1 * coord.X, -1 * coord.Y, -1 * coord.Z);
+        }
+
+        public override string ToString()
+        {
+            return "{"+Convert.ToString(X) + " " + Convert.ToString(Y) + " " + Convert.ToString(Z) + "}";
+        }
     }
 
 

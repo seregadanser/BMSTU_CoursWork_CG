@@ -26,8 +26,10 @@ namespace cours_m2G
             camera = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, picture.Size.Width / (double)picture.Size.Height, 1, 1000));
             Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
             Reader = new ReadVisitorCamera(camera, picture.Size, 1);
-            model = new CubHash(new PointComponent(0, 0, 0), 20);
-           // model = new Cub(new PointComponent(0, 0, 0), 20);
+            model = new PolygonHash(new PointComponent(0, 0, 0), 20);
+            // model = new PyramideHash(new PointComponent(0, 0, 0), 20);
+            //   model = new CubHash(new PointComponent(0, 0, 0), 20);
+            // model = new Cub(new PointComponent(0, 0, 0), 20);
             this.picture = picture;
             cancelTokenSource = new CancellationTokenSource();
             renderThread = new Thread(new ParameterizedThreadStart(RenderLoop));
@@ -186,6 +188,7 @@ namespace cours_m2G
                                 dest = po.Desctination(p);
                                 m = po;
                             }
+                        Console.WriteLine(((PointComponent)m).Coords.ToString());
                         r = new Tuple<List<Id>, Id, PointComponent>(model.GetConnectedElements(m.Id), m.Id, p);
                         break;
                     case 2:
@@ -207,6 +210,14 @@ namespace cours_m2G
         #endregion
 
         #region model
+        public void InverseNormal(Id id)
+        {
+            model.InversePolygonsNormal(id);
+        }
+        public void newCoords(Id id, MatrixCoord3D coords)
+        {
+            model.SetPointsCoord(id, coords);
+        }
         public void NewP(Point point)
         {
             Reader.InPoint = point;

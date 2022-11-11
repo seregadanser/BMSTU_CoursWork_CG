@@ -18,7 +18,7 @@ namespace cours_m2G
 
     struct CallBackDelegates
     {
-       public Action remove_active, remove_object;
+       public Action remove_active, remove_object, newcoords, invnormal;
         public ActionEmpty close;
     }
 
@@ -95,6 +95,7 @@ namespace cours_m2G
         Button rem;
         Button del;
         Button add;
+        Button inv;
         public Id id;
 
         public Elem(Id id, int num, TableLayoutPanel main, CallBackDelegates dell, calback dell1)
@@ -116,13 +117,21 @@ namespace cours_m2G
             main.Controls.Add(name, 0, num);
             main.Controls.Add(rem, 1, num);
             main.Controls.Add(del, 2, num);
-            if (id.Name == "Line")
+            if (id.Name == "Point")
             {
                 add = new Button();
                 add.Click += new EventHandler(NewPointClick);
                 add.AutoSize = true;
-                add.Text = "Add point to line";
+                add.Text = "Set new coords";
                 main.Controls.Add(add, 3, num);
+            }
+            if (id.Name == "Polygon")
+            {
+               inv = new Button();
+                inv.Click += new EventHandler(Inversenormal);
+                inv.AutoSize = true;
+                inv.Text = "Inverse normal";
+                main.Controls.Add(inv, 3, num);
             }
         }
 
@@ -138,8 +147,11 @@ namespace cours_m2G
         }
         private void NewPointClick(object sender, EventArgs e)
         {
-           // np.Invoke(this.id, new PointComponent(Convert.ToDouble(5), Convert.ToDouble(-10), Convert.ToDouble(20)));
-            dele.Invoke(id);
+         delegates.newcoords.Invoke(id);
+        }
+        private void Inversenormal(object sender, EventArgs e)
+        {
+            delegates.invnormal.Invoke(id);
         }
     }
 

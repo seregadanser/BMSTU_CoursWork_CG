@@ -145,6 +145,9 @@ namespace cours_m2G
         public void AddPoint(PointComponent point);
         public void AddLine(LineComponent line);
         public void AddPolygons(PolygonComponent polygon);
+        public void SetPointsCoord(Id pointid, MatrixCoord3D coords);
+        public void InversePolygonsNormal(Id id);
+
 
     }
     [Serializable]
@@ -447,6 +450,16 @@ namespace cours_m2G
           
 
             return m;
+        }
+
+        public void SetPointsCoord(Id pointid, MatrixCoord3D coords)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InversePolygonsNormal(Id id)
+        {
+            throw new NotImplementedException();
         }
     }
     [Serializable]

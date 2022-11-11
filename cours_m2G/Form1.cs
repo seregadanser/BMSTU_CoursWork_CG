@@ -31,13 +31,15 @@ namespace cours_m2G
             scene.l2 = label2;
 
 
-           
+
 
             CallBackDelegates del = new CallBackDelegates()
             {
                 remove_active = scene.RemoveActiveComponent,
                 remove_object = scene.RemoveComponent,
-                close = ShowActiveElemButton
+                close = ShowActiveElemButton,
+                newcoords = NewCoords,
+                invnormal = scene.InverseNormal
             };
             f1 = new ActiveElementsForm(del);
             f1.Show();
@@ -207,6 +209,10 @@ namespace cours_m2G
 
         }
 
+        private void NewCoords(Id id)
+        {
+            scene.newCoords(id, new MatrixCoord3D(Convert.ToDouble(numericUpDown13.Value), Convert.ToDouble(numericUpDown11.Value), Convert.ToDouble(numericUpDown12.Value)));
+        }
 
         private void button5_Click(object sender, EventArgs e)
         {

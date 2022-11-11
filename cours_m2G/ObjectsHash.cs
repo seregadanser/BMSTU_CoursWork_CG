@@ -227,6 +227,10 @@ namespace cours_m2G
             }
         }
 
+        public void SetPointsCoord(Id pointid, MatrixCoord3D coords)
+        {
+            points[pointid].Coords = coords;
+        }
         public void AddPoint(PointComponent point)
         {
             points.Add(new Dict<PointComponent>(point.Id, point));
@@ -286,6 +290,14 @@ namespace cours_m2G
           
 
             return m;
+        }
+
+        public void InversePolygonsNormal(Id id)
+        {
+            if (polygons[id].Inversed)
+                polygons[id].Inversed = false;
+            else
+                polygons[id].Inversed = true;
         }
     }
     [Serializable]
@@ -386,5 +398,19 @@ namespace cours_m2G
 
         }
     }
+    class PolygonHash : ModelHash
+    {
+        public PolygonHash(PointComponent center, int side) : base()
+        {
+            PointComponent p1 = new PointComponent(center.X, center.Y, center.Z, new Id("Point", "1"));
+            PointComponent p2 = new PointComponent(center.X+side, center.Y, center.Z, new Id("Point", "2"));
+            PointComponent p3 = new PointComponent(center.X + side, center.Y+side, center.Z, new Id("Point", "3"));
+
+            PolygonComponent po1 = new PolygonComponent(p1, p2, p3);
+         
+            AddPolygons(po1);
+        }
+    }
+
 
 }

@@ -266,9 +266,7 @@ namespace cours_m2G
         }
 
         public async override void visit(IModel model)
-        {
-            Console.WriteLine(Thread.CurrentThread.Name);
-      
+        {   
             MatrixCoord3D CamPosition = cam.Position.Coords;
             MatrixTransformation3D RotateMatrix = cam.RotateMatrix;
        
