@@ -168,6 +168,17 @@ namespace cours_m2G
         {
          cancelTokenSource.Cancel();
         }
+        public void Resize(Size s)
+        {
+            StopThread();
+            Thread.Sleep(100);
+            PictureBuff.Init(s);
+            Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
+            Reader = new ReadVisitorCamera(camera, picture.Size, 1);
+            camera.Aspect = s.Width / (double)s.Height;
+            StartThread();
+           
+        }
        public Tuple<List<Id>, Id, PointComponent> Read(Point point, int what)
         {
             Reader.InPoint = point;

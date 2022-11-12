@@ -16,6 +16,12 @@ namespace cours_m2G
         static Graphics g;
         public static Bitmap bmp;
         static Size screen;
+        public static Size Screen { get { return screen; } set { screen = value; bmp = new Bitmap(screen.Width, screen.Height); rgb = new int[screen.Width * screen.Height];
+                for (int x = 0; x < screen.Width; x++)
+                    for (int y = 0; y < screen.Height; y++)
+                            rgb[x + y * screen.Width] = -1;
+
+            } }
         static bool filled;
        public static object locker = new();
         static public RenderType Creator { get; set; } = RenderType.NOCUTTER;
@@ -131,6 +137,7 @@ namespace cours_m2G
                     {
                         // UInt32 0xAARRGGBB = Byte[] { BB, GG, RR, AA }
                         UInt32 val = (UInt32)rgb[x + y * screen.Width];
+  
                         // This code clears out everything but a specific part of the value
                         // and then shifts the remaining piece down to the lowest byte
                         dataBytes[byteIndex + 0] = (Byte)(val & 0x000000FF); // B

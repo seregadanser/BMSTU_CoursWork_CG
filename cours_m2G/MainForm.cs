@@ -23,13 +23,15 @@ namespace cours_m2G
         {
             F1 = new Form1();
             F1.MdiParent = this;
-            F1.Show();
+           
             F2 = new ActiveElementsForm(F1.del);
             F2.MdiParent = this;
-            F2.Show();
+           
             F1.f1 = F2;
+            F1.Show();
+            F2.Show();
+         
             LayoutMdi(MdiLayout.TileHorizontal);
-        
         }
     }
 }

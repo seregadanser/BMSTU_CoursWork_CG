@@ -12,6 +12,7 @@ namespace cours_m2G
         Size screen;
         Camera cam;
         double scale;
+        public Size Screen { get { return screen; } set { screen = value; } }
         public double Scale { get { return scale; } set { if (value > 0) scale = value; } }
         public int NumberofThreads { get; set; } = 8;
         public RayTraiser(Size screen, Camera cam, double scale)
@@ -203,6 +204,7 @@ namespace cours_m2G
     class RayTraiserPool : RayTraiser
     {
         Size screen;
+        public Size Screen { get { return screen; } set { screen = value;} }
         Camera cam;
         double scale;
 

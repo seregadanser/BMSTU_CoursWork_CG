@@ -28,7 +28,7 @@ namespace cours_m2G
          protected Size screen;
         
         public virtual int Scale { get { return scale; } set { if(value>0) scale = value; } }
-        public Size Screen { get { return screen; } set { screen = value; } }
+        public virtual Size Screen { get { return screen; } set { screen = value; } }
 
         public abstract TypeVisitor type { get; }
 
@@ -45,6 +45,7 @@ namespace cours_m2G
         public override TypeVisitor type { get; } = TypeVisitor.Drawer;
         public virtual Bitmap Bmp { get { return raster.Bmp; } }
         public override int Scale { get { return scale; } set { if (value > 0) { scale = value; raster.Scale = value; } } }
+        public override Size Screen { get { return screen; } set { screen = value; raster.Screen = value; } }
         public bool PrintText { get; set; } = true;
         protected Rasterizator raster;
        // protected R2 raster1;
@@ -162,6 +163,7 @@ namespace cours_m2G
     {
         Camera cam;
         RayTraiser rayt;
+        public override Size Screen { get { return screen; } set { screen = value; rayt.Screen = value; } }
         public override int Scale { get { return scale; } set { if (value > 0) { scale = value; rayt.Scale = value; } } }
         public override int SetRaster
         {

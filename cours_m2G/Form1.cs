@@ -23,7 +23,7 @@ namespace cours_m2G
         {
             InitializeComponent();
             KeyPreview = true;
-            ObjReader er = new ObjReader(@"D:\1.obj");
+          //  ObjReader er = new ObjReader(@"D:\1.obj");
             DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
             PictureBuff.Init(pictureBox2.Size);
@@ -532,7 +532,7 @@ namespace cours_m2G
         {
             PointComponent p = PParserer(textBox2.Text);
             if (p == null)
-            { textBox1.Text = "неправильный формат"; return; }
+            { textBox2.Text = "неправильный формат"; return; }
             scene.NewPolygon(p);
             label6.Visible = false;
             button3.Visible = false;
@@ -543,7 +543,7 @@ namespace cours_m2G
         {
             PointComponent p = PParserer(textBox3.Text);
             if (p == null)
-            { textBox1.Text = "неправильный формат"; return; }
+            { textBox3.Text = "неправильный формат"; return; }
             scene.NewPolygon(p);
             label8.Visible = false;
             button7.Visible = false;
@@ -564,6 +564,12 @@ namespace cours_m2G
             string[] g1 = label9.Text.Split(new char[] { ' ' });
             Id id = new Id(g1[0], g1[1]);
             scene.newCoords(id, new MatrixCoord3D(p.X, p.Y, p.Z));
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            scene.Resize(pictureBox2.Size);
+
         }
     }
 }

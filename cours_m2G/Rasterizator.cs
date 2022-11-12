@@ -19,6 +19,7 @@ namespace cours_m2G
     class VertexShader
     {
         protected Size screen;
+        public Size Screen { get { return screen; } set { screen = value;} }
         protected double scale;
         public double Scale { get { return scale; } set { if (value > 0) scale = value; } }
         public virtual Camera up { get; set; }
@@ -84,6 +85,7 @@ namespace cours_m2G
         protected double scale;
         public double Scale { get { return scale; } set { if (value > 0) { scale = value; shader.Scale = value; } } }
         protected Size screen;
+        public Size Screen { get { return screen; } set { screen = value; shader.Screen = value; } }
         protected VertexShader shader;
         protected RenderType type;
         public RenderType Type { get { return type; } }
