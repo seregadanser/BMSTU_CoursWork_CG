@@ -11,7 +11,7 @@ namespace cours_m2G
     {
         private string name;
         private string description;
-
+        static bool[] buizy = new bool[5000000];
         public string Name { get { return name; } }
         public string Description { get { return description; } }
 
@@ -20,6 +20,8 @@ namespace cours_m2G
             this.name = name;
             this.description = description;
         }
+
+
 
         public static bool operator ==(Id id1, Id id2)
         {

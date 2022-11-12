@@ -26,9 +26,9 @@ namespace cours_m2G
             camera = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, picture.Size.Width / (double)picture.Size.Height, 1, 1000));
             Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
             Reader = new ReadVisitorCamera(camera, picture.Size, 1);
-            model = new PolygonHash(new PointComponent(0, 0, 0), 20);
+          //  model = new PolygonHash(new PointComponent(0, 0, 0), 20);
             // model = new PyramideHash(new PointComponent(0, 0, 0), 20);
-            //   model = new CubHash(new PointComponent(0, 0, 0), 20);
+              model = new CubHash(new PointComponent(0, 0, 0), 20);
             // model = new Cub(new PointComponent(0, 0, 0), 20);
             this.picture = picture;
             cancelTokenSource = new CancellationTokenSource();
@@ -210,10 +210,7 @@ namespace cours_m2G
         #endregion
 
         #region model
-        public void InverseNormal(Id id)
-        {
-            model.InversePolygonsNormal(id);
-        }
+
         public void newCoords(Id id, MatrixCoord3D coords)
         {
             model.SetPointsCoord(id, coords);
@@ -241,7 +238,7 @@ namespace cours_m2G
 
 
         List<PointComponent> pp = new List<PointComponent>();
-        public void NewPolygon(Point point)
+        public Id NewPolygon(Point point)
         {
             Reader.InPoint = point;
             model.action(Reader);
@@ -260,14 +257,34 @@ namespace cours_m2G
                     }
                 pp.Add((PointComponent)m);
 
-                if(pp.Count == 3)
-                {
-                    PolygonComponent pol = new PolygonComponent(pp[0], pp[1], pp[2]);
-                    pp.Clear();
-                    model.AddComponent(pol);
-                }
+                //if(pp.Count == 3)
+                //{
+                //    PolygonComponent pol = new PolygonComponent(pp[0], pp[1], pp[2]);
+                //    pp.Clear();
+                //    model.AddComponent(pol);
+                //}
+                return m.Id;
             }
+            return null;
+        }
+        public void NewPolygon(PointComponent p)
+        {
+            model.LastPoint++;
+            p.Id = new Id("Point", Convert.ToString(model.LastPoint));
+            pp.Add(p);
+           
+        }
 
+        public bool NewPolygon()
+        {
+            if (pp.Count == 3)
+            {
+                PolygonComponent pol = new PolygonComponent(pp[0], pp[1], pp[2]);
+                pp.Clear();
+                model.AddComponent(pol);
+                return true;
+            }
+            return false;
         }
 
         public void RebildFigure()

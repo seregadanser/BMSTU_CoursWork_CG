@@ -25,6 +25,7 @@ namespace cours_m2G
                 }
             }
         }
+        public int LastPoint { get { return numpoints; } set { numpoints = value; } }
         protected Container<PointComponent> points;
         protected Container<LineComponent> lines;
         protected Container<PolygonComponent> polygons;
@@ -123,8 +124,8 @@ namespace cours_m2G
         public void AddPointToLine(Id LineId, PointComponent point)
         {
             List<Id> pa = lines.GetParents(LineId);
-            point.Id = new Id("Point", Convert.ToString(numpoints + 1));
             numpoints++;
+            point.Id = new Id("Point", Convert.ToString(numpoints));
             List<PolygonComponent> poly = new List<PolygonComponent>();
             List<PolygonComponent> new_polygons = new List<PolygonComponent>();
             poly.Add(polygons[pa[0]]);

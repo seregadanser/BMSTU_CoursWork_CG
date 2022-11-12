@@ -134,6 +134,7 @@ namespace cours_m2G
         public Container<PointComponent> Points { get; }
         public Container<LineComponent> Lines { get;  }
         public Container<PolygonComponent> Polygons { get; }
+        public int LastPoint { get; set; }
         public bool AddActiveComponent(Id id);
         public void DeliteActive(); public void DeliteActive(Id id); public List<Id> GetConnectedElements(Id id);
         public void AddPointToLine(Id LineId, PointComponent point);
@@ -167,6 +168,7 @@ namespace cours_m2G
                 }
             }
         }
+        public int LastPoint { get { return numpoints; } set { numpoints = value; } }
         protected Container<PointComponent> points;
         protected Container<LineComponent> lines;
         protected Container<PolygonComponent> polygons;

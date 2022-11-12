@@ -117,22 +117,6 @@ namespace cours_m2G
             main.Controls.Add(name, 0, num);
             main.Controls.Add(rem, 1, num);
             main.Controls.Add(del, 2, num);
-            if (id.Name == "Point")
-            {
-                add = new Button();
-                add.Click += new EventHandler(NewPointClick);
-                add.AutoSize = true;
-                add.Text = "Set new coords";
-                main.Controls.Add(add, 3, num);
-            }
-            if (id.Name == "Polygon")
-            {
-               inv = new Button();
-                inv.Click += new EventHandler(Inversenormal);
-                inv.AutoSize = true;
-                inv.Text = "Inverse normal";
-                main.Controls.Add(inv, 3, num);
-            }
         }
 
         private void RemClic(object sender, EventArgs e)
@@ -149,10 +133,7 @@ namespace cours_m2G
         {
          delegates.newcoords.Invoke(id);
         }
-        private void Inversenormal(object sender, EventArgs e)
-        {
-            delegates.invnormal.Invoke(id);
-        }
+
     }
 
 

@@ -11,8 +11,9 @@ namespace cours_m2G
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Form1 F1 = new Form1();
-                Application.Run(F1);
+            //  Form1 F1 = new Form1();
+            Form F = new MainForm();
+                Application.Run(F);
          
 
         }

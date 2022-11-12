@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace cours_m2G
 {
@@ -8,15 +9,15 @@ namespace cours_m2G
     delegate void NewP(Id LineId, PointComponent point);
     
 
-    public partial class Form1 : Form
+     partial class Form1 : Form
     {
 
         Scene scene;
- 
         FormTransform f;
-        ActiveElementsForm f1;
-
-     
+        public ActiveElementsForm f1;
+        bool flag_add_poly = false;
+        int what = 0;
+        public CallBackDelegates del;
 
         public Form1()
         {
@@ -33,18 +34,14 @@ namespace cours_m2G
 
 
 
-            CallBackDelegates del = new CallBackDelegates()
+             del = new CallBackDelegates()
             {
                 remove_active = scene.RemoveActiveComponent,
                 remove_object = scene.RemoveComponent,
-                close = ShowActiveElemButton,
-                newcoords = NewCoords,
-                invnormal = scene.InverseNormal
+                close = ShowActiveElemButton       
             };
-            f1 = new ActiveElementsForm(del);
-            f1.Show();
-        
-        }
+
+       }
 
         //protected override void WndProc(ref Message m)
         //{
@@ -68,7 +65,7 @@ namespace cours_m2G
         #region SceneActions
         private void ShowActiveElemButton()
         {
-            button13.Visible = true;
+
         }
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -106,26 +103,46 @@ namespace cours_m2G
             MouseEventArgs ee = (MouseEventArgs)e;
             if(ee.Button == MouseButtons.Right)
             {
-                if (ModifierKeys == Keys.Control)
-                    scene.NewPolygon(ee.Location);
-                else
                     scene.NewP(ee.Location);
                 return;
             }
             Tuple<List<Id>, Id, PointComponent> r = new Tuple<List<Id>, Id, PointComponent>(null, null, null);
-            if (Points.Checked)
-                r = scene.Read(ee.Location, 1);
-            if (Lines.Checked)
-                r = scene.Read(ee.Location, 2);
-            if (Polys.Checked)
-                r = scene.Read(ee.Location, 3);
+            if (flag_add_poly)
+            {
+                if (what == 4)
+                    label9.Text = scene.Read(ee.Location, 1).Item2.ToString();
+                else
+                {
+                    Id i = scene.NewPolygon(ee.Location);
+                    if (i != null)
+                    {
+                        if (what == 1)
+                            label3.Text = i.ToString();
+                        if (what == 2)
+                            label6.Text = i.ToString();
+                        if (what == 3)
+                            label8.Text = i.ToString();
 
-           
-
-            if (r.Item2 != null)
-                SetActiveWindow(r.Item1, r.Item2);
+                    }
+                }
+                flag_add_poly = false;
+            }
             else
-                DelActiveWindow();
+            {
+                if (Points.Checked)
+                    r = scene.Read(ee.Location, 1);
+                if (Lines.Checked)
+                    r = scene.Read(ee.Location, 2);
+                if (Polys.Checked)
+                    r = scene.Read(ee.Location, 3);
+
+
+
+                if (r.Item2 != null)
+                    SetActiveWindow(r.Item1, r.Item2);
+                else
+                    DelActiveWindow();
+            }
         }
 
         private void SetActiveWindow(List<Id> ids, Id ci)
@@ -161,11 +178,7 @@ namespace cours_m2G
             button6.Visible = false;
         }
 
-        private void button13_Click(object sender, EventArgs e)
-        {
-            f1.Show();
-            button13.Visible = false;
-        }
+  
         #endregion
 
 
@@ -209,10 +222,7 @@ namespace cours_m2G
 
         }
 
-        private void NewCoords(Id id)
-        {
-            scene.newCoords(id, new MatrixCoord3D(Convert.ToDouble(numericUpDown13.Value), Convert.ToDouble(numericUpDown11.Value), Convert.ToDouble(numericUpDown12.Value)));
-        }
+  
 
         private void button5_Click(object sender, EventArgs e)
         {
@@ -439,6 +449,121 @@ namespace cours_m2G
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            label3.Text = "Выберите точку";
+            textBox1.Visible = false;
+            button2.Visible = false;
+            flag_add_poly = true;
+            what = 1;
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+            label6.Text = "Выберите точку";
+            textBox2.Visible = false;
+            button3.Visible = false;
+            flag_add_poly = true;
+            what = 2;
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+            label8.Text = "Выберите точку";
+            textBox3.Visible = false;
+            button7.Visible = false;
+            flag_add_poly = true;
+            what = 3;
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            textBox1.Visible = true;
+            button2.Visible = true;
+            textBox2.Visible = true;
+            button3.Visible = true;
+            textBox3.Visible = true;
+            button7.Visible = true;
+            label3.Visible = true;
+            label6.Visible = true;
+            label8.Visible = true;
+            textBox1.Text = "Добавить новую";
+            textBox2.Text = "Добавить новую";
+            textBox3.Text = "Добавить новую";
+            label3.Text = "Добавить существующую";
+            label6.Text = "Добавить существующую";
+            label8.Text = "Добавить существующую";
+            
+            what = 0;
+            scene.NewPolygon();
+        }
+
+        private PointComponent PParserer(string text)
+        {
+            string[] words = text.Split(new char[] { ' ' });
+            double[] points = new double[3];
+            int i = 0;
+            foreach (string s in words)
+            {
+                try
+                {
+                    points[i] = Convert.ToDouble(s);
+                }
+                catch { return null; }
+                i++;
+            }
+            return new PointComponent(points[0], points[1], points[2]);
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+          PointComponent p = PParserer(textBox1.Text);
+            if (p == null)
+            { textBox1.Text = "неправильный формат"; return; }
+            scene.NewPolygon(p);
+            label3.Visible = false;
+            button2.Visible = false;
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            PointComponent p = PParserer(textBox2.Text);
+            if (p == null)
+            { textBox1.Text = "неправильный формат"; return; }
+            scene.NewPolygon(p);
+            label6.Visible = false;
+            button3.Visible = false;
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            PointComponent p = PParserer(textBox3.Text);
+            if (p == null)
+            { textBox1.Text = "неправильный формат"; return; }
+            scene.NewPolygon(p);
+            label8.Visible = false;
+            button7.Visible = false;
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+            flag_add_poly = true;
+            what = 4;
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            PointComponent p = PParserer(textBox4.Text);
+            if (p == null)
+            { textBox1.Text = "неправильный формат"; return; }
+            string[] g1 = label9.Text.Split(new char[] { ' ' });
+            Id id = new Id(g1[0], g1[1]);
+            scene.newCoords(id, new MatrixCoord3D(p.X, p.Y, p.Z));
         }
     }
 }
