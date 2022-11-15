@@ -18,16 +18,17 @@ namespace cours_m2G
         bool flag_add_poly = false;
         int what = 0;
         public CallBackDelegates del;
-
+        ObjReader er;
         public Form1()
         {
             InitializeComponent();
-            KeyPreview = true;
-          //  ObjReader er = new ObjReader(@"D:\1.obj");
-            DoubleBuffered = true;
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
+
+            KeyPreview = true;
+             
+            DoubleBuffered = true;
+           
             PictureBuff.Init(pictureBox2.Size);
-           // scene = new Scene(pictureBox2, er);
             scene = new Scene(pictureBox2);
             scene.l2 = label2;
 
@@ -40,8 +41,8 @@ namespace cours_m2G
                 remove_object = scene.RemoveComponent,
                 close = ShowActiveElemButton       
             };
-
-       }
+     
+        }
 
         //protected override void WndProc(ref Message m)
         //{
@@ -226,7 +227,10 @@ namespace cours_m2G
 
         private void button5_Click(object sender, EventArgs e)
         {
-            scene.RebildFigure();
+            if(er!=null)
+                scene.RebildFigure(er);
+            else
+                scene.RebildFigure();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -568,7 +572,20 @@ namespace cours_m2G
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            scene.Resize(pictureBox2.Size);
+        //    scene.Resize(pictureBox2.Size);
+
+        }
+
+        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            // получаем выбранный файл
+            string filename = openFileDialog1.FileName;
+            er = new ObjReader(filename);
+            scene.StopThread();
+            scene = new Scene(pictureBox2, er);
+            scene.l2 = label2;
 
         }
     }

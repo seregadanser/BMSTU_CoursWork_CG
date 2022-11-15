@@ -15,6 +15,7 @@ namespace cours_m2G
         public Size Screen { get { return screen; } set { screen = value; } }
         public double Scale { get { return scale; } set { if (value > 0) scale = value; } }
         public int NumberofThreads { get; set; } = 8;
+       
         public RayTraiser(Size screen, Camera cam, double scale)
         {
             this.screen = screen;
@@ -84,8 +85,10 @@ namespace cours_m2G
 
             if (closest == null)
                 return Color.White;
-            double cos = Math.Abs(MatrixCoord3D.scalar(closest.Normal, cam.Direction));
-            Color c = Color.FromArgb(255, Convert.ToInt32(closest.ColorF.R * cos), Convert.ToInt32(closest.ColorF.G * cos), Convert.ToInt32(closest.ColorF.B * cos));
+        
+             double cos = Math.Abs(MatrixCoord3D.scalar(closest.Normal, cam.Direction));
+             Color c = Color.FromArgb(255, Convert.ToInt32(closest.ColorF.R * cos), Convert.ToInt32(closest.ColorF.G * cos), Convert.ToInt32(closest.ColorF.B * cos));
+       
             return c;
         }
         protected Tuple<MatrixCoord3D, double> FoundCenter(Container<PointComponent> points)
@@ -186,7 +189,7 @@ namespace cours_m2G
             return new MatrixCoord3D(t, u, v);
         }
 
-        protected MatrixCoord3D GetTrilinearCoordinateOfTheHit(float t, MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection)
+        protected MatrixCoord3D GetTrilinearCoordinateOfTheHit(double t, MatrixCoord3D rayOrigin, MatrixCoord3D rayDirection)
         {
             return rayDirection * t + rayOrigin;
         }

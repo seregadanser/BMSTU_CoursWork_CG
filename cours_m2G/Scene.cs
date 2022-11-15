@@ -18,12 +18,13 @@ namespace cours_m2G
         Thread renderThread;
         CancellationTokenSource cancelTokenSource;
         PictureBox picture;
-
+        
         public Label l2;
 
         public Scene(PictureBox picture)
         {
             camera = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixPerspectiveProjection(90, picture.Size.Width / (double)picture.Size.Height, 1, 1000));
+          //  camera = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixOrtoProjection(0, picture.Size.Width, 0, picture.Height, 0, 1000));
             Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
             Reader = new ReadVisitorCamera(camera, picture.Size, 1);
           //  model = new PolygonHash(new PointComponent(0, 0, 0), 20);
@@ -300,13 +301,13 @@ namespace cours_m2G
 
         public void RebildFigure()
         {
-    
             model = new CubHash(new PointComponent(0, 0, 0), 20);
         }
-        public void RebildFigure(ObjReader re)
+        public void RebildFigure(ObjReader er)
         {
-            model = re.ReadModel();
+            model = er.ReadModel();
         }
+
 
         public void AddComponent(IObjects objects)
         {
