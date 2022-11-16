@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace cours_m2G
 {
+    delegate void  cdb(CallBackDelegates v);
     public partial class MainForm : Form
     {
         Form1 F1;
@@ -21,7 +22,7 @@ namespace cours_m2G
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            F1 = new Form1();
+            F1 = new Form1(new cdb(CallBack));
             F1.MdiParent = this;
            
             F2 = new ActiveElementsForm(F1.del);
@@ -32,6 +33,15 @@ namespace cours_m2G
             F2.Show();
          
             LayoutMdi(MdiLayout.TileHorizontal);
+        }
+
+        private void CallBack(CallBackDelegates del)
+        {
+            F2.Close();
+            F2 = new ActiveElementsForm(F1.del);
+            F2.MdiParent = this;
+            F1.f1 = F2;
+            F2.Show();
         }
     }
 }

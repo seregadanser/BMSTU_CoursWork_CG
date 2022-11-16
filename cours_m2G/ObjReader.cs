@@ -23,14 +23,14 @@ namespace cours_m2G
 
         public IModel ReadModel()
         {
-           IModel M = new ModelHash();
+            IModel M = new ModelHash();
             while (true)
             {
                 string temp = f.ReadLine();
 
                 if (temp == null) break;
 
-                string[] str =  temp.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                string[] str = temp.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
                 if (str.Length != 0)
                 {
@@ -64,7 +64,7 @@ namespace cours_m2G
             double.TryParse(str[1], NumberStyles.Any, CultureInfo.InvariantCulture, out a);
             double.TryParse(str[2], NumberStyles.Any, CultureInfo.InvariantCulture, out b);
             double.TryParse(str[3], NumberStyles.Any, CultureInfo.InvariantCulture, out c);
-            pointsObj.Add(new PointComponent(a,b, c,i));
+            pointsObj.Add(new PointComponent(a, b, c, i));
         }
         void NewTexture(string[] str)
         {
@@ -81,25 +81,25 @@ namespace cours_m2G
         {
             List<int> p = new List<int>();
             List<int> pt = new List<int>();
-            for (int i =1; i<str.Length; i++)
+            for (int i = 1; i < str.Length; i++)
             {
-                string[] tmp = str[i].Split("/",StringSplitOptions.RemoveEmptyEntries);
+                string[] tmp = str[i].Split("/", StringSplitOptions.RemoveEmptyEntries);
                 p.Add(Convert.ToInt32(tmp[0]));
                 pt.Add(Convert.ToInt32(tmp[1]));
             }
 
-            if(p.Count == 3)
+            if (p.Count == 3)
             {
                 PolygonComponent pp = new PolygonComponent(pointsObj[p[0] - 1], pointsObj[p[1] - 1], pointsObj[p[2] - 1], textureObj[pt[0] - 1], textureObj[pt[1] - 1], textureObj[pt[2] - 1]);
-                
+
                 PointComponent[] tex = new PointComponent[3];
                 tex[0] = textureObj[pt[0] - 1];
                 tex[1] = textureObj[pt[1] - 1];
                 tex[2] = textureObj[pt[2] - 1];
-               // pp.Text = tex;
+                // pp.Text = tex;
                 polygonsObj.Add(pp);
             }
-            if(p.Count == 4)
+            if (p.Count == 4)
             {
                 PolygonComponent pp = new PolygonComponent(pointsObj[p[0] - 1], pointsObj[p[1] - 1], pointsObj[p[2] - 1]);// textureObj[pt[0] - 1], textureObj[pt[1] - 1], textureObj[pt[2] - 1]);
                 PolygonComponent pp1 = new PolygonComponent(pointsObj[p[2] - 1], pointsObj[p[3] - 1], pointsObj[p[0] - 1]);//, textureObj[pt[2] - 1], textureObj[pt[3] - 1], textureObj[pt[0] - 1]);
@@ -122,6 +122,31 @@ namespace cours_m2G
             }
         }
     }
-  
-    
+    class ObjWriter
+    {
+        StreamReader f;
+        List<PointComponent> pointsObj;
+        List<PolygonComponent> polygonsObj;
+        List<PointComponent> textureObj;
+        public ObjWriter(string s)
+        {
+            pointsObj = new List<PointComponent>();
+            polygonsObj = new List<PolygonComponent>();
+            textureObj = new List<PointComponent>();
+            f = new StreamReader(@s);
+        }
+
+        public void WriteModel(IModel model)
+        {
+            List<PolygonComponent> poly = new List<PolygonComponent>();
+            foreach (PolygonComponent p in model.Polygons)
+                poly.Add(p);
+
+        }
+
+
+
+    }
+
+
 }

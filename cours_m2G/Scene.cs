@@ -16,7 +16,7 @@ namespace cours_m2G
         Camera camera;
 
         Thread renderThread;
-        CancellationTokenSource cancelTokenSource;
+     public static CancellationTokenSource cancelTokenSource;
         PictureBox picture;
         
         public Label l2;
@@ -78,7 +78,7 @@ namespace cours_m2G
                 if (l2 == null)
                     Console.WriteLine("RenderTime " + elapsedTime + " " + "Percent: ");
                 else
-                     if (l2.InvokeRequired)
+                     if (l2.InvokeRequired && !cancellationToken.IsCancellationRequested)
                 {
                     l2.Invoke(new MethodInvoker(delegate
                     {
@@ -315,8 +315,7 @@ namespace cours_m2G
             model.AddComponent(objects);
         }
         public void AddComponent(Id LineId, PointComponent point)
-        {
-         
+        {    
             model.AddPointToLine(LineId, point);
         }
         public void RemoveComponent(Id id)

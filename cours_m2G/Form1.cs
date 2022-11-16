@@ -19,7 +19,8 @@ namespace cours_m2G
         int what = 0;
         public CallBackDelegates del;
         ObjReader er;
-        public Form1()
+        cdb v;
+        public Form1(cdb v)
         {
             InitializeComponent();
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
@@ -33,7 +34,7 @@ namespace cours_m2G
             scene.l2 = label2;
 
 
-
+            this.v = v;
 
              del = new CallBackDelegates()
             {
@@ -167,6 +168,12 @@ namespace cours_m2G
             if (g != "")
             {
                 string[] g1 = g.Split(new char[] { ' ' });
+                if (g1[0] !="Point" || g1[0] != "Line" || g1[0] != "Polygon"  )
+                {
+                    DelActiveWindow();
+                    button6.Visible = false;
+                    return;
+                }
                 Id id = new Id(g1[0], g1[1]);
 
                 if (scene.AddComponentToActive(id))
@@ -585,7 +592,19 @@ namespace cours_m2G
             er = new ObjReader(filename);
             scene.StopThread();
             scene = new Scene(pictureBox2, er);
+            del = new CallBackDelegates()
+            {
+                remove_active = scene.RemoveActiveComponent,
+                remove_object = scene.RemoveComponent,
+                close = ShowActiveElemButton
+            };
+            v.Invoke(del);
             scene.l2 = label2;
+
+        }
+
+        private void ñîõðàíèòüToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
         }
     }

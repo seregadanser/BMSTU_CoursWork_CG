@@ -14,7 +14,7 @@ namespace cours_m2G
         double scale;
         public Size Screen { get { return screen; } set { screen = value; } }
         public double Scale { get { return scale; } set { if (value > 0) scale = value; } }
-        public int NumberofThreads { get; set; } = 8;
+        public int NumberofThreads { get; set; } = Environment.ProcessorCount;
        
         public RayTraiser(Size screen, Camera cam, double scale)
         {
@@ -34,6 +34,8 @@ namespace cours_m2G
             {
                 for (int y = 0; y < screen.Height; y++)
                 {
+                    if (Scene.cancelTokenSource.IsCancellationRequested)
+                        return;
                     MatrixCoord3D D = CanvasToVieport(x, y, aspect, field) * RotateMatrix;// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
                     D.Normalise();
                     Color c = Color.White;
@@ -251,6 +253,8 @@ namespace cours_m2G
             for (int x = limit.begin; x < limit.end; x++)
                 for (int y = 0; y < screen.Height; y++)
                 {
+                    if (Scene.cancelTokenSource.IsCancellationRequested)
+                        return;
                     MatrixCoord3D D = CanvasToVieport(x, y,aspect,field) * limit.RotateMatrix;// new MatrixCoord3D(cam.RotateMatrix.Coeff[0,2], cam.RotateMatrix.Coeff[1, 2], cam.RotateMatrix.Coeff[2, 2]);
                     D.Normalise();
                     c = Color.White;

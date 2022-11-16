@@ -32,10 +32,11 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1978, 1410);
+            this.ClientSize = new System.Drawing.Size(1347, 637);
             this.IsMdiContainer = true;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
