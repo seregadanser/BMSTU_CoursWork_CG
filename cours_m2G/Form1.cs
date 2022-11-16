@@ -168,7 +168,7 @@ namespace cours_m2G
             if (g != "")
             {
                 string[] g1 = g.Split(new char[] { ' ' });
-                if (g1[0] !="Point" || g1[0] != "Line" || g1[0] != "Polygon"  )
+                if (g1[0] !="Point" && g1[0] != "Line" && g1[0] != "Polygon"  )
                 {
                     DelActiveWindow();
                     button6.Visible = false;
@@ -579,7 +579,8 @@ namespace cours_m2G
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-        //    scene.Resize(pictureBox2.Size);
+            if(scene!=null)
+          scene.Resize(pictureBox2.Size);
 
         }
 
