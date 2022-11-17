@@ -105,6 +105,8 @@ namespace cours_m2G
     
             foreach (PolygonComponent l in model.Polygons)
             {
+                if (Scene.cancelTokenSource.IsCancellationRequested)
+                    return;
                 l.action(this);
             }
      
@@ -150,8 +152,10 @@ namespace cours_m2G
             raster.up = cam;
             foreach (PolygonComponent l in model.Polygons)
             {
-              // if(MatrixCoord3D.scalar(l.Normal,cam.Direction)>0)
-              if(l!=null)
+                if (Scene.cancelTokenSource.IsCancellationRequested)
+                    return;
+                // if(MatrixCoord3D.scalar(l.Normal,cam.Direction)>0)
+                if (l!=null)
                 l.action(this);
             }
             PictureBuff.Filled = true;
