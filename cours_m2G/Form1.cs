@@ -13,14 +13,14 @@ namespace cours_m2G
     {
 
         Scene scene;
-        FormTransform f;
         public ActiveElementsForm f1;
         bool flag_add_poly = false;
         int what = 0;
         public CallBackDelegates del;
+        CreateTF createTF;
         ObjReader er;
         cdb v;
-        public Form1(cdb v)
+        public Form1(cdb v, CreateTF c)
         {
             InitializeComponent();
             pictureBox2.MouseWheel += new MouseEventHandler(pictureBox2_MouseWheel);
@@ -35,40 +35,21 @@ namespace cours_m2G
 
 
             this.v = v;
-
+            createTF = c;
+            
              del = new CallBackDelegates()
             {
                 remove_active = scene.RemoveActiveComponent,
-                remove_object = scene.RemoveComponent,
-                close = ShowActiveElemButton       
+                remove_object = scene.RemoveComponent  
             };
      
         }
 
-        //protected override void WndProc(ref Message m)
-        //{
-        //    const int WM_NCLBUTTONDBLCLK = 0x00A3;
-        //    const int WM_LBUTTONDOWN = 0x0201;
-        //    base.WndProc(ref m);
-        //    Console.WriteLine(m);
-        //    switch (m.Msg)
-        //    {
-        //        case WM_NCLBUTTONDBLCLK:
-        //            MessageBox.Show("Произошел двойной щелчок вне клиентской области");
-        //            return;
-        //        case WM_LBUTTONDOWN:
-        //            MessageBox.Show("Произошел щелчок вне клиентской области");
-        //            return;
-        //    }
-        //}
-       
+      
        
        
         #region SceneActions
-        private void ShowActiveElemButton()
-        {
 
-        }
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (ModifierKeys != Keys.Control)
@@ -189,49 +170,6 @@ namespace cours_m2G
   
         #endregion
 
-
-        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Paint_1(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void pictureBox2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void pictureBox_Paint()
-        {
-
-            //muljanov@mail.ru - анализ алгоритмов
-
-        }
-
- 
-        private void Form1_MouseMove(object sender, MouseEventArgs e)
-        {
-            //   pictureBox2.Refresh();
-        }
-
-
-
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-  
-
         private void button5_Click(object sender, EventArgs e)
         {
             if(er!=null)
@@ -240,76 +178,14 @@ namespace cours_m2G
                 scene.RebildFigure();
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void button4_Click(object sender, EventArgs e)
         {
-            f = new FormTransform();
-            f.Show();
+            createTF.Invoke(scene.ModelAction);
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-           // Mstack.Push(ObjectCopier.Clone(cub));
-            scene.ModelAction(f.transformvisitor);
-        }
-
-
-        private void button10_Click(object sender, EventArgs e)
-        {
-            //renderThread = new Thread(RenderLoop);
-            //renderThread.Name = "drawing";
-            //renderThread.IsBackground = true;
-            //renderThread.Start();
-        }
-
-
-        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-
-        }
-
-        private void pictureBox2_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            //if(ModifierKeys != Keys.ShiftKey)
-            //    cub.DeliteActive();
-
-            //reader.InPoint = e.Location;
-            //cub.action(reader);
-            //ModelComponent io = reader.Find;
-            //if (io != null)
-            //{
-            //  SetActiveWindow(cub.GetConnectedElements(io.Id));
-            //}
-        }
-
-
-        private void trackBar1_Scroll(object sender, EventArgs e)
-        {
-         //   curcam.Fovy = trackBar1.Value;
-        }
-
-        private void One_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Form1_MouseDown(object sender, MouseEventArgs e)
-        {
-
+         
         }
 
         bool MousePressed = false;
@@ -361,21 +237,10 @@ namespace cours_m2G
             MousePressed = false;
         }
 
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             scene.DropCam();
         }
-
-        private void выборЭлементовToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void Polys_Click(object sender, EventArgs e)
         {
             Lines.Checked = false;
@@ -451,17 +316,6 @@ namespace cours_m2G
             scene.ChangeRender(4);
             scene.ChangeRender(1);
         }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void label3_Click(object sender, EventArgs e)
         {
             label3.Text = "Выберите точку";
@@ -579,9 +433,8 @@ namespace cours_m2G
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            if(scene!=null)
-          scene.Resize(pictureBox2.Size);
-
+            if (scene != null)
+                scene.Resize(pictureBox2.Size);
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -596,8 +449,7 @@ namespace cours_m2G
             del = new CallBackDelegates()
             {
                 remove_active = scene.RemoveActiveComponent,
-                remove_object = scene.RemoveComponent,
-                close = ShowActiveElemButton
+                remove_object = scene.RemoveComponent
             };
             v.Invoke(del);
             scene.l2 = label2;
@@ -605,6 +457,11 @@ namespace cours_m2G
         }
 
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
         {
 
         }

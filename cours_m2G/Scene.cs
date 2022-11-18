@@ -159,11 +159,14 @@ namespace cours_m2G
 
         public void StartThread()
         {
-            cancelTokenSource = new CancellationTokenSource();
-            renderThread = new Thread(new ParameterizedThreadStart(RenderLoop));
-            renderThread.Name = "drawing";
-            renderThread.IsBackground = true;
-            renderThread.Start(cancelTokenSource.Token);
+            if (cancelTokenSource.IsCancellationRequested)
+            {
+                cancelTokenSource = new CancellationTokenSource();
+                renderThread = new Thread(new ParameterizedThreadStart(RenderLoop));
+                renderThread.Name = "drawing";
+                renderThread.IsBackground = true;
+                renderThread.Start(cancelTokenSource.Token);
+            }
         }
         public void StopThread()
         {

@@ -10,12 +10,15 @@ using System.Windows.Forms;
 
 namespace cours_m2G
 {
+    delegate void ActiveD(IVisitor I);
     partial class FormTransform : Form
     {
+        ActiveD action;
         public IVisitor transformvisitor = new EasyTransformVisitor(new MatrixTransformationTransfer3D(0, 0, 0)); 
-        public FormTransform()
+        public FormTransform(ActiveD action)
         {
             InitializeComponent();
+            this.action = action;
         }
 
         private void FormTransform_Load(object sender, EventArgs e)
@@ -81,9 +84,15 @@ namespace cours_m2G
             {
               transformvisitor =  new EasyTransformVisitor(transform);
             }
+            action.Invoke(transformvisitor);
         }
 
         private void numericUpDown13_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numericUpDown8_ValueChanged(object sender, EventArgs e)
         {
 
         }

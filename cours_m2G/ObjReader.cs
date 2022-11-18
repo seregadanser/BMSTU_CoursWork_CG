@@ -10,6 +10,7 @@ namespace cours_m2G
     class ObjReader
     {
         StreamReader f;
+        string filename;
         List<PointComponent> pointsObj;
         List<PolygonComponent> polygonsObj;
         List<PointComponent> textureObj;
@@ -18,11 +19,14 @@ namespace cours_m2G
             pointsObj = new List<PointComponent>();
             polygonsObj = new List<PolygonComponent>();
             textureObj = new List<PointComponent>();
-            f = new StreamReader(@s);
+          
+            filename = s;
         }
 
         public IModel ReadModel()
         {
+       f = new StreamReader(filename);
+
             IModel M = new ModelHash();
             while (true)
             {
@@ -53,6 +57,10 @@ namespace cours_m2G
             //    M.AddComponent(p);
             foreach (PolygonComponent p in polygonsObj)
                 M.AddComponent(p);
+            f.Close();
+            pointsObj.Clear();
+            polygonsObj.Clear();
+            textureObj.Clear();
             return M;
         }
 
