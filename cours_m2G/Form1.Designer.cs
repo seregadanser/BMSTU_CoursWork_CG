@@ -108,6 +108,8 @@
             this.button6.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.button6.Location = new System.Drawing.Point(991, 49);
             this.button6.Margin = new System.Windows.Forms.Padding(2);
+            this.button6.MaximumSize = new System.Drawing.Size(71, 48);
+            this.button6.MinimumSize = new System.Drawing.Size(71, 48);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(71, 48);
             this.button6.TabIndex = 20;
@@ -121,6 +123,8 @@
             this.comboBox5.FormattingEnabled = true;
             this.comboBox5.Location = new System.Drawing.Point(851, 49);
             this.comboBox5.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox5.MaximumSize = new System.Drawing.Size(129, 0);
+            this.comboBox5.MinimumSize = new System.Drawing.Size(129, 0);
             this.comboBox5.Name = "comboBox5";
             this.comboBox5.Size = new System.Drawing.Size(129, 23);
             this.comboBox5.TabIndex = 27;
@@ -164,6 +168,8 @@
             this.button11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button11.Location = new System.Drawing.Point(8, 504);
             this.button11.Margin = new System.Windows.Forms.Padding(2);
+            this.button11.MaximumSize = new System.Drawing.Size(115, 43);
+            this.button11.MinimumSize = new System.Drawing.Size(115, 43);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(115, 43);
             this.button11.TabIndex = 31;
@@ -174,8 +180,10 @@
             // button12
             // 
             this.button12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button12.Location = new System.Drawing.Point(129, 504);
+            this.button12.Location = new System.Drawing.Point(127, 504);
             this.button12.Margin = new System.Windows.Forms.Padding(2);
+            this.button12.MaximumSize = new System.Drawing.Size(94, 43);
+            this.button12.MinimumSize = new System.Drawing.Size(94, 43);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(94, 43);
             this.button12.TabIndex = 32;
@@ -336,6 +344,8 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(8, 478);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.MaximumSize = new System.Drawing.Size(218, 15);
+            this.label1.MinimumSize = new System.Drawing.Size(218, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(218, 15);
             this.label1.TabIndex = 36;
@@ -347,6 +357,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(241, 478);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.MinimumSize = new System.Drawing.Size(38, 15);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(38, 15);
             this.label2.TabIndex = 37;
@@ -393,6 +404,8 @@
             // 
             this.button8.Location = new System.Drawing.Point(29, 98);
             this.button8.Margin = new System.Windows.Forms.Padding(2);
+            this.button8.MaximumSize = new System.Drawing.Size(128, 20);
+            this.button8.MinimumSize = new System.Drawing.Size(128, 20);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(128, 20);
             this.button8.TabIndex = 12;
@@ -414,6 +427,8 @@
             // 
             this.button7.Location = new System.Drawing.Point(112, 68);
             this.button7.Margin = new System.Windows.Forms.Padding(2);
+            this.button7.MaximumSize = new System.Drawing.Size(28, 20);
+            this.button7.MinimumSize = new System.Drawing.Size(28, 20);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(28, 20);
             this.button7.TabIndex = 10;
@@ -426,6 +441,8 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(155, 70);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label8.MaximumSize = new System.Drawing.Size(151, 15);
+            this.label8.MinimumSize = new System.Drawing.Size(151, 15);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(151, 15);
             this.label8.TabIndex = 9;
@@ -436,6 +453,8 @@
             // 
             this.textBox3.Location = new System.Drawing.Point(4, 68);
             this.textBox3.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox3.MaximumSize = new System.Drawing.Size(105, 23);
+            this.textBox3.MinimumSize = new System.Drawing.Size(105, 23);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(105, 23);
             this.textBox3.TabIndex = 8;
@@ -455,6 +474,8 @@
             // 
             this.button3.Location = new System.Drawing.Point(112, 41);
             this.button3.Margin = new System.Windows.Forms.Padding(2);
+            this.button3.MaximumSize = new System.Drawing.Size(28, 20);
+            this.button3.MinimumSize = new System.Drawing.Size(28, 20);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(28, 20);
             this.button3.TabIndex = 6;
@@ -467,6 +488,8 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(155, 43);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label6.MaximumSize = new System.Drawing.Size(151, 15);
+            this.label6.MinimumSize = new System.Drawing.Size(151, 15);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(151, 15);
             this.label6.TabIndex = 5;
@@ -477,6 +500,8 @@
             // 
             this.textBox2.Location = new System.Drawing.Point(4, 41);
             this.textBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox2.MaximumSize = new System.Drawing.Size(105, 23);
+            this.textBox2.MinimumSize = new System.Drawing.Size(105, 23);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(105, 23);
             this.textBox2.TabIndex = 4;
@@ -496,6 +521,8 @@
             // 
             this.button2.Location = new System.Drawing.Point(112, 16);
             this.button2.Margin = new System.Windows.Forms.Padding(2);
+            this.button2.MaximumSize = new System.Drawing.Size(28, 20);
+            this.button2.MinimumSize = new System.Drawing.Size(28, 20);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(28, 20);
             this.button2.TabIndex = 2;
@@ -508,6 +535,8 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(155, 17);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.MaximumSize = new System.Drawing.Size(151, 15);
+            this.label3.MinimumSize = new System.Drawing.Size(151, 15);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(151, 15);
             this.label3.TabIndex = 1;
@@ -518,6 +547,8 @@
             // 
             this.textBox1.Location = new System.Drawing.Point(4, 16);
             this.textBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox1.MaximumSize = new System.Drawing.Size(105, 23);
+            this.textBox1.MinimumSize = new System.Drawing.Size(105, 23);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(105, 23);
             this.textBox1.TabIndex = 0;
