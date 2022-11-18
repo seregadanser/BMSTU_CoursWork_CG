@@ -465,5 +465,10 @@ namespace cours_m2G
         {
 
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
