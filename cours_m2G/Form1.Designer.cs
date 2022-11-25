@@ -91,7 +91,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BackColor = System.Drawing.Color.White;
-            this.pictureBox2.BackgroundImage = global::cours_m2G.Properties.Resources._1639537185_31_papik_pro_p_setka_risunok_33;
             this.pictureBox2.Location = new System.Drawing.Point(8, 26);
             this.pictureBox2.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox2.Name = "pictureBox2";

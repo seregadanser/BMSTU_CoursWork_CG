@@ -403,7 +403,7 @@ namespace cours_m2G
     {
         public PolygonHash(PointComponent center, int side) : base()
         {
-            PointComponent p1 = new PointComponent(center.X, center.Y, center.Z, new Id("Point", "1"));
+            PointComponent p1 = new PointComponent(center.X, center.Y+side, center.Z, new Id("Point", "1"));
             PointComponent p2 = new PointComponent(center.X+side, center.Y, center.Z, new Id("Point", "2"));
             PointComponent p3 = new PointComponent(center.X + side, center.Y+side, center.Z, new Id("Point", "3"));
 

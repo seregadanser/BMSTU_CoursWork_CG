@@ -27,7 +27,7 @@ namespace cours_m2G
           //  camera = new Camera(new PointComponent(0, 0, 300), new MatrixCoord3D(0, 0, 0), new MatrixCoord3D(0, 1, 0), new MatrixOrtoProjection(0, picture.Size.Width, 0, picture.Height, 0, 1000));
             Drawer = new DrawVisitorCamera(picture.Size, 1, camera);
             Reader = new ReadVisitorCamera(camera, picture.Size, 1);
-          //  model = new PolygonHash(new PointComponent(0, 0, 0), 20);
+           model = new PolygonHash(new PointComponent(0, 0, 0), 20);
             // model = new PyramideHash(new PointComponent(0, 0, 0), 20);
               model = new CubHash(new PointComponent(0, 0, 0), 20);
             // model = new Cub(new PointComponent(0, 0, 0), 20);
@@ -108,26 +108,26 @@ namespace cours_m2G
             Bitmap LocalBMP = new Bitmap(picture.Size.Width,picture.Size.Height);
             if (PictureBuff.Filled)
                 LocalBMP = Drawer.Bmp;
-            //int coloredp = 0;
+          //  int coloredp = 0;
             if (picture.InvokeRequired)
             {
                 picture.Invoke(new MethodInvoker(delegate
                 {
                     picture.Image = LocalBMP;
                     Bitmap p = (Bitmap)picture.Image;
-       
+
                     //for (int i = 0; i < p.Size.Width; i++)
                     //    for (int j = 0; j < p.Size.Height; j++)
                     //    {
-                    //        Color r =p.GetPixel(i, j);
+                    //        Color r = p.GetPixel(i, j);
 
                     //        if (r != Color.FromArgb(255, 255, 255, 255) && r != Color.FromArgb(0, 0, 0, 0))
                     //            coloredp++;
                     //    }
                 }));
             }
-            //double perc = coloredp / (double)(LocalBMP.Width * LocalBMP.Height) * 100;
-            //Console.WriteLine(perc);
+          //  double perc = coloredp / (double)(LocalBMP.Width * LocalBMP.Height) * 100;
+           // Console.WriteLine(perc);
             Thread.Sleep(10);
         }
         /// <summary>

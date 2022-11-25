@@ -999,7 +999,7 @@ namespace cours_m2G
                 {
                     if (zBuffer[p1.X, p1.Y] <= p1.Z - 1 && zBuffer[p2.X, p2.Y] <= p2.Z - 1)
                         return;
-                    drawLine(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2) }, line.Color);
+                   drawLine(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2) }, line.Color);
                 }
         }
 
@@ -1071,11 +1071,11 @@ namespace cours_m2G
 
             double l1, l2, l3;
             double dy23 = (p2.Y - p3.Y), dy31 = (p3.Y - p1.Y), dx32 = (p3.X - p2.X), dx13 = (p1.X - p3.X);
-            int k = 0;
+            int k = 1;
             bool flag_in = false, flag_out = false;
             double direction = 1;
             double start = x_min-1, stop = x_max+1;
-            for (double sy = y_min - k; sy <= y_max + k; sy += 1)
+            for (double sy = y_min - k; sy <= y_max + k; sy += 0.5)
             {
                 flag_out = false;
                 double speed = 0.5;
@@ -1098,7 +1098,7 @@ namespace cours_m2G
                             if (flag_in)
                             {
                                 start = sx;
-                                stop = x_min-1;
+                                stop = x_min - 1;
                                 flag_in = false;
                                 flag_out = true;
                                 direction = -1;
@@ -1110,7 +1110,7 @@ namespace cours_m2G
                 else
                     for (double sx = start; sx >= stop; sx -= speed)
                     {
-               
+
                         l1 = (dy23 * ((sx) - p3.X) + dx32 * ((sy) - p3.Y)) / det;
                         l2 = (dy31 * ((sx) - p3.X) + dx13 * ((sy) - p3.Y)) / det;
                         l3 = 1 - l1 - l2;
@@ -1126,7 +1126,7 @@ namespace cours_m2G
                             if (flag_in)
                             {
                                 start = sx;
-                                stop = x_max+1;
+                                stop = x_max + 1;
                                 flag_in = false;
                                 flag_out = true;
                                 direction = 1;
