@@ -251,7 +251,10 @@ namespace cours_m2G
             }
         }
 
-
+        public void SaveModel(ObjWriter w)
+        {
+            w.WriteModel(model);
+        }
         List<PointComponent> pp = new List<PointComponent>();
         public Id NewPolygon(Point point)
         {

@@ -443,7 +443,11 @@ namespace cours_m2G
                 return;
             // получаем выбранный файл
             string filename = openFileDialog1.FileName;
-            er = new ObjReader(filename);
+            if (filename.Split(new char[] { '.' })[1] == "json")
+                er = new ObjReaderJson(filename);
+            else if (filename.Split(new char[] { '.' })[1] == "obj")
+                er = new ObjReader(filename);
+            else return;
             scene.StopThread();
             scene = new Scene(pictureBox2, er);
             del = new CallBackDelegates()
@@ -458,6 +462,13 @@ namespace cours_m2G
 
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = openFileDialog1.FileName;
+            if (filename.Split(new char[] { '.' })[1] != "json")
+                return;
+            ObjWriter ow = new ObjWriter(filename);
+            scene.SaveModel(ow);
 
         }
 

@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace cours_m2G
 {
     class ObjReader
     {
-        StreamReader f;
-        string filename;
+        protected StreamReader f;
+        protected string filename;
         List<PointComponent> pointsObj;
         List<PolygonComponent> polygonsObj;
         List<PointComponent> textureObj;
@@ -19,13 +20,12 @@ namespace cours_m2G
             pointsObj = new List<PointComponent>();
             polygonsObj = new List<PolygonComponent>();
             textureObj = new List<PointComponent>();
-          
             filename = s;
         }
 
-        public IModel ReadModel()
+        public virtual IModel ReadModel()
         {
-       f = new StreamReader(filename);
+           f = new StreamReader(filename);
 
             IModel M = new ModelHash();
             while (true)
@@ -130,26 +130,45 @@ namespace cours_m2G
             }
         }
     }
+
+    class ObjReaderJson:ObjReader
+    {
+        public ObjReaderJson(string s) :base(s)
+        {
+            
+        }
+
+        public override IModel ReadModel()
+        {
+            IModel model = null;
+            using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
+            {
+                model = JsonSerializer.Deserialize<IModel>(fs);
+            }
+            return model;
+        }
+    }
+
     class ObjWriter
     {
         StreamReader f;
-        List<PointComponent> pointsObj;
-        List<PolygonComponent> polygonsObj;
-        List<PointComponent> textureObj;
+        protected string filename;
         public ObjWriter(string s)
         {
-            pointsObj = new List<PointComponent>();
-            polygonsObj = new List<PolygonComponent>();
-            textureObj = new List<PointComponent>();
-            f = new StreamReader(@s);
+            filename = s; 
         }
 
         public void WriteModel(IModel model)
         {
-            List<PolygonComponent> poly = new List<PolygonComponent>();
-            foreach (PolygonComponent p in model.Polygons)
-                poly.Add(p);
-
+            using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
+            {
+                var options = new JsonSerializerOptions
+                {
+                    IncludeFields = true,
+                };
+                JsonSerializer.Serialize(fs, model, options);
+                Console.WriteLine("Data has been saved to file");
+            }
         }
 
 
