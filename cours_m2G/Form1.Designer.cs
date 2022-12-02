@@ -95,10 +95,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BackColor = System.Drawing.Color.White;
-            this.pictureBox2.Location = new System.Drawing.Point(8, 33);
+            this.pictureBox2.Location = new System.Drawing.Point(7, 46);
             this.pictureBox2.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(918, 576);
+            this.pictureBox2.Size = new System.Drawing.Size(1029, 577);
             this.pictureBox2.TabIndex = 10;
             this.pictureBox2.TabStop = false;
             this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
@@ -111,11 +111,11 @@
             this.button6.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.button6.AutoSize = true;
             this.button6.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button6.Location = new System.Drawing.Point(135, 119);
+            this.button6.Location = new System.Drawing.Point(135, 158);
             this.button6.Margin = new System.Windows.Forms.Padding(2);
             this.button6.MinimumSize = new System.Drawing.Size(71, 48);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(182, 48);
+            this.button6.Size = new System.Drawing.Size(262, 48);
             this.button6.TabIndex = 20;
             this.button6.Text = "Сделать активным";
             this.button6.UseVisualStyleBackColor = true;
@@ -126,11 +126,11 @@
             this.comboBox5.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.comboBox5.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Location = new System.Drawing.Point(2, 126);
+            this.comboBox5.Location = new System.Drawing.Point(2, 159);
             this.comboBox5.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox5.MinimumSize = new System.Drawing.Size(129, 0);
             this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(129, 33);
+            this.comboBox5.Size = new System.Drawing.Size(129, 46);
             this.comboBox5.TabIndex = 27;
             // 
             // button5
@@ -138,10 +138,10 @@
             this.button5.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.button5.AutoSize = true;
             this.button5.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button5.Location = new System.Drawing.Point(2, 41);
+            this.button5.Location = new System.Drawing.Point(2, 54);
             this.button5.Margin = new System.Windows.Forms.Padding(2);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(160, 35);
+            this.button5.Size = new System.Drawing.Size(231, 48);
             this.button5.TabIndex = 20;
             this.button5.Text = "Возврат фигуры";
             this.button5.UseVisualStyleBackColor = true;
@@ -152,10 +152,10 @@
             this.button4.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.button4.AutoSize = true;
             this.button4.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button4.Location = new System.Drawing.Point(2, 80);
+            this.button4.Location = new System.Drawing.Point(2, 106);
             this.button4.Margin = new System.Windows.Forms.Padding(2);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(283, 35);
+            this.button4.Size = new System.Drawing.Size(407, 48);
             this.button4.TabIndex = 21;
             this.button4.Text = "Выбрать трансформирование";
             this.button4.UseVisualStyleBackColor = true;
@@ -174,7 +174,7 @@
             // button11
             // 
             this.button11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button11.Location = new System.Drawing.Point(8, 686);
+            this.button11.Location = new System.Drawing.Point(8, 687);
             this.button11.Margin = new System.Windows.Forms.Padding(2);
             this.button11.MinimumSize = new System.Drawing.Size(115, 43);
             this.button11.Name = "button11";
@@ -187,7 +187,7 @@
             // button12
             // 
             this.button12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button12.Location = new System.Drawing.Point(127, 686);
+            this.button12.Location = new System.Drawing.Point(127, 687);
             this.button12.Margin = new System.Windows.Forms.Padding(2);
             this.button12.MinimumSize = new System.Drawing.Size(94, 43);
             this.button12.Name = "button12";
@@ -208,7 +208,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
-            this.menuStrip1.Size = new System.Drawing.Size(1404, 31);
+            this.menuStrip1.Size = new System.Drawing.Size(1778, 44);
             this.menuStrip1.TabIndex = 34;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -219,20 +219,20 @@
             this.сохранитьToolStripMenuItem});
             this.toolStripMenuItem3.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(69, 29);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(98, 42);
             this.toolStripMenuItem3.Text = "Файл";
             // 
             // открытьToolStripMenuItem
             // 
             this.открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
+            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(257, 46);
             this.открытьToolStripMenuItem.Text = "Открыть";
             this.открытьToolStripMenuItem.Click += new System.EventHandler(this.открытьToolStripMenuItem_Click);
             // 
             // сохранитьToolStripMenuItem
             // 
             this.сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
-            this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
+            this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(257, 46);
             this.сохранитьToolStripMenuItem.Text = "Сохранить";
             this.сохранитьToolStripMenuItem.Click += new System.EventHandler(this.сохранитьToolStripMenuItem_Click);
             // 
@@ -243,7 +243,7 @@
             this.трассировкаЛучейToolStripMenuItem});
             this.методРендераToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.методРендераToolStripMenuItem.Name = "методРендераToolStripMenuItem";
-            this.методРендераToolStripMenuItem.Size = new System.Drawing.Size(158, 29);
+            this.методРендераToolStripMenuItem.Size = new System.Drawing.Size(230, 42);
             this.методРендераToolStripMenuItem.Text = "Метод рендера";
             // 
             // растеризацияToolStripMenuItem
@@ -253,7 +253,7 @@
             this.Bariscentric,
             this.NoCutter});
             this.растеризацияToolStripMenuItem.Name = "растеризацияToolStripMenuItem";
-            this.растеризацияToolStripMenuItem.Size = new System.Drawing.Size(251, 30);
+            this.растеризацияToolStripMenuItem.Size = new System.Drawing.Size(370, 46);
             this.растеризацияToolStripMenuItem.Text = "Растеризация";
             // 
             // Interpolation
@@ -261,21 +261,21 @@
             this.Interpolation.Checked = true;
             this.Interpolation.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Interpolation.Name = "Interpolation";
-            this.Interpolation.Size = new System.Drawing.Size(359, 30);
+            this.Interpolation.Size = new System.Drawing.Size(528, 46);
             this.Interpolation.Text = "Интерполяция";
             this.Interpolation.Click += new System.EventHandler(this.Interpolation_Click);
             // 
             // Bariscentric
             // 
             this.Bariscentric.Name = "Bariscentric";
-            this.Bariscentric.Size = new System.Drawing.Size(359, 30);
+            this.Bariscentric.Size = new System.Drawing.Size(528, 46);
             this.Bariscentric.Text = "Барицентрические координаты";
             this.Bariscentric.Click += new System.EventHandler(this.Bariscentric_Click);
             // 
             // NoCutter
             // 
             this.NoCutter.Name = "NoCutter";
-            this.NoCutter.Size = new System.Drawing.Size(359, 30);
+            this.NoCutter.Size = new System.Drawing.Size(528, 46);
             this.NoCutter.Text = "Без отсечения";
             this.NoCutter.Click += new System.EventHandler(this.NoCutter_Click);
             // 
@@ -285,20 +285,20 @@
             this.Parallel,
             this.StepbyStep});
             this.трассировкаЛучейToolStripMenuItem.Name = "трассировкаЛучейToolStripMenuItem";
-            this.трассировкаЛучейToolStripMenuItem.Size = new System.Drawing.Size(251, 30);
+            this.трассировкаЛучейToolStripMenuItem.Size = new System.Drawing.Size(370, 46);
             this.трассировкаЛучейToolStripMenuItem.Text = "Трассировка лучей";
             // 
             // Parallel
             // 
             this.Parallel.Name = "Parallel";
-            this.Parallel.Size = new System.Drawing.Size(248, 30);
+            this.Parallel.Size = new System.Drawing.Size(362, 46);
             this.Parallel.Text = "Параллельная";
             this.Parallel.Click += new System.EventHandler(this.Parallel_Click);
             // 
             // StepbyStep
             // 
             this.StepbyStep.Name = "StepbyStep";
-            this.StepbyStep.Size = new System.Drawing.Size(248, 30);
+            this.StepbyStep.Size = new System.Drawing.Size(362, 46);
             this.StepbyStep.Text = "Последовательная";
             this.StepbyStep.Click += new System.EventHandler(this.StepbyStep_Click);
             // 
@@ -311,7 +311,7 @@
             this.выборЭлементовToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.выборЭлементовToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.выборЭлементовToolStripMenuItem.Name = "выборЭлементовToolStripMenuItem";
-            this.выборЭлементовToolStripMenuItem.Size = new System.Drawing.Size(178, 29);
+            this.выборЭлементовToolStripMenuItem.Size = new System.Drawing.Size(261, 42);
             this.выборЭлементовToolStripMenuItem.Text = "Выбор элементов";
             // 
             // Polys
@@ -319,21 +319,21 @@
             this.Polys.Checked = true;
             this.Polys.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Polys.Name = "Polys";
-            this.Polys.Size = new System.Drawing.Size(172, 30);
+            this.Polys.Size = new System.Drawing.Size(254, 46);
             this.Polys.Text = "Полигоны";
             this.Polys.Click += new System.EventHandler(this.Polys_Click);
             // 
             // Lines
             // 
             this.Lines.Name = "Lines";
-            this.Lines.Size = new System.Drawing.Size(172, 30);
+            this.Lines.Size = new System.Drawing.Size(254, 46);
             this.Lines.Text = "Ребра";
             this.Lines.Click += new System.EventHandler(this.Lines_Click);
             // 
             // Points
             // 
             this.Points.Name = "Points";
-            this.Points.Size = new System.Drawing.Size(172, 30);
+            this.Points.Size = new System.Drawing.Size(254, 46);
             this.Points.Text = "Вершины";
             this.Points.Click += new System.EventHandler(this.Points_Click);
             // 
@@ -345,7 +345,7 @@
             this.button1.Location = new System.Drawing.Point(2, 2);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(190, 35);
+            this.button1.Size = new System.Drawing.Size(234, 48);
             this.button1.TabIndex = 35;
             this.button1.Text = "Возврат камеры";
             this.button1.UseVisualStyleBackColor = true;
@@ -355,11 +355,11 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 660);
+            this.label1.Location = new System.Drawing.Point(8, 661);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.MinimumSize = new System.Drawing.Size(218, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(218, 15);
+            this.label1.Size = new System.Drawing.Size(327, 25);
             this.label1.TabIndex = 36;
             this.label1.Text = "Время отрисовки предыдущей сцены:";
             // 
@@ -367,11 +367,11 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(241, 660);
+            this.label2.Location = new System.Drawing.Point(241, 661);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.MinimumSize = new System.Drawing.Size(38, 15);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(38, 15);
+            this.label2.Size = new System.Drawing.Size(59, 25);
             this.label2.TabIndex = 37;
             this.label2.Text = "label2";
             // 
@@ -381,12 +381,12 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tabControl1.Location = new System.Drawing.Point(932, 33);
+            this.tabControl1.Location = new System.Drawing.Point(1040, 46);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(446, 260);
+            this.tabControl1.Size = new System.Drawing.Size(620, 293);
             this.tabControl1.TabIndex = 44;
             // 
             // tabPage1
@@ -396,11 +396,11 @@
             this.tabPage1.Controls.Add(this.tableLayoutPanel1);
             this.tabPage1.Controls.Add(this.button8);
             this.tabPage1.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tabPage1.Location = new System.Drawing.Point(4, 34);
+            this.tabPage1.Location = new System.Drawing.Point(4, 47);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage1.Size = new System.Drawing.Size(438, 222);
+            this.tabPage1.Size = new System.Drawing.Size(612, 242);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Добавить полигон";
             // 
@@ -432,7 +432,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(411, 140);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(576, 175);
             this.tableLayoutPanel1.TabIndex = 45;
             // 
             // textBox1
@@ -442,7 +442,7 @@
             this.textBox1.Margin = new System.Windows.Forms.Padding(2);
             this.textBox1.MinimumSize = new System.Drawing.Size(105, 23);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(125, 32);
+            this.textBox1.Size = new System.Drawing.Size(125, 45);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "Добавить новую";
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
@@ -451,11 +451,11 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label8.Location = new System.Drawing.Point(201, 78);
+            this.label8.Location = new System.Drawing.Point(224, 104);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.MinimumSize = new System.Drawing.Size(151, 15);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(236, 25);
+            this.label8.Size = new System.Drawing.Size(347, 38);
             this.label8.TabIndex = 9;
             this.label8.Text = "Добавить существующую";
             this.label8.Click += new System.EventHandler(this.label8_Click);
@@ -464,21 +464,21 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label7.Location = new System.Drawing.Point(178, 78);
+            this.label7.Location = new System.Drawing.Point(192, 104);
             this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(19, 25);
+            this.label7.Size = new System.Drawing.Size(28, 38);
             this.label7.TabIndex = 11;
             this.label7.Text = "/";
             // 
             // textBox2
             // 
             this.textBox2.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.textBox2.Location = new System.Drawing.Point(2, 41);
+            this.textBox2.Location = new System.Drawing.Point(2, 54);
             this.textBox2.Margin = new System.Windows.Forms.Padding(2);
             this.textBox2.MinimumSize = new System.Drawing.Size(105, 23);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(125, 32);
+            this.textBox2.Size = new System.Drawing.Size(125, 45);
             this.textBox2.TabIndex = 4;
             this.textBox2.Text = "Добавить новую";
             // 
@@ -486,11 +486,11 @@
             // 
             this.button7.AutoSize = true;
             this.button7.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button7.Location = new System.Drawing.Point(131, 80);
+            this.button7.Location = new System.Drawing.Point(131, 106);
             this.button7.Margin = new System.Windows.Forms.Padding(2);
             this.button7.MinimumSize = new System.Drawing.Size(28, 20);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(43, 35);
+            this.button7.Size = new System.Drawing.Size(57, 48);
             this.button7.TabIndex = 10;
             this.button7.Text = "ок";
             this.button7.UseVisualStyleBackColor = true;
@@ -505,7 +505,7 @@
             this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.MinimumSize = new System.Drawing.Size(28, 20);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(42, 35);
+            this.button2.Size = new System.Drawing.Size(57, 48);
             this.button2.TabIndex = 2;
             this.button2.Text = "ок";
             this.button2.UseVisualStyleBackColor = false;
@@ -515,11 +515,11 @@
             // 
             this.button3.AutoSize = true;
             this.button3.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button3.Location = new System.Drawing.Point(131, 41);
+            this.button3.Location = new System.Drawing.Point(131, 54);
             this.button3.Margin = new System.Windows.Forms.Padding(2);
             this.button3.MinimumSize = new System.Drawing.Size(28, 20);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(42, 35);
+            this.button3.Size = new System.Drawing.Size(57, 48);
             this.button3.TabIndex = 6;
             this.button3.Text = "ок";
             this.button3.UseVisualStyleBackColor = true;
@@ -528,11 +528,11 @@
             // textBox3
             // 
             this.textBox3.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.textBox3.Location = new System.Drawing.Point(2, 80);
+            this.textBox3.Location = new System.Drawing.Point(2, 106);
             this.textBox3.Margin = new System.Windows.Forms.Padding(2);
             this.textBox3.MinimumSize = new System.Drawing.Size(105, 23);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(125, 32);
+            this.textBox3.Size = new System.Drawing.Size(125, 45);
             this.textBox3.TabIndex = 8;
             this.textBox3.Text = "Добавить новую";
             // 
@@ -540,10 +540,10 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label5.Location = new System.Drawing.Point(178, 39);
+            this.label5.Location = new System.Drawing.Point(192, 52);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(19, 25);
+            this.label5.Size = new System.Drawing.Size(28, 38);
             this.label5.TabIndex = 7;
             this.label5.Text = "/";
             // 
@@ -551,11 +551,11 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label6.Location = new System.Drawing.Point(201, 39);
+            this.label6.Location = new System.Drawing.Point(224, 52);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.MinimumSize = new System.Drawing.Size(151, 15);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(236, 25);
+            this.label6.Size = new System.Drawing.Size(347, 38);
             this.label6.TabIndex = 5;
             this.label6.Text = "Добавить существующую";
             this.label6.Click += new System.EventHandler(this.label6_Click);
@@ -564,11 +564,11 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(201, 0);
+            this.label3.Location = new System.Drawing.Point(224, 0);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.MinimumSize = new System.Drawing.Size(151, 15);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(236, 25);
+            this.label3.Size = new System.Drawing.Size(347, 38);
             this.label3.TabIndex = 1;
             this.label3.Text = "Добавить существующую";
             this.label3.Click += new System.EventHandler(this.label3_Click);
@@ -577,10 +577,10 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(178, 0);
+            this.label4.Location = new System.Drawing.Point(192, 0);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(19, 25);
+            this.label4.Size = new System.Drawing.Size(28, 38);
             this.label4.TabIndex = 3;
             this.label4.Text = "/";
             // 
@@ -592,7 +592,7 @@
             this.button8.Margin = new System.Windows.Forms.Padding(2);
             this.button8.MinimumSize = new System.Drawing.Size(128, 20);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(183, 35);
+            this.button8.Size = new System.Drawing.Size(262, 48);
             this.button8.TabIndex = 12;
             this.button8.Text = "Добавить полигон";
             this.button8.UseVisualStyleBackColor = true;
@@ -604,11 +604,11 @@
             this.tabPage2.Controls.Add(this.textBox4);
             this.tabPage2.Controls.Add(this.label9);
             this.tabPage2.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tabPage2.Location = new System.Drawing.Point(4, 34);
+            this.tabPage2.Location = new System.Drawing.Point(4, 90);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage2.Size = new System.Drawing.Size(438, 222);
+            this.tabPage2.Size = new System.Drawing.Size(438, 166);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Изменить позицию точки";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -619,7 +619,7 @@
             this.button13.Location = new System.Drawing.Point(215, 58);
             this.button13.Margin = new System.Windows.Forms.Padding(2);
             this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(42, 35);
+            this.button13.Size = new System.Drawing.Size(57, 48);
             this.button13.TabIndex = 45;
             this.button13.Text = "ок";
             this.button13.UseVisualStyleBackColor = true;
@@ -630,7 +630,7 @@
             this.textBox4.Location = new System.Drawing.Point(13, 58);
             this.textBox4.Margin = new System.Windows.Forms.Padding(2);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(186, 32);
+            this.textBox4.Size = new System.Drawing.Size(186, 45);
             this.textBox4.TabIndex = 1;
             this.textBox4.Text = "Ввести координаты";
             // 
@@ -640,7 +640,7 @@
             this.label9.Location = new System.Drawing.Point(11, 16);
             this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(139, 25);
+            this.label9.Size = new System.Drawing.Size(203, 38);
             this.label9.TabIndex = 0;
             this.label9.Text = "Выбрать точку";
             this.label9.Click += new System.EventHandler(this.label9_Click);
@@ -657,16 +657,16 @@
             this.flowLayoutPanel1.Controls.Add(this.button4);
             this.flowLayoutPanel1.Controls.Add(this.comboBox5);
             this.flowLayoutPanel1.Controls.Add(this.button6);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(930, 303);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(1044, 344);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(351, 256);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(446, 256);
             this.flowLayoutPanel1.TabIndex = 45;
             // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(1404, 819);
+            this.ClientSize = new System.Drawing.Size(1778, 820);
             this.ControlBox = false;
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.tabControl1);
