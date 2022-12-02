@@ -164,7 +164,7 @@ namespace cours_m2G
                 }
             }
             DelActiveWindow();
-            button6.Visible = false;
+       //     button6.Visible = false;
         }
 
   
@@ -417,6 +417,7 @@ namespace cours_m2G
 
         private void label9_Click(object sender, EventArgs e)
         {
+            label9.Text = "¬ыберите точку";
             flag_add_poly = true;
             what = 4;
         }
@@ -425,7 +426,7 @@ namespace cours_m2G
         {
             PointComponent p = PParserer(textBox4.Text);
             if (p == null)
-            { textBox1.Text = "неправильный формат"; return; }
+            { textBox4.Text = "неправильный формат"; return; }
             string[] g1 = label9.Text.Split(new char[] { ' ' });
             Id id = new Id(g1[0], g1[1]);
             scene.newCoords(id, new MatrixCoord3D(p.X, p.Y, p.Z));
@@ -443,7 +444,7 @@ namespace cours_m2G
                 return;
             // получаем выбранный файл
             string filename = openFileDialog1.FileName;
-            if (filename.Split(new char[] { '.' })[1] == "json")
+            if (filename.Split(new char[] { '.' })[1] == "dat")
                 er = new ObjReaderJson(filename);
             else if (filename.Split(new char[] { '.' })[1] == "obj")
                 er = new ObjReader(filename);
@@ -465,7 +466,7 @@ namespace cours_m2G
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
                 return;
             string filename = openFileDialog1.FileName;
-            if (filename.Split(new char[] { '.' })[1] != "json")
+            if (filename.Split(new char[] { '.' })[1] != "dat")
                 return;
             ObjWriter ow = new ObjWriter(filename);
             scene.SaveModel(ow);

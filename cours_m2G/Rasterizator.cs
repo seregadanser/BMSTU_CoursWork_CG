@@ -1075,10 +1075,10 @@ namespace cours_m2G
             bool flag_in = false, flag_out = false;
             double direction = 1;
             double start = x_min-1, stop = x_max+1;
-            for (double sy = y_min - k; sy <= y_max + k; sy += 0.5)
+            for (double sy = y_min - k; sy <= y_max + k; sy += 0.25)
             {
                 flag_out = false;
-                double speed = 0.5;
+                double speed = 0.25;
                 if (direction == 1)
                     for (double sx = start; sx <= stop; sx += speed)
                     {
@@ -1097,7 +1097,7 @@ namespace cours_m2G
                         {
                             if (flag_in)
                             {
-                                start = sx;
+                                start = sx+1;
                                 stop = x_min - 1;
                                 flag_in = false;
                                 flag_out = true;
@@ -1125,7 +1125,7 @@ namespace cours_m2G
                         {
                             if (flag_in)
                             {
-                                start = sx;
+                                start = sx-1;
                                 stop = x_max + 1;
                                 flag_in = false;
                                 flag_out = true;

@@ -302,6 +302,7 @@ namespace cours_m2G
                 model.AddComponent(pol);
                 return true;
             }
+            
             return false;
         }
 

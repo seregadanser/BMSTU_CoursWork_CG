@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -141,9 +142,10 @@ namespace cours_m2G
         public override IModel ReadModel()
         {
             IModel model = null;
+            BinaryFormatter formatter = new BinaryFormatter();
             using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
             {
-                model = JsonSerializer.Deserialize<IModel>(fs);
+                model = (IModel)formatter.Deserialize(fs);
             }
             return model;
         }
@@ -160,13 +162,10 @@ namespace cours_m2G
 
         public void WriteModel(IModel model)
         {
+            BinaryFormatter formatter = new BinaryFormatter();
             using (FileStream fs = new FileStream(filename, FileMode.OpenOrCreate))
             {
-                var options = new JsonSerializerOptions
-                {
-                    IncludeFields = true,
-                };
-                JsonSerializer.Serialize(fs, model, options);
+                formatter.Serialize(fs, model);
                 Console.WriteLine("Data has been saved to file");
             }
         }
