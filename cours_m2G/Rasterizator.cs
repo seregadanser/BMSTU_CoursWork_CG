@@ -219,8 +219,13 @@ namespace cours_m2G
         private void drawLine(List<PointComponent> vertices, Color color)
         {
             List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+            if(pp!=null)
             foreach (var p in pp)
+            {
+                if (Scene.cancelTokenSource.IsCancellationRequested)
+                    return;
                 drawPoint1(p, color);
+            }
         }
         void drawPoint1(PointComponent point, Color color)
         {
@@ -274,7 +279,12 @@ namespace cours_m2G
             MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
             MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
             double cos = Math.Abs(MatrixCoord3D.scalar(polygon.Normal, shader.up.Direction));
-            Color c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
+            Color c = Color.White;
+            try
+            {
+                c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
+            }
+            catch { return; }
             if (p1 != null && p2 != null && p3 != null)
          //       if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
                     drawTriangleFill(new List<PointComponent> { new PointComponent(p1), new PointComponent(p2), new PointComponent(p3) }, c);
@@ -284,17 +294,27 @@ namespace cours_m2G
         {
             var points = new List<PointComponent> { vertices[0], vertices[1], vertices[2] };
 
-    
+
 
             foreach (var p in Fill.FillTriangle(points))
+            {
+                if (Scene.cancelTokenSource.IsCancellationRequested)
+                    return;
                 drawPoint(p, color);
+            }
         }
 
         private void drawLine(List<PointComponent> vertices, Color color)
         {
             List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+            if(pp!=null)
             foreach (var p in pp)
+            {
+                if (Scene.cancelTokenSource.IsCancellationRequested)
+                    return;
                 drawPoint1(p, color);
+            }
+               
         }
 
         void drawPoint(PointComponent point, Color color)
@@ -508,6 +528,8 @@ namespace cours_m2G
                 d2 = 2 * dz - dx;
                 while (Math.Abs(Ut.F(x1) - Ut.F(p2.X)) > dE)
                 {
+                    if (Scene.cancelTokenSource.IsCancellationRequested)
+                        return null;
                     x1 += xs;
                     if (d1 >= 0)
                     {
@@ -531,6 +553,8 @@ namespace cours_m2G
                 d2 = 2 * dz - dy;
                 while (Math.Abs(Ut.F(y1) - Ut.F(p2.Y)) > dE)
                 {
+                    if (Scene.cancelTokenSource.IsCancellationRequested)
+                        return null;
                     y1 += ys;
                     if (d1 >= 0)
                     {
@@ -554,6 +578,8 @@ namespace cours_m2G
                 d2 = 2 * dz - dz;
                 while (Math.Abs(Ut.F(z1) - Ut.F(p2.Z)) > dE)
                 {
+                    if (Scene.cancelTokenSource.IsCancellationRequested)
+                        return null;
                     z1 += zs;
                     if (d1 >= 0)
                     {
@@ -638,6 +664,8 @@ namespace cours_m2G
             {
                 for (var y = (int)p1.Y; y <= (int)p3.Y; y++)
                 {
+                    if (Scene.cancelTokenSource.IsCancellationRequested)
+                        return null;
                     if (y < p2.Y)
                     {
                         points.AddRange(ProcessScanLine(y, p1, p3, p1, p2));
@@ -663,6 +691,8 @@ namespace cours_m2G
             {
                 for (var y = (int)p1.Y; y <= (int)p3.Y; y++)
                 {
+                    if (Scene.cancelTokenSource.IsCancellationRequested)
+                        return null;
                     if (y < p2.Y)
                     {
                         points.AddRange(ProcessScanLine(y, p1, p2, p1, p3));
@@ -709,6 +739,8 @@ namespace cours_m2G
 
             for (x = sx + 1; x < ex; x++)
             {
+                if (Scene.cancelTokenSource.IsCancellationRequested)
+                    return null;
                 gradient = (x - sx) / (float)(ex - sx);
 
                 z = Interpolate(z1, z2, gradient);
@@ -1009,8 +1041,12 @@ namespace cours_m2G
             MatrixCoord3D p2 = shader.VertexTransform(polygon.Points[1]);
             MatrixCoord3D p3 = shader.VertexTransform(polygon.Points[2]);
             double cos = Math.Abs(MatrixCoord3D.scalar(polygon.Normal, shader.up.Direction));
-            Color c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
-
+            Color c = Color.White;
+            try
+            {
+                c = Color.FromArgb(255, Convert.ToInt32(polygon.ColorF.R * cos), Convert.ToInt32(polygon.ColorF.G * cos), Convert.ToInt32(polygon.ColorF.B * cos));
+            }
+            catch { return; }
             if (p1 != null && p2 != null && p3 != null)
             //    if (p1 != Double.NaN && p2 != Double.NaN && p3 != Double.NaN)
             {
