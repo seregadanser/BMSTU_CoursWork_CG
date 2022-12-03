@@ -49,12 +49,18 @@ namespace cours_m2G
             polygons = new ContainerHash<PolygonComponent>();
             active = new ActiveElements();
         }
-
+        int count = 0;
         public void action(IVisitor visitor)
         {
             if (visitor.type == TypeVisitor.Drawer || visitor.type == TypeVisitor.Reader)
             {
                 visitor.visit(this);
+                count++;
+                if(count!=50)
+                return;
+                count = 0;
+                foreach (IObjects i2 in polygons)
+                    ((PolygonComponent)i2).ReCalcNormal();
                 return;
             }
 

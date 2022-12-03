@@ -16,10 +16,11 @@ namespace cours_m2G
         Camera camera;
 
         Thread renderThread;
-     public static CancellationTokenSource cancelTokenSource;
+        public static CancellationTokenSource cancelTokenSource;
         PictureBox picture;
         
         public Label l2;
+        public Label l3;
 
         public Scene(PictureBox picture)
         {
@@ -194,6 +195,8 @@ namespace cours_m2G
             double dest = double.MaxValue;
             if (io != null)
             {
+                if (l3 != null)
+                    l3.Text = p.ToString();
                 switch (what)
                 {
                     case 1:

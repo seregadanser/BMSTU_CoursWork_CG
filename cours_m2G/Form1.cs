@@ -32,7 +32,7 @@ namespace cours_m2G
             PictureBuff.Init(pictureBox2.Size);
             scene = new Scene(pictureBox2);
             scene.l2 = label2;
-
+            scene.l3 = label11;
 
             this.v = v;
             createTF = c;
@@ -458,7 +458,7 @@ namespace cours_m2G
             };
             v.Invoke(del);
             scene.l2 = label2;
-
+            scene.l3 = label11;
         }
 
         private void ñîõðàíèòüToolStripMenuItem_Click(object sender, EventArgs e)
@@ -479,6 +479,11 @@ namespace cours_m2G
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
 
         }
