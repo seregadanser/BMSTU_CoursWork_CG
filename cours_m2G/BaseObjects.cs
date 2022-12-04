@@ -4,9 +4,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace cours_m2G
 {
-    interface IBaseObjects : IObjects
+    interface IBaseObjects
     {
-     
+
     }
 
 
