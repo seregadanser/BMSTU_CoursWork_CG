@@ -497,8 +497,7 @@ namespace cours_m2G
 
     static class Line
     {
-        // Bresenham's Line in 3D
-        // Source https://www.geeksforgeeks.org/bresenhams-algorithm-for-3-d-line-drawing/
+ 
         public static List<PointComponent> GetPoints(PointComponent p1, PointComponent p2)
         {
             double dE = 1;
@@ -610,9 +609,6 @@ namespace cours_m2G
             var p2 = vertices[1];
             var p3 = vertices[2];
 
-            // Sorting the points in order to always have this order on screen p1, p2 & p3
-            // with p1 always up (thus having the Y the lowest possible to be near the top screen)
-            // then p2 between p1 & p3
             if (p1.Y > p2.Y)
             {
                 var temp = p2;
@@ -634,11 +630,8 @@ namespace cours_m2G
                 p1 = temp;
             }
 
-            // inverse slopes
             double dP1P2, dP1P3;
 
-            // http://en.wikipedia.org/wiki/Slope
-            // Computing inverse slopes
             if (p2.Y - p1.Y > 0)
                 dP1P2 = (p2.X - p1.X) / (p2.Y - p1.Y);
             else
@@ -649,17 +642,7 @@ namespace cours_m2G
             else
                 dP1P3 = 0;
 
-            // First case where triangles are like that:
-            // P1
-            // -
-            // -- 
-            // - -
-            // -  -
-            // -   - P2
-            // -  -
-            // - -
-            // -
-            // P3
+ 
             if (dP1P2 > dP1P3)
             {
                 for (var y = (int)p1.Y; y <= (int)p3.Y; y++)
@@ -676,17 +659,7 @@ namespace cours_m2G
                     }
                 }
             }
-            // First case where triangles are like that:
-            //       P1
-            //        -
-            //       -- 
-            //      - -
-            //     -  -
-            // P2 -   - 
-            //     -  -
-            //      - -
-            //        -
-            //       P3
+
             else
             {
                 for (var y = (int)p1.Y; y <= (int)p3.Y; y++)
@@ -753,7 +726,7 @@ namespace cours_m2G
     }
 
     static class Fill
-    // Source https://www.davrous.com/2013/06/21/tutorial-part-4-learning-how-to-write-a-3d-software-engine-in-c-ts-or-js-rasterization-z-buffering/
+    
     {
         public static IEnumerable<PointComponent> FillTriangle(List<PointComponent> vertices)
         {
@@ -841,8 +814,7 @@ namespace cours_m2G
     }
 
     static class FillTexture
-    // Source https://www.davrous.com/2013/06/21/tutorial-part-4-learning-how-to-write-a-3d-software-engine-in-c-ts-or-js-rasterization-z-buffering/
-    {
+{
         public static IEnumerable<Point3DTexture> FillTriangle(List<Point3DTexture> vertices)
         {
             vertices.Sort((x, y) => Ut.F(x.Y - y.Y));
@@ -1052,7 +1024,11 @@ namespace cours_m2G
             {
 
                 foreach (var p in ShadeBackgroundPixel(new PointComponent(p1), new PointComponent(p2), new PointComponent(p3)))
+                {
+                    if (p == null)
+                        return;
                     drawPoint(p, c);
+                }
             }
         }
 
@@ -1061,6 +1037,7 @@ namespace cours_m2G
         private void drawLine(List<PointComponent> vertices, Color color)
         {
             List<PointComponent> pp = Line.GetPoints(vertices[0], vertices[1]);
+            if(pp!=null)
             foreach (var p in pp)
                 drawPoint1(p, color);
         }
@@ -1113,6 +1090,8 @@ namespace cours_m2G
             double start = x_min-1, stop = x_max+1;
             for (double sy = y_min - k; sy <= y_max + k; sy += 0.25)
             {
+                if (Scene.cancelTokenSource.IsCancellationRequested)
+                    yield break;
                 flag_out = false;
                 double speed = 0.25;
                 if (direction == 1)
@@ -1126,8 +1105,8 @@ namespace cours_m2G
                         {
                             flag_in = true;
                             double z = l1 * p1.Z + l2 * p2.Z + l3 * p3.Z;
-                           // yield return new PointComponent(sx, sy, z);
-                            points.Add(new PointComponent(sx, sy, z));
+                            yield return new PointComponent(sx, sy, z);
+                           // points.Add(new PointComponent(sx, sy, z));
                         }
                         else
                         {
@@ -1154,8 +1133,8 @@ namespace cours_m2G
                         {
                             flag_in = true;
                             double z = l1 * p1.Z + l2 * p2.Z + l3 * p3.Z;
-                            //yield return new PointComponent(sx, sy, z);
-                            points.Add(new PointComponent(sx, sy, z));
+                            yield return new PointComponent(sx, sy, z);
+                            //points.Add(new PointComponent(sx, sy, z));
                         }
                         else
                         {
@@ -1173,7 +1152,7 @@ namespace cours_m2G
                     }
             }
             
-            return points;
+          //  return points;
         }
 
 
