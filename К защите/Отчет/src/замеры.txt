@@ -1,0 +1,35 @@
+интерполяция
+RenderTime 0.0 Percent 0.0713107812987476
+RenderTime 0.0 Percent 0.13537906137184114
+RenderTime 0.0 Percent 0.29471408833623036
+RenderTime 0.0 Percent 1.071054508178455
+RenderTime 0.01 Percent 3.2791817087845967
+RenderTime 0.02 Percent 8.433614119534697
+RenderTime 0.04 Percent 23.345645585416946
+RenderTime 0.09 Percent 69.19374247894103
+RenderTime 0.19 Percent 91.4560770156438
+RenderTime 0.33 Percent 100
+
+
+оптимизированный барри
+RenderTime 0.0 Percent 0.0713107812987476
+RenderTime 0.0 Percent 0.13705040780853056
+RenderTime 0.01 Percent 0.29471408833623036
+RenderTime 0.02 Percent 1.071054508178455
+RenderTime 0.03 Percent 3.2791817087845967
+RenderTime 0.08 Percent 8.433614119534697
+RenderTime 0.24 Percent 23.265142398716407
+RenderTime 01.07 Percent 69.31407942238266
+RenderTime 02.63 Percent 91.69675090252709
+RenderTime 04.86 Percent 100
+не оптимиз
+RenderTime 0.0 Percent 0.0713107812987476
+RenderTime 0.0 Percent 0.13732896554797877
+RenderTime 0.01 Percent 0.30390649373802203
+RenderTime 0.01 Percent 1.0716116236573516
+RenderTime 0.03 Percent 3.3095445023844547
+RenderTime 0.10 Percent 8.433614119534697
+RenderTime 0.26 Percent 23.265142398716407
+RenderTime 01.09 Percent 69.31407942238266
+RenderTime 03.06 Percent 91.69675090252709
+RenderTime 05.27 Percent 100
